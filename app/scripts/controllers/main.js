@@ -39,12 +39,6 @@ angular.module('rpgApp')
     stage.addChild(yeo);
 
 
-    animate();
-    function run(callback) {
-      requestAnimationFrame(callback);
-      frames += 1;
-    }
-
 
     function animate() {
       requestAnimationFrame(animate);
@@ -55,5 +49,7 @@ angular.module('rpgApp')
       renderer.render(stage);
       frames += 1;
     }
+
+    animate();
 
   });
