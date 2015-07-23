@@ -29,7 +29,7 @@ angular.module('rpgApp')
 
 
     var stage = new PIXI.Container();
-    var renderer = PIXI.autoDetectRenderer(800, 600, {view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb});
+    var renderer = PIXI.autoDetectRenderer(800, 608, {view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb});
 
     var groundTexture = PIXI.Texture.fromImage("images/ground.png");
     var wallTexture = PIXI.Texture.fromImage("images/wall.png");
@@ -44,7 +44,6 @@ angular.module('rpgApp')
          posX = -16;
          for (var i = 0; i < map[line].length; i++) {
            posX += 32;
-           map[line][i] = _.random(2);
            if (map[line][i] === 0) {
              createSquare(posX, posY, wallTexture);
            } else {
