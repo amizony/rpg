@@ -35,7 +35,7 @@ angular.module('rpgApp')
     var wallTexture = PIXI.Texture.fromImage("images/wall.png");
 
     $.getJSON("resources/map.json", function(data) {
-       map = data;
+       map = mapRefection(data);
        var posX = -16;
        var posY = -16;
 
@@ -52,6 +52,28 @@ angular.module('rpgApp')
          }
        }
     });
+
+    function mapRefection(data) {
+      var reflectionX = _.random(1) === 1;
+      var reflectionY = _.random(1) === 1;
+      var mapp = data;
+
+      if (reflectionX) {
+        for (var line in mapp) {
+          mapp[line] = mapp[line].reverse();
+        }
+      }
+      if (reflectionY) {
+        var temp = [];
+        for (var line in mapp) {
+          temp.push(mapp[line]);
+        }
+        for (var line in mapp) {
+          mapp[line] = temp.pop();
+        }
+      }
+      return mapp;
+    }
 
     function createSquare(x, y, texture) {
       var square = new PIXI.Sprite(texture);
