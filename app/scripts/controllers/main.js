@@ -25,17 +25,19 @@ angular.module('rpgApp')
       fpsPosition.innerHTML = fps;
     }, 1000);
 
-    var map;
+
 
 
     var stage = new PIXI.Container();
     var renderer = PIXI.autoDetectRenderer(800, 608, {view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb});
 
+    var mapContainer = new PIXI.Container();
     var groundTexture = PIXI.Texture.fromImage("images/ground.png");
     var wallTexture = PIXI.Texture.fromImage("images/wall.png");
 
+    stage.addChild(mapContainer);
     $.getJSON("resources/map.json", function(data) {
-       map = mapRefection(data);
+       var map = mapRefection(data);
        var posX = -16;
        var posY = -16;
 
@@ -81,14 +83,30 @@ angular.module('rpgApp')
       square.scale.set(0.125);
       square.position.x = x;
       square.position.y = y;
-      stage.addChild(square);
+      mapContainer.addChild(square);
     }
 
+    var character;
+    var charTexture = PIXI.Texture.fromImage("images/SuaRQmP.png");
+    function createChar(x, y) {
+      character = new PIXI.Sprite(charTexture);
+      character.anchor.set(0.5);
+      character.scale.set(0.05);
+      character.position.x = x;
+      character.position.y = y;
+      stage.addChild(character);
+    }
+    createChar(400, 300);
 
     function animate() {
-      requestAnimationFrame(animate);
+      var movX = _.random(-3, 3);
+      var movY = _.random(-3, 3);
+      character.position.x += movX;
+      character.position.y += movY;
+
       renderer.render(stage);
       frames += 1;
+      requestAnimationFrame(animate);
     }
 
     animate();
