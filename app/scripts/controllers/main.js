@@ -32,12 +32,13 @@ angular.module('rpgApp')
     var renderer = PIXI.autoDetectRenderer(800, 608, {view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb});
 
     var mapContainer = new PIXI.Container();
+    var map;
     var groundTexture = PIXI.Texture.fromImage("images/ground.png");
     var wallTexture = PIXI.Texture.fromImage("images/wall.png");
 
     stage.addChild(mapContainer);
     $.getJSON("resources/map.json", function(data) {
-       var map = mapRefection(data);
+       map = mapRefection(data);
        var posX = -16;
        var posY = -16;
 
@@ -86,24 +87,50 @@ angular.module('rpgApp')
       mapContainer.addChild(square);
     }
 
+    function isWall(x, y) {
+      console.log("hi");
+      var count = 0;
+      for (var line in map) {
+        if (count === y) {
+          for (var i = 0; i < map[line].length; i++) {
+            if (i === x) {
+              return (map[line][i] === 0);
+            }
+          }
+        }
+        count += 1;
+      }
+    }
+
     var character;
     var charTexture = PIXI.Texture.fromImage("images/SuaRQmP.png");
-    function createChar(x, y) {
+    function createChar() {
       character = new PIXI.Sprite(charTexture);
       character.anchor.set(0.5);
       character.scale.set(0.05);
-      character.position.x = x;
-      character.position.y = y;
+      var position = randPos();
+      character.position.x = position[0]*32 + 16;
+      character.position.y = position[1]*32 + 16;
       stage.addChild(character);
     }
-    createChar(400, 300);
+    createChar();
+
+    function randPos() {
+      var posX = _.random(12);
+      var posY = _.random(12);
+      while (isWall(posX, posY)) {
+        console.log("is wall");
+        posX = _.random(12);
+        posY = _.random(12);
+      }
+      return [posX, posY];
+    }
+
+    function moveChar(dir) {
+
+    }
 
     function animate() {
-      var movX = _.random(-3, 3);
-      var movY = _.random(-3, 3);
-      character.position.x += movX;
-      character.position.y += movY;
-
       renderer.render(stage);
       frames += 1;
       requestAnimationFrame(animate);
