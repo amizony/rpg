@@ -35,6 +35,8 @@ angular.module('rpgApp')
     var map;
     var groundTexture = PIXI.Texture.fromImage("images/ground.png");
     var wallTexture = PIXI.Texture.fromImage("images/wall.png");
+    var charTexture = PIXI.Texture.fromImage("images/SuaRQmP.png");
+    var character;
 
     stage.addChild(mapContainer);
     $.getJSON("resources/map.json", function(data) {
@@ -54,7 +56,7 @@ angular.module('rpgApp')
            }
          }
        }
-    });
+    }).then(createChar);
 
     function mapRefection(data) {
       var reflectionX = _.random(1) === 1;
@@ -88,7 +90,6 @@ angular.module('rpgApp')
     }
 
     function isWall(x, y) {
-      console.log("hi");
       var count = 0;
       for (var line in map) {
         if (count === y) {
@@ -100,10 +101,9 @@ angular.module('rpgApp')
         }
         count += 1;
       }
+      return false;
     }
 
-    var character;
-    var charTexture = PIXI.Texture.fromImage("images/SuaRQmP.png");
     function createChar() {
       character = new PIXI.Sprite(charTexture);
       character.anchor.set(0.5);
@@ -113,15 +113,13 @@ angular.module('rpgApp')
       character.position.y = position[1]*32 + 16;
       stage.addChild(character);
     }
-    createChar();
 
     function randPos() {
-      var posX = _.random(12);
-      var posY = _.random(12);
+      var posX = _.random(24);
+      var posY = _.random(18);
       while (isWall(posX, posY)) {
-        console.log("is wall");
-        posX = _.random(12);
-        posY = _.random(12);
+        posX = _.random(24);
+        posY = _.random(18);
       }
       return [posX, posY];
     }
