@@ -58,12 +58,12 @@ angular.module("rpgApp").service("PixiServ", function () {
       var posX = -16;
       var posY = -16;
 
-      for (var line in mapData) {
+      for (var i = 0; i < mapData.length; i++) {
         posY += 32;
         posX = -16;
-        for (var i = 0; i < mapData[line].length; i++) {
+        for (var j = 0; j < mapData[i].length; j++) {
           posX += 32;
-          if (mapData[line][i] === 0) {
+          if (mapData[i][j] === 0) {
             createSquare(posX, posY, $scope.texture.wall);
           } else {
             createSquare(posX, posY, $scope.texture.ground);
@@ -72,8 +72,8 @@ angular.module("rpgApp").service("PixiServ", function () {
       }
     },
     moveChar: function(moveX, moveY) {
-      $scope.character.position.x += moveX;
-      $scope.character.position.y += moveY;
+      $scope.character.position.x += moveX * 32;
+      $scope.character.position.y += moveY * 32;
     },
     render: function() {
       $scope.renderer.render($scope.stage);

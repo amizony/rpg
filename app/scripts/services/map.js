@@ -15,7 +15,7 @@ angular.module("rpgApp").service("MapServ", ["PixiServ", function (PixiServ) {
   return {
     load: function() {
       return $.getJSON("resources/map.json", function(data) {
-         $scope.map = data;
+         $scope.map = data.map;
       });
     },
     reflect: function() {
@@ -23,17 +23,16 @@ angular.module("rpgApp").service("MapServ", ["PixiServ", function (PixiServ) {
       var reflectionY = _.random(1) === 1;
 
       if (reflectionX) {
-        for (var line in $scope.map) {
-          $scope.map[line] = $scope.map[line].reverse();
+        for (var i = 0; i < $scope.map.length; i++) {
+          $scope.map[i] = $scope.map[i].reverse();
         }
       }
       if (reflectionY) {
-        var temp = [];
-        for (var line in $scope.map) {
-          temp.push($scope.map[line]);
-        }
-        for (var line in $scope.map) {
-          $scope.map[line] = temp.pop();
+        var temp = $scope.map;
+        var j = $scope.map.length - 1;
+        for (var i = 0; i < $scope.map.length; i++) {
+          $scope.map[i] = temp[j];
+          j -= 1;
         }
       }
     },
@@ -41,16 +40,14 @@ angular.module("rpgApp").service("MapServ", ["PixiServ", function (PixiServ) {
       PixiServ.newMap($scope.map);
     },
     isWall: function(x, y) {
-      var count = 0;
-      for (var line in $scope.map) {
-        if (count === y) {
-          for (var i = 0; i < $scope.map[line].length; i++) {
-            if (i === x) {
-              return ($scope.map[line][i] === 0);
+      for (var i = 0; i < $scope.map.length; i++) {
+        if (i === y) {
+          for (var j = 0; j < $scope.map[i].length; j++) {
+            if (j === x) {
+              return ($scope.map[i][j] === 0);
             }
           }
         }
-        count += 1;
       }
     }
   };

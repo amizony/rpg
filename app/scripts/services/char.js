@@ -17,11 +17,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "PixiServ", function (M
   };
 
   function randPos() {
-    var posX = _.random(24);
-    var posY = _.random(18);
+    var posX = _.random(1,23);
+    var posY = _.random(1,17);
     while (MapServ.isWall(posX, posY)) {
-      posX = _.random(24);
-      posY = _.random(18);
+      posX = _.random(1,23);
+      posY = _.random(1,17);
     }
     return [posX, posY];
   }
@@ -37,7 +37,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "PixiServ", function (M
     move: function(dir) {
       if (!MapServ.isWall($scope.position.x + dir[0], $scope.position.y + dir[1])) {
         $scope.position.x += dir[0];
-        PixiServ.moveChar(dir[0] * 32, dir[1] * 32);
+        PixiServ.moveChar(dir[0], dir[1]);
         $scope.position.y += dir[1];
       }
     }
