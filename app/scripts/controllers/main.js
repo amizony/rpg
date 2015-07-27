@@ -125,8 +125,31 @@ angular.module('rpgApp')
     }
 
     function moveChar(dir) {
-
+      if (!isWall((character.position.x - 16) / 32 + dir[0], (character.position.y - 16) / 32 + dir[1])) {
+        character.position.x += dir[0]*32;
+        character.position.y += dir[1]*32;
+      }
     }
+
+    window.addEventListener("keydown", function(event) {
+      // left key
+      if (event.keyCode === 37) {
+        moveChar([-1,0]);
+      }
+      // up key
+      if (event.keyCode === 38) {
+        moveChar([0,-1]);
+      }
+      // right key
+      if (event.keyCode === 39) {
+        moveChar([1,0]);
+      }
+      // down key
+      if (event.keyCode === 40) {
+        moveChar([0,1]);
+      }
+    });
+
 
     function animate() {
       renderer.render(stage);
