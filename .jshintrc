@@ -4,9 +4,10 @@
   "curly": true,
   "eqeqeq": true,
   "esnext": true,
-  "latedef": true,
+  "latedef": "nofunc",
   "noarg": true,
   "node": true,
+  "shadow": "inner",
   "strict": true,
   "undef": true,
   "unused": true,
@@ -14,6 +15,7 @@
     "angular": false,
     "PIXI": true,
     "_": true,
-    "$": true
+    "$": true,
+    "$scope": true
   }
 }
