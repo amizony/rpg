@@ -42,15 +42,18 @@ angular.module("rpgApp").service("PixiServ", function () {
     var button = new PIXI.Sprite($scope.texture.button);
     button.scale.set(0.70);
     button.position.x = 5;
-    button.buttonMode = true;
-    button.interactive = true;
+    item.buttonMode = true;
+    item.interactive = true;
 
-    button
+    item
       .on("mouseover", function() {
-        this.texture = $scope.texture.buttonHover;
+        button.texture = $scope.texture.buttonHover;
       })
       .on("mouseout", function() {
-        this.texture = $scope.texture.button;
+        button.texture = $scope.texture.button;
+      })
+      .on("click", function() {
+        console.log("click on " + name + " noticed");
       });
 
     var text = new PIXI.Text(name);
