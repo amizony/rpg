@@ -12,29 +12,6 @@ angular.module("rpgApp").service("PixiServ", function () {
 
   var $scope = {};
 
-  $scope.stage = new PIXI.Container();
-  $scope.stage.interactive = true;
-
-  $scope.menu = new PIXI.Container();
-  $scope.dungeon = new PIXI.Container();
-  $scope.dungeon.position.x = 150;
-  $scope.stage.addChild($scope.dungeon);
-  $scope.stage.addChild($scope.menu);
-
-  $scope.menuList = new PIXI.Graphics();
-  $scope.menu.addChild($scope.menuList);
-
-
-  $scope.renderer = PIXI.autoDetectRenderer(800, 608, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
-
-  $scope.texture = {
-    ground: PIXI.Texture.fromImage("images/ground.png"),
-    wall: PIXI.Texture.fromImage("images/wall.png"),
-    char: PIXI.Texture.fromImage("images/SuaRQmP.png")
-  };
-
-  createMenu();
-
   function createSquare(posX, posY, texture) {
     var square = new PIXI.Sprite(texture);
     square.anchor.set(0.5);
@@ -50,6 +27,40 @@ angular.module("rpgApp").service("PixiServ", function () {
     $scope.menuList.drawRect(0, 0, 150, 608);
     $scope.menuList.drawRect(150, 508, 650, 100);
     $scope.menuList.endFill();
+
+    var buttonsNames = ["Character", "Inventory", "Spells", "Quests", "Help"];
+    $scope.menuItems = [];
+    for (var i = 0; i < buttonsNames.length; i++) {
+      $scope.menuItems.push(createMenuItem(buttonsNames[i]));
+      $scope.menuItems[i].position.y = 10 + i*55;
+      $scope.menuList.addChild($scope.menuItems[i]);
+    }
+  }
+
+  function createMenuItem(name) {
+    var item = new PIXI.Container();
+    var button = new PIXI.Sprite($scope.texture.button);
+    button.scale.set(0.70);
+    button.position.x = 5;
+    button.buttonMode = true;
+    button.interactive = true;
+
+    button
+      .on("mouseover", function() {
+        this.texture = $scope.texture.buttonHover;
+      })
+      .on("mouseout", function() {
+        this.texture = $scope.texture.button;
+      });
+
+    var text = new PIXI.Text(name);
+    text.x = 15;
+    text.y = 10;
+
+    item.addChild(button);
+    item.addChild(text);
+
+    return item;
   }
 
   /*function convertCoordPx(x, y) {
@@ -61,6 +72,35 @@ angular.module("rpgApp").service("PixiServ", function () {
   }*/
 
   return {
+    init: function() {
+      // init rendering
+      $scope.renderer = PIXI.autoDetectRenderer(800, 608, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
+
+      // init display containers
+      $scope.stage = new PIXI.Container();
+      $scope.stage.interactive = true;
+
+      $scope.menu = new PIXI.Container();
+      $scope.dungeon = new PIXI.Container();
+      $scope.dungeon.position.x = 150;
+      $scope.stage.addChild($scope.dungeon);
+      $scope.stage.addChild($scope.menu);
+
+      $scope.menuList = new PIXI.Graphics();
+      $scope.menu.addChild($scope.menuList);
+
+      //init textures
+      $scope.texture = {
+        ground: PIXI.Texture.fromImage("images/ground.png"),
+        wall: PIXI.Texture.fromImage("images/wall.png"),
+        char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
+        button: PIXI.Texture.fromImage("images/button.png"),
+        buttonHover: PIXI.Texture.fromImage("images/buttonhover.png")
+      };
+
+      //draw menu
+      createMenu();
+    },
     newChar: function(posX, posY) {
       $scope.character = new PIXI.Sprite($scope.texture.char);
       $scope.character.anchor.set(0.5);

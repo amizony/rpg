@@ -11,11 +11,12 @@
 
 angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", function ($scope, CharServ, MapServ, PixiServ) {
 
+  PixiServ.init();
+
   MapServ.load().then(function() {return MapServ.reflect();})
   .then(function() {return MapServ.create();})
   .then(function() {return CharServ.create();})
   .then(function() {return animate();});
-
 
   $scope.frames = 0;
   $scope.fps = 0;
