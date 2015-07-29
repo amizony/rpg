@@ -21,8 +21,10 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
   $scope.frames = 0;
   $scope.fps = 0;
 
-  window.setInterval( function() {
-    $scope.fps = frames;
+  window.setInterval(function() {
+    $scope.$apply(function() {
+      $scope.fps = $scope.frames;
+    });
     $scope.frames = 0;
   }, 1000);
 
