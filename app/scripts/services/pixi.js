@@ -13,18 +13,27 @@ angular.module("rpgApp").service("PixiServ", function () {
   var $scope = {};
 
   $scope.stage = new PIXI.Container();
+  $scope.stage.interactive = true;
+
   $scope.menu = new PIXI.Container();
   $scope.dungeon = new PIXI.Container();
-  $scope.stage.addChild($scope.menu);
+  $scope.dungeon.position.x = 150;
   $scope.stage.addChild($scope.dungeon);
+  $scope.stage.addChild($scope.menu);
 
-  $scope.renderer = PIXI.autoDetectRenderer(800, 608, {view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb});
+  $scope.menuList = new PIXI.Graphics();
+  $scope.menu.addChild($scope.menuList);
+
+
+  $scope.renderer = PIXI.autoDetectRenderer(800, 608, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
 
   $scope.texture = {
     ground: PIXI.Texture.fromImage("images/ground.png"),
     wall: PIXI.Texture.fromImage("images/wall.png"),
     char: PIXI.Texture.fromImage("images/SuaRQmP.png")
   };
+
+  createMenu();
 
   function createSquare(posX, posY, texture) {
     var square = new PIXI.Sprite(texture);
@@ -33,6 +42,14 @@ angular.module("rpgApp").service("PixiServ", function () {
     square.position.x = posX;
     square.position.y = posY;
     $scope.map.addChild(square);
+  }
+
+  function createMenu() {
+    $scope.menuList.lineStyle(2, 0x0000FF, 1);
+    $scope.menuList.beginFill(0xFF0000);
+    $scope.menuList.drawRect(0, 0, 150, 608);
+    $scope.menuList.drawRect(150, 508, 650, 100);
+    $scope.menuList.endFill();
   }
 
   /*function convertCoordPx(x, y) {
