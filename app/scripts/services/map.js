@@ -27,8 +27,11 @@ angular.module("rpgApp").service("MapServ", ["PixiServ", function (PixiServ) {
           $scope.map[i] = $scope.map[i].reverse();
         }
       }
+      var temp = [];
+      for (var i = 0; i < $scope.map.length; i++) {
+        temp.push($scope.map[i]);
+      }
       if (reflectionY) {
-        var temp = $scope.map;
         var j = $scope.map.length - 1;
         for (var i = 0; i < $scope.map.length; i++) {
           $scope.map[i] = temp[j];
