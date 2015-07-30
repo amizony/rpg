@@ -86,6 +86,16 @@ angular.module("rpgApp").service("PixiServ", function () {
     $scope.dungeon.position.y += dir[1];
   }
 
+  function makeOneAnimation(fn) {
+    if (!$scope.animating) {
+      $scope.animating = true;
+      fn();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /*function convertCoordPx(x, y) {
     return [x * 32 + 16, y * 32 + 16];
   }
@@ -152,8 +162,8 @@ angular.module("rpgApp").service("PixiServ", function () {
       }
     },
     moveChar: function(moveX, moveY) {
-      $scope.IDcount = 0;
-      if (!$scope.ID) {
+      var status = makeOneAnimation(function() {
+        $scope.IDcount = 0;
         $scope.ID = window.setInterval(function() {
           $scope.character.position.x += moveX * 2;
           $scope.character.position.y += moveY * 2;
@@ -161,12 +171,11 @@ angular.module("rpgApp").service("PixiServ", function () {
           if ($scope.IDcount >= 32) {
             clearInterval($scope.ID);
             $scope.ID = null;
+            $scope.animating = false;
           }
-        });
-      }
-    },
-    moveEnded: function() {
-      return $scope.ID;
+        }, 10);
+      });
+      return status;
     },
     render: function() {
       $scope.renderer.render($scope.stage);

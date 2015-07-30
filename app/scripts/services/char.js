@@ -35,10 +35,12 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "PixiServ", function (M
       $scope.position.y = pos[1];
     },
     move: function(dir) {
-      if ( (!MapServ.isWall($scope.position.x + dir[0], $scope.position.y + dir[1])) && (!PixiServ.moveEnded()) ) {
-        $scope.position.x += dir[0];
-        PixiServ.moveChar(dir[0], dir[1]);
-        $scope.position.y += dir[1];
+      if ( !MapServ.isWall($scope.position.x + dir[0], $scope.position.y + dir[1]) ) {
+        var status = PixiServ.moveChar(dir[0], dir[1]);
+        if (status) {
+          $scope.position.x += dir[0];
+          $scope.position.y += dir[1];
+        }
       }
     }
   };
