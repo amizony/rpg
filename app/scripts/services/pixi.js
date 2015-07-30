@@ -66,6 +66,26 @@ angular.module("rpgApp").service("PixiServ", function () {
     return item;
   }
 
+  function mapScroll() {
+    var dir = [0,0];
+    if (true) {
+      dir[0] += 0;
+    } else if (true) {
+      dir[0] -= 0;
+    }
+    if (true) {
+      dir[1] += 0;
+    } else if (true) {
+      dir[1] -= 0;
+    }
+    moveMap(dir);
+  }
+
+  function moveMap(dir) {
+    $scope.dungeon.position.x += dir[0];
+    $scope.dungeon.position.y += dir[1];
+  }
+
   /*function convertCoordPx(x, y) {
     return [x * 32 + 16, y * 32 + 16];
   }
@@ -130,10 +150,6 @@ angular.module("rpgApp").service("PixiServ", function () {
           }
         }
       }
-    },
-    moveChar: function(moveX, moveY) {
-      $scope.character.position.x += moveX * 32;
-      $scope.character.position.y += moveY * 32;
     },
     render: function() {
       $scope.renderer.render($scope.stage);
