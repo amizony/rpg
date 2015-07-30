@@ -151,6 +151,23 @@ angular.module("rpgApp").service("PixiServ", function () {
         }
       }
     },
+    moveChar: function(moveX, moveY) {
+      $scope.IDcount = 0;
+      if (!$scope.ID) {
+        $scope.ID = window.setInterval(function() {
+          $scope.character.position.x += moveX * 2;
+          $scope.character.position.y += moveY * 2;
+          $scope.IDcount += 2;
+          if ($scope.IDcount >= 32) {
+            clearInterval($scope.ID);
+            $scope.ID = null;
+          }
+        });
+      }
+    },
+    moveEnded: function() {
+      return $scope.ID;
+    },
     render: function() {
       $scope.renderer.render($scope.stage);
     }
