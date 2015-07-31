@@ -96,6 +96,22 @@ angular.module("rpgApp").service("PixiServ", function () {
     }
   }
 
+  function setAnimationInterval(animationFn, interval, iteration) {
+    return makeOneAnimation(function() {
+      $scope.intervalCount = 0;
+
+      $scope.intervalID = window.setInterval(function() {
+        animationFn();
+        $scope.intervalCount += 1;
+
+        if ($scope.intervalCount >= iteration) {
+          clearInterval($scope.intervalID);
+          $scope.animating = false;
+        }
+      }, interval);
+    });
+  }
+
   /*function convertCoordPx(x, y) {
     return [x * 32 + 16, y * 32 + 16];
   }
@@ -162,20 +178,10 @@ angular.module("rpgApp").service("PixiServ", function () {
       }
     },
     moveChar: function(moveX, moveY) {
-      var status = makeOneAnimation(function() {
-        $scope.IDcount = 0;
-        $scope.ID = window.setInterval(function() {
-          $scope.character.position.x += moveX * 2;
-          $scope.character.position.y += moveY * 2;
-          $scope.IDcount += 2;
-          if ($scope.IDcount >= 32) {
-            clearInterval($scope.ID);
-            $scope.ID = null;
-            $scope.animating = false;
-          }
-        }, 10);
-      });
-      return status;
+      return setAnimationInterval(function() {
+        $scope.character.position.x += moveX * 2;
+        $scope.character.position.y += moveY * 2;
+      }, 10, 16);
     },
     render: function() {
       $scope.renderer.render($scope.stage);
