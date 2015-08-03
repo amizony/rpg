@@ -43,6 +43,8 @@ angular.module("rpgApp").service("PixiServ", function () {
 
     $scope.menuBackground = new PIXI.Sprite($scope.texture.menuBackground);
     $scope.menuWindow.addChild($scope.menuBackground);
+    $scope.activeMenu = new PIXI.Container();
+    $scope.menuWindow.addChild($scope.activeMenu);
   }
 
   function createMenuItem(name) {
@@ -62,7 +64,7 @@ angular.module("rpgApp").service("PixiServ", function () {
       })
       .on("click", function() {
         console.log("click on " + name + " noticed");
-        openMenu();
+        openMenu(name);
       });
 
     var text = new PIXI.Text(name);
@@ -125,8 +127,72 @@ angular.module("rpgApp").service("PixiServ", function () {
     });
   }
 
-  function openMenu() {
-    $scope.menuWindow.renderable = !$scope.menuWindow.renderable;
+  function openMenu(menu) {
+    if (!$scope.menuWindow.renderable || $scope.menuTitle._text !== menu) {
+      $scope.menuWindow.renderable = true;
+      destroyMenu();
+      switch (menu) {
+        case "Character":
+          characterMenu(menu);
+          break;
+        case "Inventory":
+          inventoryMenu(menu);
+          break;
+        case "Spells":
+          spellsMenu(menu);
+          break;
+        case "Quests":
+          questsMenu(menu);
+          break;
+        case "Help":
+          helpMenu(menu);
+          break;
+        default:
+          console.log("Unknown menu");
+      }
+    } else {
+      $scope.menuWindow.renderable = false;
+      destroyMenu();
+    }
+  }
+
+  function destroyMenu() {
+    $scope.activeMenu.removeChildren();
+  }
+
+  function characterMenu(title) {
+    $scope.menuTitle = new PIXI.Text(title);
+    $scope.menuTitle.position.x = 20;
+    $scope.menuTitle.position.y = 15;
+    $scope.activeMenu.addChild($scope.menuTitle);
+  }
+
+  function inventoryMenu(title) {
+    $scope.menuTitle = new PIXI.Text(title);
+    $scope.menuTitle.position.x = 20;
+    $scope.menuTitle.position.y = 15;
+    $scope.activeMenu.addChild($scope.menuTitle);
+  }
+
+  function spellsMenu(title) {
+    $scope.menuTitle = new PIXI.Text(title);
+    $scope.menuTitle.position.x = 20;
+    $scope.menuTitle.position.y = 15;
+    $scope.activeMenu.addChild($scope.menuTitle);
+  }
+
+  function questsMenu(title) {
+    $scope.menuTitle = new PIXI.Text(title);
+    $scope.menuTitle.position.x = 20;
+    $scope.menuTitle.position.y = 15;
+    $scope.activeMenu.addChild($scope.menuTitle);
+  }
+
+  function helpMenu(title) {
+    $scope.menuTitle = new PIXI.Text(title);
+    $scope.menuTitle.position.x = 20;
+    $scope.menuTitle.position.y = 15;
+    $scope.activeMenu.addChild($scope.menuTitle);
   }
 
   /*function convertCoordPx(x, y) {
