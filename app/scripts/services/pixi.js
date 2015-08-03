@@ -35,6 +35,14 @@ angular.module("rpgApp").service("PixiServ", function () {
       $scope.menuItems[i].position.y = 10 + i*55;
       $scope.menuList.addChild($scope.menuItems[i]);
     }
+
+    $scope.menuWindow = new PIXI.Container();
+    $scope.menuWindow.position.x = 150;
+    $scope.menuWindow.renderable = false;
+    $scope.menu.addChild($scope.menuWindow);
+
+    $scope.menuBackground = new PIXI.Sprite($scope.texture.menuBackground);
+    $scope.menuWindow.addChild($scope.menuBackground);
   }
 
   function createMenuItem(name) {
@@ -54,6 +62,7 @@ angular.module("rpgApp").service("PixiServ", function () {
       })
       .on("click", function() {
         console.log("click on " + name + " noticed");
+        openMenu();
       });
 
     var text = new PIXI.Text(name);
@@ -116,6 +125,10 @@ angular.module("rpgApp").service("PixiServ", function () {
     });
   }
 
+  function openMenu() {
+    $scope.menuWindow.renderable = !$scope.menuWindow.renderable;
+  }
+
   /*function convertCoordPx(x, y) {
     return [x * 32 + 16, y * 32 + 16];
   }
@@ -148,7 +161,8 @@ angular.module("rpgApp").service("PixiServ", function () {
         wall: PIXI.Texture.fromImage("images/wall.png"),
         char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
         button: PIXI.Texture.fromImage("images/button.png"),
-        buttonHover: PIXI.Texture.fromImage("images/buttonhover.png")
+        buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
+        menuBackground: PIXI.Texture.fromImage("images/menubackground.png")
       };
 
       //draw menu
