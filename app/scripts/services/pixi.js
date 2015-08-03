@@ -100,7 +100,7 @@ angular.module("rpgApp").service("PixiServ", function () {
   }
 
   function makeOneAnimation(fn) {
-    if (!$scope.animating) {
+    if (!$scope.animating && !$scope.menuWindow.renderable) {
       $scope.animating = true;
       fn();
       return true;
