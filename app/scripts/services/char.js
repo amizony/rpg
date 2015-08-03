@@ -40,6 +40,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "PixiServ", function (M
         if (status) {
           $scope.position.x += dir[0];
           $scope.position.y += dir[1];
+          console.log("hero position: " + $scope.position.x + ", " + $scope.position.y);
         }
       }
     }

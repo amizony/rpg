@@ -68,22 +68,26 @@ angular.module("rpgApp").service("PixiServ", function () {
 
   function mapScroll() {
     var dir = [0,0];
-    if (true) {
-      dir[0] += 0;
-    } else if (true) {
-      dir[0] -= 0;
+    if (($scope.dungeon.position.x === 150) && ($scope.character.position.x > 16 * 32)) {
+      dir[0] -= 4.6875;
+    } else if (($scope.dungeon.position.x === 0) && ($scope.character.position.x < 6 * 32)) {
+      dir[0] += 4.6875;
     }
-    if (true) {
-      dir[1] += 0;
-    } else if (true) {
-      dir[1] -= 0;
+    if (($scope.dungeon.position.y === 0) && ($scope.character.position.y > 12 * 32)) {
+      dir[1] -= 3;
+    } else if (($scope.dungeon.position.y === -96) && ($scope.character.position.y < 6 * 32)) {
+      dir[1] += 3;
     }
-    moveMap(dir);
+    if ((dir[0] !== 0) || (dir[1] !== 0)) {
+      moveMap(dir);
+    }
   }
 
   function moveMap(dir) {
-    $scope.dungeon.position.x += dir[0];
-    $scope.dungeon.position.y += dir[1];
+    setAnimationInterval(function() {
+      $scope.dungeon.position.x += dir[0];
+      $scope.dungeon.position.y += dir[1];
+    }, 20, 32);
   }
 
   function makeOneAnimation(fn) {
@@ -157,6 +161,7 @@ angular.module("rpgApp").service("PixiServ", function () {
       $scope.character.position.x = posX * 32 + 16;
       $scope.character.position.y = posY * 32 + 16;
       $scope.dungeon.addChild($scope.character);
+      window.setInterval(mapScroll, 1000);
     },
     newMap: function(mapData) {
       $scope.map = new PIXI.Container();
