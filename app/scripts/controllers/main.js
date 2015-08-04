@@ -11,11 +11,10 @@
 
 angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", function ($scope, CharServ, MapServ, PixiServ) {
 
-  PixiServ.init();
-
   MapServ.load().then(function() {return MapServ.reflect();})
-  .then(function() {return MapServ.create();})
   .then(function() {return CharServ.create();})
+  .then(function() {return PixiServ.init(MapServ.getMap(), CharServ.getPosition());})
+  .then(function() {return window.setInterval(PixiServ.mapScroll, 1000);})
   .then(function() {return animate();});
 
   $scope.frames = 0;
@@ -34,22 +33,33 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
     requestAnimationFrame(animate);
   }
 
+  function move(direction) {
+    if ( !MapServ.isWall([CharServ.getPosition()[0] + direction[0], CharServ.getPosition()[1] + direction[1]]) ) {
+      var status = PixiServ.moveChar(direction);
+      if (status) {
+        CharServ.updatePosition(direction);
+      }
+    }
+  }
+
+
+
   window.addEventListener("keydown", function(event) {
     // left key
     if (event.keyCode === 37) {
-      CharServ.move([-1,0]);
+      move([-1,0]);
     }
     // up key
     if (event.keyCode === 38) {
-      CharServ.move([0,-1]);
+      move([0,-1]);
     }
     // right key
     if (event.keyCode === 39) {
-      CharServ.move([1,0]);
+      move([1,0]);
     }
     // down key
     if (event.keyCode === 40) {
-      CharServ.move([0,1]);
+      move([0,1]);
     }
   });
 
