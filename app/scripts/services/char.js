@@ -8,7 +8,7 @@
  * Service of the rpgApp
 **/
 
-angular.module("rpgApp").service("CharServ", ["MapServ", "PixiServ", function (MapServ, PixiServ) {
+angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
   var $scope = {};
   $scope.position = {
@@ -19,7 +19,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "PixiServ", function (M
   function randPos() {
     var posX = _.random(1,23);
     var posY = _.random(1,17);
-    while (MapServ.isWall(posX, posY)) {
+    while (MapServ.isWall([posX, posY])) {
       posX = _.random(1,23);
       posY = _.random(1,17);
     }
@@ -29,17 +29,21 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "PixiServ", function (M
 
   return {
     create: function() {
-      var pos = randPos();
-      PixiServ.newChar(pos[0], pos[1]);
-      $scope.position.x = pos[0];
-      $scope.position.y = pos[1];
+      var position = randPos();
+      $scope.position.x = position[0];
+      $scope.position.y = position[1];
+      // and other char inits
     },
-    move: function(dir) {
-      if (!MapServ.isWall($scope.position.x + dir[0], $scope.position.y + dir[1])) {
-        $scope.position.x += dir[0];
-        PixiServ.moveChar(dir[0], dir[1]);
-        $scope.position.y += dir[1];
-      }
+    getPosition: function() {
+      return [$scope.position.x, $scope.position.y];
+    },
+    updatePosition: function(direction) {
+      $scope.position.x += direction[0];
+      $scope.position.y += direction[1];
+      console.log("New hero location: " + $scope.position.x + ", " + $scope.position.y);
+    },
+    getAllDatas: function() {
+      return {};
     }
   };
 

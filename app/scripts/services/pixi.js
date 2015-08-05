@@ -8,31 +8,40 @@
  * Service of the rpgApp
 **/
 
-angular.module("rpgApp").service("PixiServ", function () {
+angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , function (GameDraw, InterfaceDraw) {
 
   var $scope = {};
 
-  $scope.stage = new PIXI.Container();
-  $scope.menu = new PIXI.Container();
-  $scope.dungeon = new PIXI.Container();
-  $scope.stage.addChild($scope.menu);
-  $scope.stage.addChild($scope.dungeon);
 
-  $scope.renderer = PIXI.autoDetectRenderer(800, 608, {view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb});
+  function makeOneAnimation(fn) {
+    if (!$scope.animating && !$scope.interface.children[1].renderable) {
+      $scope.animating = true;
+      fn();
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-  $scope.texture = {
-    ground: PIXI.Texture.fromImage("images/ground.png"),
-    wall: PIXI.Texture.fromImage("images/wall.png"),
-    char: PIXI.Texture.fromImage("images/SuaRQmP.png")
-  };
+  function setAnimationInterval(animationFn, interval, iteration) {
+    return makeOneAnimation(function() {
+      $scope.intervalCount = 0;
 
-  function createSquare(posX, posY, texture) {
-    var square = new PIXI.Sprite(texture);
-    square.anchor.set(0.5);
-    square.scale.set(0.125);
-    square.position.x = posX;
-    square.position.y = posY;
-    $scope.map.addChild(square);
+      $scope.intervalID = window.setInterval(function() {
+        animationFn();
+        $scope.intervalCount += 1;
+
+        if ($scope.intervalCount >= iteration) {
+          clearInterval($scope.intervalID);
+          $scope.animating = false;
+        }
+      }, interval);
+    });
+  }
+
+  function moveMap(direction) {
+    var temp = GameDraw.moveMap(direction);
+    return setAnimationInterval(temp[0], temp[1], temp[2]);
   }
 
   /*function convertCoordPx(x, y) {
@@ -44,39 +53,44 @@ angular.module("rpgApp").service("PixiServ", function () {
   }*/
 
   return {
-    newChar: function(posX, posY) {
-      $scope.character = new PIXI.Sprite($scope.texture.char);
-      $scope.character.anchor.set(0.5);
-      $scope.character.scale.set(0.05);
-      $scope.character.position.x = posX * 32 + 16;
-      $scope.character.position.y = posY * 32 + 16;
-      $scope.dungeon.addChild($scope.character);
-    },
-    newMap: function(mapData) {
-      $scope.map = new PIXI.Container();
-      $scope.dungeon.addChild($scope.map);
-      var posX = -16;
-      var posY = -16;
+    init: function(mapData, charPosition) {
+      // init rendering
+      $scope.renderer = PIXI.autoDetectRenderer(800, 608, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
 
-      for (var i = 0; i < mapData.length; i++) {
-        posY += 32;
-        posX = -16;
-        for (var j = 0; j < mapData[i].length; j++) {
-          posX += 32;
-          if (mapData[i][j] === 0) {
-            createSquare(posX, posY, $scope.texture.wall);
-          } else {
-            createSquare(posX, posY, $scope.texture.ground);
-          }
-        }
-      }
+      // init display containers
+      $scope.stage = new PIXI.Container();
+      $scope.stage.interactive = true;
+
+      $scope.interface = InterfaceDraw.init();
+      $scope.dungeon = GameDraw.init(mapData, charPosition);
+      $scope.stage.addChild($scope.dungeon);
+      $scope.stage.addChild($scope.interface);
+
     },
-    moveChar: function(moveX, moveY) {
-      $scope.character.position.x += moveX * 32;
-      $scope.character.position.y += moveY * 32;
+    moveChar: function(direction) {
+      var temp = GameDraw.moveChar(direction);
+      return setAnimationInterval(temp[0], temp[1], temp[2]);
     },
     render: function() {
+      $scope.dungeon = GameDraw.getGame();
+      $scope.interface = InterfaceDraw.getInterface();
       $scope.renderer.render($scope.stage);
+    },
+    mapScroll: function() {
+      var dir = [0,0];
+      if (($scope.dungeon.position.x === 150) && (GameDraw.getCharPosition()[0] > 16 * 32)) {
+        dir[0] -= 4.6875;
+      } else if (($scope.dungeon.position.x === 0) && (GameDraw.getCharPosition()[0] < 6 * 32)) {
+        dir[0] += 4.6875;
+      }
+      if (($scope.dungeon.position.y === 0) && (GameDraw.getCharPosition()[1] > 12 * 32)) {
+        dir[1] -= 3;
+      } else if (($scope.dungeon.position.y === -96) && (GameDraw.getCharPosition()[1] < 6 * 32)) {
+        dir[1] += 3;
+      }
+      if ((dir[0] !== 0) || (dir[1] !== 0)) {
+        moveMap(dir);
+      }
     }
   };
-});
+}]);

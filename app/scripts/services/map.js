@@ -8,7 +8,7 @@
  * Service of the rpgApp
 **/
 
-angular.module("rpgApp").service("MapServ", ["PixiServ", function (PixiServ) {
+angular.module("rpgApp").service("MapServ", function () {
 
   var $scope = {};
 
@@ -27,8 +27,11 @@ angular.module("rpgApp").service("MapServ", ["PixiServ", function (PixiServ) {
           $scope.map[i] = $scope.map[i].reverse();
         }
       }
+      var temp = [];
+      for (var i = 0; i < $scope.map.length; i++) {
+        temp.push($scope.map[i]);
+      }
       if (reflectionY) {
-        var temp = $scope.map;
         var j = $scope.map.length - 1;
         for (var i = 0; i < $scope.map.length; i++) {
           $scope.map[i] = temp[j];
@@ -36,19 +39,19 @@ angular.module("rpgApp").service("MapServ", ["PixiServ", function (PixiServ) {
         }
       }
     },
-    create: function() {
-      PixiServ.newMap($scope.map);
-    },
-    isWall: function(x, y) {
+    isWall: function(cell) {
       for (var i = 0; i < $scope.map.length; i++) {
-        if (i === y) {
+        if (i === cell[1]) {
           for (var j = 0; j < $scope.map[i].length; j++) {
-            if (j === x) {
+            if (j === cell[0]) {
               return ($scope.map[i][j] === 0);
             }
           }
         }
       }
+    },
+    getMap: function() {
+      return $scope.map;
     }
   };
-}]);
+});
