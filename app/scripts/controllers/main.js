@@ -46,7 +46,6 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
       .then(function() {
         var encounter = _.random(5);
         if (encounter === 0) {
-          console.log("You encounter a monster!");
           launchFight();
         }
       });
@@ -56,15 +55,21 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
   function launchFight() {
     var difficulty = _.random(3);
     var level = _.random(-3,3);
+    console.log("You encounter a level " + Math.max(1, CharServ.getAllDatas().stats.level + level) + " monster!");
+
     AdversariesDB.defineAdversary(CharServ.getAllDatas().stats.level + level, difficulty);
-    window.setTimeout(function() {
-      var victory = FightEngine.fight();
-      if (victory) {
-        console.log("You win the fight \\o/");
-      } else {
-        console.log("You loose the fight :-(");
-      }
-    }, 1000);
+
+
+    var victory = FightEngine.fight();
+    if (victory) {
+      var exp = AdversariesDB.getStats().xpReward;
+      CharServ.getXP(exp);
+      console.log("You win the fight \\o/");
+      console.log("You got " + exp + " XP!");
+
+    } else {
+      console.log("You loose the fight :-(");
+    }
   }
 
 

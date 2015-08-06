@@ -42,14 +42,14 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
       $scope.stats = {
         level: 1,
-        experience: 0,
-        lifeMax: this.level * (8 + $scope.attribute.endurance),
-        life: this.lifeMax,
-        manaMax: this.level * (2 + $scope.attribute.wisdom),
-        mana: this.manaMax,
-        hitBonus: this.level + $scope.attribute.strength, //+ $scope.weapon.enhancement,
-        defence: 10 + $scope.attribute.dexterity //+ $scope.armor.defence + $scope.armor.enhancement
+        experience: 0
       };
+      $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance)+20;
+      $scope.stats.life = $scope.stats.lifeMax;
+      $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
+      $scope.stats.mana = $scope.stats.manaMax;
+      $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength; //+ $scope.weapon.enhancement;
+      $scope.stats.defence = 10 + $scope.stats.level + $scope.attribute.dexterity; //+ $scope.armor.defence + $scope.armor.enhancement;
 
       $scope.weapon = {
         name: "Rusty dagger",
@@ -88,13 +88,24 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     updatePosition: function(direction) {
       $scope.position.x += direction[0];
       $scope.position.y += direction[1];
-      console.log("New hero location: " + $scope.position.x + ", " + $scope.position.y);
+      //console.log("New hero location: " + $scope.position.x + ", " + $scope.position.y);
     },
     getAllDatas: function() {
       return {
         stats: $scope.stats,
-        attribute: $scope.attribute
+        attribute: $scope.attribute,
+        weapon: $scope.weapon,
+        armor: $scope.armor,
+        spells: $scope.spells,
+        inventory: $scope.inventory,
+        quests: $scope.quests
       };
+    },
+    takeDamages: function(dmg) {
+      $scope.stats.life -= dmg;
+    },
+    getXP: function(exp) {
+      $scope.stats.experience += exp;
     }
   };
 
