@@ -91,7 +91,10 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       console.log("New hero location: " + $scope.position.x + ", " + $scope.position.y);
     },
     getAllDatas: function() {
-      return {};
+      return {
+        stats: $scope.stats,
+        attribute: $scope.attribute
+      };
     }
   };
 
