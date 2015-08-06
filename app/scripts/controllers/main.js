@@ -34,16 +34,18 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
   }
 
   function move(direction) {
-    if ( !MapServ.isWall([CharServ.getPosition()[0] + direction[0], CharServ.getPosition()[1] + direction[1]]) ) {
-      var status = PixiServ.moveChar(direction);
-      if (status) {
+    var newX = CharServ.getPosition()[0] + direction[0];
+    var newY = CharServ.getPosition()[1] + direction[1];
+    if ( !MapServ.isWall([newX, newY]) ) {
+      PixiServ.moveChar(direction).then(function() {
         CharServ.updatePosition(direction);
-      }
+      });
     }
   }
 
-
-
+  /**
+   * Events - key bindings.
+   */
   window.addEventListener("keydown", function(event) {
     // left key
     if (event.keyCode === 37) {
