@@ -111,6 +111,8 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     randomText.position.x = 100;
     randomText.position.y = 200;
     $scope.activeMenu.addChild(randomText);
+
+    console.log(CharServ.getAllDatas());
   }
 
   function inventoryMenu() {
