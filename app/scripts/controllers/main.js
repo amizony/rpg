@@ -12,10 +12,10 @@
 angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", function ($scope, CharServ, MapServ, PixiServ) {
 
   MapServ.load().then(function() {return MapServ.reflect();})
-  .then(function() {return CharServ.create();})
-  .then(function() {return PixiServ.init(MapServ.getMap(), CharServ.getPosition());})
-  .then(function() {return window.setInterval(PixiServ.mapScroll, 1000);})
-  .then(function() {return animate();});
+  .then(function() { return CharServ.create(); })
+  .then(function() { return PixiServ.init(MapServ.getMap(), CharServ.getPosition()); })
+  .then(function() { PixiServ.mapScroll(); })
+  .then(function() { return animate(); });
 
   $scope.frames = 0;
   $scope.fps = 0;
@@ -34,16 +34,20 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
   }
 
   function move(direction) {
-    if ( !MapServ.isWall([CharServ.getPosition()[0] + direction[0], CharServ.getPosition()[1] + direction[1]]) ) {
-      var status = PixiServ.moveChar(direction);
-      if (status) {
+    var newX = CharServ.getPosition()[0] + direction[0];
+    var newY = CharServ.getPosition()[1] + direction[1];
+    if ( !MapServ.isWall([newX, newY]) ) {
+      PixiServ.moveChar(direction).then(function() {
         CharServ.updatePosition(direction);
-      }
+        // One *may* need to shift the map after the character has moved.
+        PixiServ.mapScroll();
+      });
     }
   }
 
-
-
+  /**
+   * Events - key bindings.
+   */
   window.addEventListener("keydown", function(event) {
     // left key
     if (event.keyCode === 37) {

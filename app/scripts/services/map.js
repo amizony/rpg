@@ -15,7 +15,7 @@ angular.module("rpgApp").service("MapServ", function () {
   return {
     load: function() {
       return $.getJSON("resources/map.json", function(data) {
-         $scope.map = data.map;
+        $scope.map = data.map;
       });
     },
     reflect: function() {
@@ -39,17 +39,18 @@ angular.module("rpgApp").service("MapServ", function () {
         }
       }
     },
+
+    /**
+     * Check whether a specific cell is a wall (unpathable by characters).
+     *
+     * @param {array} cell Cell coordinates, as [x, y].
+     * @return {boolean} true if the cell is wall, false otherwise.
+     */
     isWall: function(cell) {
-      for (var i = 0; i < $scope.map.length; i++) {
-        if (i === cell[1]) {
-          for (var j = 0; j < $scope.map[i].length; j++) {
-            if (j === cell[0]) {
-              return ($scope.map[i][j] === 0);
-            }
-          }
-        }
-      }
+      // The map is stored row-wise (y-axis first).
+      return $scope.map[cell[1]][cell[0]] === 0;
     },
+
     getMap: function() {
       return $scope.map;
     }

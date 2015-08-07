@@ -13,18 +13,29 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
   var $scope = {};
 
 
-  function makeOneAnimation(fn) {
+  function ensureSingleAnimation(fn, dfd) {
     if (!$scope.animating && !$scope.interface.children[1].renderable) {
       $scope.animating = true;
-      fn();
-      return true;
+      fn(function() { dfd.resolve(); });
     } else {
-      return false;
+      dfd.reject();
     }
   }
 
-  function setAnimationInterval(animationFn, interval, iteration) {
-    return makeOneAnimation(function() {
+  /**
+   * Animate something iteratively so it's smooth-looking, using a loop-like
+   * animation function repeated a specific number of times at a specific rate.
+   *
+   * @param {function} animationFn A function implementing the animation.
+   * @param {integer} interval Duration of each animation step.
+   * @param {integer} iteration Number of steps in the animation.
+   * @return {Promise} Returns a promise: resolved when the animation is over,
+   *                   or early-rejected if the animation is aborted due to
+   *                   another animation already running.
+   */
+  function animate(animationFn, interval, iteration) {
+    var dfd = $.Deferred();
+    var animation = function(next) {
       $scope.intervalCount = 0;
 
       $scope.intervalID = window.setInterval(function() {
@@ -34,14 +45,17 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
         if ($scope.intervalCount >= iteration) {
           clearInterval($scope.intervalID);
           $scope.animating = false;
+          next();
         }
       }, interval);
-    });
+    };
+    ensureSingleAnimation(animation, dfd);
+    return dfd.promise();
   }
 
   function moveMap(direction) {
     var temp = GameDraw.moveMap(direction);
-    return setAnimationInterval(temp[0], temp[1], temp[2]);
+    return animate(temp[0], temp[1], temp[2]);
   }
 
   /*function convertCoordPx(x, y) {
@@ -69,7 +83,7 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
     },
     moveChar: function(direction) {
       var temp = GameDraw.moveChar(direction);
-      return setAnimationInterval(temp[0], temp[1], temp[2]);
+      return animate(temp[0], temp[1], temp[2]);
     },
     render: function() {
       $scope.dungeon = GameDraw.getGame();
