@@ -33,7 +33,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength; //+ $scope.weapon.enhancement;
     $scope.stats.defence = 10 + $scope.stats.level + $scope.attribute.dexterity; //+ $scope.armor.defence + $scope.armor.enhancement;
 
-    console.log("You gained a level!");
+    console.log("You gained a level! You are now level " + $scope.stats.level);
   }
 
   return {
@@ -124,6 +124,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       if ($scope.stats.experience >= $scope.stats.level * 1000) {
         levelUP();
       }
+    },
+    dying: function() {
+      // for now only a 'resurection'
+      console.log("The gods are merciful, you can continue your quest.");
+      $scope.stats.life = $scope.stats.lifeMax;
     }
   };
 
