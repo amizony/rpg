@@ -58,7 +58,6 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
     if ($scope.player.stats.life < 1) {
       console.log("--------  end fight  --------");
       console.log("you were killed");
-      CharServ.dying();
       return false;
     }
 

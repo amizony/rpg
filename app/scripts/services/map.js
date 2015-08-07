@@ -14,11 +14,20 @@ angular.module("rpgApp").service("MapServ", function () {
 
   return {
     load: function() {
+      /**
+       * Load the map from a JSON file.
+       *
+       * @return {promise} fulfilled when the map is loaded.
+      **/
       return $.getJSON("resources/map.json", function(data) {
         $scope.map = data.map;
       });
     },
     reflect: function() {
+      /**
+       * Apply a vertical or horizontal reflection to the map
+       * to provide 4 differents layouts from the same file.
+      **/
       var reflectionX = _.random(1) === 1;
       var reflectionY = _.random(1) === 1;
 
@@ -27,30 +36,20 @@ angular.module("rpgApp").service("MapServ", function () {
           $scope.map[i] = $scope.map[i].reverse();
         }
       }
-      var temp = [];
-      for (var i = 0; i < $scope.map.length; i++) {
-        temp.push($scope.map[i]);
-      }
       if (reflectionY) {
-        var j = $scope.map.length - 1;
-        for (var i = 0; i < $scope.map.length; i++) {
-          $scope.map[i] = temp[j];
-          j -= 1;
-        }
+        $scope.map = $scope.map.reverse();
       }
     },
-
-    /**
-     * Check whether a specific cell is a wall (unpathable by characters).
-     *
-     * @param {array} cell Cell coordinates, as [x, y].
-     * @return {boolean} true if the cell is wall, false otherwise.
-     */
     isWall: function(cell) {
+      /**
+       * Check whether a specific cell is a wall.
+       *
+       * @param {array} cell coordinates as [x, y].
+       * @return {boolean} true if the cell is wall, false otherwise.
+      **/
       // The map is stored row-wise (y-axis first).
       return $scope.map[cell[1]][cell[0]] === 0;
     },
-
     getMap: function() {
       return $scope.map;
     }
