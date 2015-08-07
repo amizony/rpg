@@ -44,31 +44,32 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
         PixiServ.mapScroll();
       })
       .then(function() {
-        var encounter = _.random(5);
-        if (encounter === 0) {
+        var encounter = true;
+        if (encounter) {
           launchFight();
         }
       });
     }
   }
 
+  function setAdversary() {
+    var charLevel = CharServ.getAllDatas().stats.level;
+    var difficulty = _.random(_.floor(charLevel / 3)) - 1;
+    var level = _.random(1, charLevel + _.floor(charLevel / 3));
+
+    console.log("You encounter a level " + level + " monster!");
+
+    AdversariesDB.defineAdversary(level, difficulty);
+  }
+
   function launchFight() {
-    var difficulty = _.random(3);
-    var level = _.random(-3,3);
-    console.log("You encounter a level " + Math.max(1, CharServ.getAllDatas().stats.level + level) + " monster!");
-
-    AdversariesDB.defineAdversary(CharServ.getAllDatas().stats.level + level, difficulty);
-
+    setAdversary();
 
     var victory = FightEngine.fight();
     if (victory) {
       var exp = AdversariesDB.getStats().xpReward;
-      CharServ.getXP(exp);
-      console.log("You win the fight \\o/");
       console.log("You got " + exp + " XP!");
-
-    } else {
-      console.log("You loose the fight :-(");
+      CharServ.getXP(exp);
     }
   }
 

@@ -34,7 +34,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
 
   function fightRound() {
     // player action
-    console.log("-----fight round-----")
+    console.log("-----fight round-----");
     var playerAtt = rollAttack() + $scope.player.stats.hitBonus;
     console.log("player att: " + playerAtt + "    vs def: " + $scope.mob.defence);
     if (!isDodged(playerAtt, $scope.mob.defence)) {
@@ -69,7 +69,6 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
     fight: function() {
       $scope.player = CharServ.getAllDatas();
       $scope.mob = AdversariesDB.getStats();
-      console.log($scope.player.stats.life);
       // do stuff
       var victory = fightRound();
       //var victory = (_.random(3) > 0);
