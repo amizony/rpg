@@ -34,7 +34,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
 
   function fightRound() {
     // player action
-    console.log("-----fight round-----");
+    console.log("-------- fight round --------");
     var playerAtt = rollAttack() + $scope.player.stats.hitBonus;
     console.log("player att: " + playerAtt + "    vs def: " + $scope.mob.defence);
     if (!isDodged(playerAtt, $scope.mob.defence)) {
@@ -43,6 +43,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       $scope.mob.life -= playerDmg;
     }
     if ($scope.mob.life < 1) {
+      console.log("--------  end fight  --------");
       console.log("you killed the monster");
       return true;
     }
@@ -55,7 +56,9 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       $scope.player.stats.life -= mobDmg;
     }
     if ($scope.player.stats.life < 1) {
+      console.log("--------  end fight  --------");
       console.log("you were killed");
+      CharServ.dying();
       return false;
     }
 

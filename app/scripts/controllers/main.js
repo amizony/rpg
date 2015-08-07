@@ -57,7 +57,9 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
     var difficulty = _.random(_.floor(charLevel / 3)) - 1;
     var level = _.random(1, charLevel + _.floor(charLevel / 3));
 
-    console.log("You encounter a level " + level + " monster!");
+    console.log("");
+    console.log("");
+    console.log("You encounter a level " + level + " monster with difficulty " + difficulty + ".");
 
     AdversariesDB.defineAdversary(level, difficulty);
   }

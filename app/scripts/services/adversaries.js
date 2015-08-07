@@ -19,15 +19,15 @@ angular.module("rpgApp").service("AdversariesDB", function () {
     defineAdversary: function(level, difficulty) {
       $scope.stats = {
         level: level,
-        xpReward: level * 100,
-        lifeMax: level * (6 + difficulty),
-        life: level * (6 + difficulty),
-        manaMax: level * (2 + difficulty),
-        mana: level * (2 + difficulty),
-        hitBonus: level + difficulty,
-        defence: 10 + difficulty,
+        xpReward: level * (100 + 20 * difficulty),
+        lifeMax: level * (6 + _.random(2) * difficulty),
+        manaMax: level * (2 + _.random(2) * difficulty),
+        hitBonus: level + _.random(2) * difficulty,
+        defence: 10 + _.random(2) * difficulty,
         damages: "1d8"
       };
+      $scope.stats.life = $scope.stats.lifeMax;
+      $scope.stats.mana = $scope.stats.manaMax;
     }
   };
 
