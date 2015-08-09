@@ -13,8 +13,13 @@ angular.module("rpgApp").service("GameDraw", function () {
   var $scope = {};
 
   function createSquare(position, texture) {
+    /**
+     * Draw a cell of the map
+     *
+     * @param {array} position in px of the cell.
+     * @param {pixi.texture} texture to use for the cell.
+    **/
     var square = new PIXI.Sprite(texture);
-    square.anchor.set(0.5);
     square.scale.set(0.125);
     square.position.x = position[0];
     square.position.y = position[1];
@@ -22,24 +27,38 @@ angular.module("rpgApp").service("GameDraw", function () {
   }
 
   function createMap(mapData) {
+    /**
+     * Draw the map.
+     * Each cell has a size of 32*32 px.
+     *
+     * @param {array} map to draw, stored as pseudo-matrix.
+    **/
     $scope.map = new PIXI.Container();
     $scope.dungeon.addChild($scope.map);
-    var position = [-16,-16];
+
+    // store the position in px of the next cell
+    var position = [0, 0];
     for (var i = 0; i < mapData.length; i++) {
-      position[1] += 32;
-      position[0] = -16;
+      position[0] = 0;
       for (var j = 0; j < mapData[i].length; j++) {
-        position[0] += 32;
         if (mapData[i][j] === 0) {
           createSquare(position, $scope.texture.wall);
         } else {
           createSquare(position, $scope.texture.ground);
         }
+        position[0] += 32;
       }
+      position[1] += 32;
     }
   }
 
   function createChar(position) {
+    /**
+     * Draw the character.
+     * He is drawn in the middle of its cell.
+     *
+     * @param {array} coordinates of the character, as [x, y].
+    **/
     $scope.character = new PIXI.Sprite($scope.texture.char);
     $scope.character.anchor.set(0.5);
     $scope.character.scale.set(0.05);
@@ -50,12 +69,23 @@ angular.module("rpgApp").service("GameDraw", function () {
 
   return {
     getGame: function() {
+      /**
+       * @return {pixi.container} game container to be rendered.
+      **/
       return $scope.dungeon;
     },
     getCharPosition: function() {
+      /**
+       * @return {array} position in px of the character, as [x, y].
+      **/
       return [$scope.character.position.x, $scope.character.position.y];
     },
     init: function(mapData, charPosition) {
+      /**
+       * @param {array} map to draw, stored as pseudo-matrix
+       * @param {array} coordinates of the character, as [x, y].
+       * @return {pixi.container} game container.
+      **/
       $scope.dungeon = new PIXI.Container();
       $scope.dungeon.position.x = 150;
       //init textures
@@ -70,18 +100,40 @@ angular.module("rpgApp").service("GameDraw", function () {
       return $scope.dungeon;
     },
     moveChar: function(direction) {
-      function fn() {
-        $scope.character.position.x += direction[0] * 2;
-        $scope.character.position.y += direction[1] * 2;
-      }
-      return [fn, 10, 16];
+      /**
+       * Definition of the animation for moving the character.
+       * By iterating 32 times, the coordinates are transformed in a position in px.
+       *
+       * @param {array} adjustment of position to apply, as [+x, +y].
+       * @return {array} fn: elementary function for the animation
+       *                 interval: time (in ms) between two movement
+       *                 iteration: number of iteration to repeat
+      **/
+      var fn = function() {
+        $scope.character.position.x += direction[0];
+        $scope.character.position.y += direction[1];
+      };
+      var interval = 5;
+      var iteration = 32;
+      return [fn, interval, iteration];
     },
     moveMap: function(direction) {
-      function fn() {
+      /**
+       * Definition of the animation for moving the map.
+       * By iterating 32 times, the coordinates are transformed in a position in px.
+       *
+       * @param {array} adjustment of position to apply, as [+x, +y].
+       * @return {array} fn: elementary function for the animation
+       *                 interval: time (in ms) between two movement
+       *                 iteration: number of iteration to repeat
+      **/
+      var fn = function() {
         $scope.dungeon.position.x += direction[0];
         $scope.dungeon.position.y += direction[1];
-      }
-      return [fn, 20, 32];
+      };
+      var interval = 20;
+      var iteration = 32;
+      return [fn, interval, iteration];
     }
   };
 
