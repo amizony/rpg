@@ -17,6 +17,12 @@ angular.module("rpgApp").service("AdversariesDB", function () {
       return $scope.stats;
     },
     defineAdversary: function(level, difficulty) {
+      /**
+       * Set the stats of the enemy according to the level and difficulty defined.
+       *
+       * @param {integer} enemy level, governing it's overall power.
+       * @param {integer} enemy difficulty, providing small power adjustment.
+      **/
       $scope.stats = {
         level: level,
         xpReward: level * (100 + 20 * difficulty),

@@ -72,8 +72,10 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
      * but can later on be stronger than the player.
     **/
     var charLevel = CharServ.getAllDatas().stats.level;
+    // level from 1 to player's level * 1.33
     var level = _.random(1, charLevel + _.floor(charLevel / 3));
-    var difficulty = _.random(_.floor(charLevel / 3)) - 1;
+    // difficulty from -2 to player's level / 3
+    var difficulty = _.random(_.floor(charLevel / 3)) - 2;
 
     console.log("");
     console.log("");
@@ -83,8 +85,7 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
 
   function launchFight() {
     /**
-     * Launch the turn based engine for the fight
-     * and takes action depending on the outcome.
+     * Launch the fight and take action depending on the outcome.
     **/
     var victory = FightEngine.fight();
 
