@@ -4,8 +4,8 @@
  * @ngdoc function
  * @name rpgApp.service:GameDraw
  * @description
- * #GameDraw
- * Service of the rpgApp
+ * Service responsible of drawing the dungeon (map + character)
+ * and providing the functions to animate them.
 **/
 
 angular.module("rpgApp").service("GameDraw", function () {

@@ -4,8 +4,7 @@
  * @ngdoc function
  * @name rpgApp.controller:MainCtrl
  * @description
- * # MainCtrl
- * Controller of the rpgApp
+ * Main controller of the game
 **/
 
 
@@ -58,29 +57,11 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
       .then(function() {
         var encounter = true;
         if (encounter) {
-          setAdversary();
+          AdversariesDB.defineAdversary(CharServ.getAllDatas().stats.level);
           launchFight();
         }
       });
     }
-  }
-
-  function setAdversary() {
-    /**
-     * Set the difficulty of the encounter depending of the player's level.
-     * Monsters should not be too strong at the begining
-     * but can later on be stronger than the player.
-    **/
-    var charLevel = CharServ.getAllDatas().stats.level;
-    // level from 1 to player's level * 1.33
-    var level = _.random(1, charLevel + _.floor(charLevel / 3));
-    // difficulty from -2 to player's level / 3
-    var difficulty = _.random(_.floor(charLevel / 3)) - 2;
-
-    console.log("");
-    console.log("");
-    console.log("You encounter a level " + level + " monster with difficulty " + difficulty + ".");
-    AdversariesDB.defineAdversary(level, difficulty);
   }
 
   function launchFight() {

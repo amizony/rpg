@@ -4,8 +4,7 @@
  * @ngdoc function
  * @name rpgApp.service:MapServ
  * @description
- * #MapServ
- * Service of the rpgApp
+ * Service containing the map.
 **/
 
 angular.module("rpgApp").service("MapServ", function () {

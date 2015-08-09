@@ -4,8 +4,8 @@
  * @ngdoc function
  * @name rpgApp.service:CharServ
  * @description
- * #CharServ
- * Service of the rpgApp
+ * Service holding every data related to the character.
+ * Provide functions to access or modify them.
 **/
 
 angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {

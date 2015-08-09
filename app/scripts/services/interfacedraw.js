@@ -4,8 +4,10 @@
  * @ngdoc function
  * @name rpgApp.service:InterfaceDraw
  * @description
- * #InterfaceDraw
- * Service of the rpgApp
+ * Service responsible of drawing the interface:
+ *    - left panel containing buttons to open/close menus
+ *    - bottom panel containing the combat log (not yet implemented)
+ *    - overlay for displaying the menus
 **/
 
 angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharServ) {

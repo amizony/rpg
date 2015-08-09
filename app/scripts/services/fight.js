@@ -4,8 +4,7 @@
  * @ngdoc function
  * @name rpgApp.service:FightEngine
  * @description
- * #FightEngine
- * Service of the rpgApp
+ * Turn-based fight engine.
 **/
 
 angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", function (CharServ, AdversariesDB) {
@@ -83,7 +82,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       console.log("you recieve: " + mobDmg + " damages");
       $scope.player.stats.life -= mobDmg;
     }
-    
+
     if ($scope.player.stats.life < 1) {
       console.log("--------  end fight  --------");
       console.log("you were killed");

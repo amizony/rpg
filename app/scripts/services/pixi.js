@@ -4,8 +4,7 @@
  * @ngdoc function
  * @name rpgApp.service:PixiServ
  * @description
- * #PixiServ
- * Service of the rpgApp
+ * Main service of Pixi, responsible of the rendering and managing the animations.
 **/
 
 angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , function (GameDraw, InterfaceDraw) {
