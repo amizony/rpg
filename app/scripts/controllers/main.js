@@ -45,7 +45,7 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
      * After each move the map may need to be re-centered, and a monster can be
      * encoutered (launching then a fight).
      *
-     * @param {array} direction of movement, as [moveX, moveY].
+     * @param {array} direction: adjustment of position to apply, as [+x, +y].
     **/
     var newCell = [CharServ.getPosition()[0] + direction[0], CharServ.getPosition()[1] + direction[1]];
     if ( !MapServ.isWall(newCell) ) {

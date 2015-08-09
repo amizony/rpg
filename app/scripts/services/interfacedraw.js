@@ -52,12 +52,12 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
   function createMenuItem(obj) {
     /**
-     * Draw an interactive button.
-     * When clicked, it opens the corresponding menu.
+     * Draw an interactive button;
+     * when clicked, it opens the corresponding menu.
      * The menus are all drawn in the same container (activeMenu).
      *
      * @param {hash} name: the button's name,
-     *               open: the function drawing the contnt of the menu when he is open.
+     *               open: the function drawing the contnt of the menu when he is open
      * @return {pixi.container} the button we just create.
     **/
     var item = new PIXI.Container();

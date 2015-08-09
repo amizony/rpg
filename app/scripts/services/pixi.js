@@ -17,8 +17,8 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
      * Launch an animation if the game is in a state allowing it :
      * no other animation running or game not in pause
      *
-     * @param {function} a function implementing the animation.
-     * @param {promise} resolved when the animation is over,
+     * @param {function} animationFn: a function implementing the animation.
+     * @param {promise} dfd: a promise resolved when the animation is over,
      *                  or rejected if the animation can't be launched.
     **/
     if (!$scope.animating && !$scope.interface.children[1].renderable) {
@@ -34,16 +34,16 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
      * Animate something iteratively so it's smooth-looking, using a loop-like
      * animation function repeated a specific number of times at a specific rate.
      *
-     * @param {function} animationFn A function implementing the animation.
-     * @param {integer} interval Duration of each animation step.
-     * @param {integer} iteration Number of steps in the animation.
-     * @return {promise} resolved when the animation is over,
+     * @param {function} animationFn: a function implementing the animation.
+     * @param {integer} interval: time (in ms) between two steps.
+     * @param {integer} iteration: number of steps in the animation.
+     * @return {promise} a promise resolved when the animation is over,
      *                   or rejected if the animation can't be launched.
     **/
     var dfd = $.Deferred();
     var animation = function(next) {
       /**
-       * @param {function} used to resolve the promise when the animation is ended.
+       * @param {function} next: used to resolve the promise when the animation is ended.
       **/
       $scope.intervalCount = 0;
 
@@ -66,7 +66,7 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
     /**
      * Launch the move map animation.
      *
-     * @param {array} adjustment of position (in number of cells) to apply to the map.
+     * @param {array} direction: adjustment of position (in number of cells) to apply to the map.
      * @return {promise} resolved when the animation is over,
      *                   or rejected if the animation can't be launched.
     **/
@@ -88,8 +88,8 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
        * Initialisations of pixi and containers,
        * drawing the interface, the map and the character.
        *
-       * @param {array} map to draw, stored as pseudo-matrix
-       * @param {array} coordinates of the character, as [x, y].
+       * @param {array} mapData: map to draw, stored as pseudo-matrix
+       * @param {array} charPosition: coordinates of the character, as [x, y].
       **/
       // init rendering
       $scope.renderer = PIXI.autoDetectRenderer(800, 608, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });

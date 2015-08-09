@@ -49,7 +49,6 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     create: function() {
       /**
        * Create the character.
-       *
       **/
       var position = randPos();
       $scope.position = {
@@ -117,7 +116,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     },
     updatePosition: function(direction) {
       /**
-       * @param {array} adjustment of position to apply, as [+x, +y].
+       * @param {array} direction: adjustment of position to apply, as [+x, +y].
       **/
       $scope.position.x += direction[0];
       $scope.position.y += direction[1];
@@ -138,7 +137,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       /**
        * function not yet used
        *
-       * @param {integer} damages taken by the player.
+       * @param {integer} dmg: damages taken by the player.
       **/
       $scope.stats.life -= dmg;
       if ($scope.stats.life < 1) {
@@ -147,7 +146,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     },
     getXP: function(exp) {
       /**
-       * @param {integer} experience gained by the player.
+       * @param {integer} exp: experience gained by the player.
       **/
       $scope.stats.experience += exp;
       if ($scope.stats.experience >= $scope.stats.level * 1000) {

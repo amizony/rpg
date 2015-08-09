@@ -11,15 +11,16 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
 
   var $scope = {};
 
-  function rollDamages(string) {
+  function rollDamages(weaponDamage) {
     /**
      * Calculate the random damages from a weapon done by an attack
      *
-     * @param {string} as 'integer'd'integer' (1d8 , 3d12, 6d4), the first integer is the number of dices and the second the faces' number.
+     * @param {string} weaponDamage: damages possibilities of weapon, as 'integer'd'integer' (1d8 , 3d12, 6d4)
+     *                               the first integer is the number of dices and the second the dices' faces' number.
      * @return {integer} damages done.
     **/
-    var nb = string.slice(0, string.indexOf("d"));
-    var dice = string.slice(string.indexOf("d") + 1, string.length);
+    var nb = weaponDamage.slice(0, weaponDamage.indexOf("d"));
+    var dice = weaponDamage.slice(weaponDamage.indexOf("d") + 1, weaponDamage.length);
     var damages = 0;
 
     for (var i = 0; i < nb; i++) {
@@ -40,9 +41,9 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
     /**
      * Determine if an attack hit or miss.
      *
-     * @param {integer} the total attack (attack roll + hit bonuses) of the attacker.
-     * @param {integer} the total defence of the defender.
-     * @return {boolean} true if the attack hit the target.
+     * @param {integer} attack: the total attack (attack roll + hit bonuses) of the attacker.
+     * @param {integer} defence: the total defence of the defender.
+     * @return {boolean} true if the attack hit the target, false otherwise.
     **/
     return attack > defence;
   }
@@ -52,15 +53,19 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
      * Reccursive function  computing all action of one round.
      * The fight ends when the life of someone reaches 0.
      *
-     * @return {boolean} true if the player won the fight.
+     * @return {boolean} true if the player won the fight, false otherwise.
     **/
 
-    // player action
     console.log("-------- fight round --------");
+
+    // player actions
+
+    // attack roll
     var playerAtt = rollAttack() + $scope.player.stats.hitBonus;
     console.log("player att: " + playerAtt + "    vs def: " + $scope.mob.defence);
 
     if (doesHit(playerAtt, $scope.mob.defence)) {
+      // do some damages if the attack hit
       var playerDmg = rollDamages($scope.player.weapon.damages) + $scope.player.attribute.strength;
       console.log("you do: " + playerDmg + " damages");
       $scope.mob.life -= playerDmg;
@@ -68,22 +73,27 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
 
 
     if ($scope.mob.life < 1) {
+      // fight ends if the monster dies
       console.log("--------  end fight  --------");
       console.log("you killed the monster");
       return true;
     }
 
-    // mob action
+    // mob actions
+
+    // attack roll
     var mobAtt = rollAttack() + $scope.mob.hitBonus;
     console.log("mob att: " + mobAtt + "    vs def: " + $scope.player.stats.defence);
 
     if (doesHit(mobAtt, $scope.player.stats.defence)) {
+      // do some damages if the attack hit
       var mobDmg = rollDamages($scope.mob.damages) + 2;
       console.log("you recieve: " + mobDmg + " damages");
       $scope.player.stats.life -= mobDmg;
     }
 
     if ($scope.player.stats.life < 1) {
+      // fight ends if the player dies
       console.log("--------  end fight  --------");
       console.log("you were killed");
       return false;
@@ -100,7 +110,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       /**
        * Launch the turn based engine.
        *
-       * @return {boolean} true the player won the fight.
+       * @return {boolean} true the player won the fight, false otherwise.
       **/
       $scope.player = CharServ.getAllDatas();
       $scope.mob = AdversariesDB.getStats();

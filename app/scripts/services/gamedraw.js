@@ -14,10 +14,10 @@ angular.module("rpgApp").service("GameDraw", function () {
 
   function createSquare(position, texture) {
     /**
-     * Draw a cell of the map
+     * Draw a cell of the map.
      *
-     * @param {array} position in px of the cell.
-     * @param {pixi.texture} texture to use for the cell.
+     * @param {array} position: cell's position in px.
+     * @param {pixi.texture} texture: a wall or ground texture.
     **/
     var square = new PIXI.Sprite(texture);
     square.scale.set(0.125);
@@ -31,7 +31,7 @@ angular.module("rpgApp").service("GameDraw", function () {
      * Draw the map.
      * Each cell has a size of 32*32 px.
      *
-     * @param {array} map to draw, stored as pseudo-matrix.
+     * @param {array} mapData: the map to render, stored as pseudo-matrix.
     **/
     $scope.map = new PIXI.Container();
     $scope.dungeon.addChild($scope.map);
@@ -57,7 +57,7 @@ angular.module("rpgApp").service("GameDraw", function () {
      * Draw the character.
      * He is drawn in the middle of its cell.
      *
-     * @param {array} coordinates of the character, as [x, y].
+     * @param {array} position: coordinates of the character, as [x, y].
     **/
     $scope.character = new PIXI.Sprite($scope.texture.char);
     $scope.character.anchor.set(0.5);
@@ -82,8 +82,8 @@ angular.module("rpgApp").service("GameDraw", function () {
     },
     init: function(mapData, charPosition) {
       /**
-       * @param {array} map to draw, stored as pseudo-matrix
-       * @param {array} coordinates of the character, as [x, y].
+       * @param {array} mapData: the map to render, stored as pseudo-matrix.
+       * @param {array} position: coordinates of the character, as [x, y].
        * @return {pixi.container} game container.
       **/
       $scope.dungeon = new PIXI.Container();
@@ -104,10 +104,10 @@ angular.module("rpgApp").service("GameDraw", function () {
        * Definition of the animation for moving the character.
        * By iterating 32 times, the coordinates are transformed in a position in px.
        *
-       * @param {array} adjustment of position to apply, as [+x, +y].
+       * @param {array} direction: adjustment of position to apply, as [+x, +y].
        * @return {array} fn: elementary function for the animation
-       *                 interval: time (in ms) between two movement
-       *                 iteration: number of iteration to repeat
+       *                 interval: time (in ms) between two steps.
+       *                 iteration: number of steps in the animation.
       **/
       var fn = function() {
         $scope.character.position.x += direction[0];
@@ -124,8 +124,8 @@ angular.module("rpgApp").service("GameDraw", function () {
        *
        * @param {array} adjustment of position to apply, as [+x, +y].
        * @return {array} fn: elementary function for the animation
-       *                 interval: time (in ms) between two movement
-       *                 iteration: number of iteration to repeat
+       *                 interval: time (in ms) between two steps.
+       *                 iteration: number of steps in the animation.
       **/
       var fn = function() {
         $scope.dungeon.position.x += direction[0];
