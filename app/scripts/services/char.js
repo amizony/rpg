@@ -89,6 +89,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       $scope.weapon = {
         name: "Rusty sword",
         damages: "1d6",
+        critical: [19, 2],
         enhancement: 0
       };
 
