@@ -194,9 +194,9 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       if ($scope.inventory["Resurection Stone"] > 0) {
         $scope.inventory["Resurection Stone"] -= 1;
         $scope.stats.life = $scope.stats.lifeMax;
-        console.log("You felt inconscious, but the use of a Resurection Stone allow you to continue your adventure (" + $scope.inventory["Resurection Stone"] + " left).");
+        console.log("The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"] + " left).");
       } else {
-        console.log("You die - Game Over.");
+        console.log("No Resurection Stones left - Game Over.");
         console.log("New game started");
         var temp = $scope.position;
         this.create();

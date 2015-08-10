@@ -72,6 +72,22 @@ angular.module("rpgApp").service("AdversariesDB", function () {
       console.log("");
       console.log("");
       console.log("You encounter a level " + $scope.level + " monster with difficulty " + $scope.difficulty + ".");
+    },
+
+    /**
+     * Create the final Boss.
+     *
+     * @param {integer} charLevel: player's level.
+     */
+    setBoss: function(charLevel) {
+      $scope.level = 30;
+      $scope.difficulty = _.floor(charLevel / 5);
+      setStats();
+      $scope.stats.damages = "2d8";
+
+      console.log("");
+      console.log("");
+      console.log("You encounter a boss (level " + $scope.level + ", difficulty " + $scope.difficulty + ")");
     }
   };
 

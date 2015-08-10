@@ -55,13 +55,18 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
         PixiServ.mapScroll();
       })
       .then(function() {
-        var encounter = true;
-        if (encounter) {
-          AdversariesDB.defineAdversary(CharServ.getAllDatas().stats.level);
+        if ((CharServ.getPosition()[0] === 18) && (CharServ.getPosition()[1] === 14)) {
+          AdversariesDB.setBoss(CharServ.getAllDatas().stats.level);
           FightEngine.fight();
         } else {
-          CharServ.manaRegen();
-          CharServ.lifeRegen();
+          var encounter = true;
+          if (encounter) {
+            AdversariesDB.defineAdversary(CharServ.getAllDatas().stats.level);
+            FightEngine.fight();
+          } else {
+            CharServ.manaRegen();
+            CharServ.lifeRegen();
+          }
         }
       });
     }
