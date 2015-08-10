@@ -31,32 +31,47 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
   }
 
   /**
-   * @return {integer} attack roll bewteen 1 and 20.
+   * @return {integer} action roll bewteen 1 and 20.
    */
-  function rollAttack() {
+  function actionRoll() {
     return _.random(1,20);
   }
 
   /**
-   * Determine if an attack hit or miss.
+   * Determine if an action is a success or a failure.
    *
-   * @param {integer} attack: the total attack (attack roll + hit bonuses) of the attacker.
-   * @param {integer} defence: the total defence of the defender.
-   * @return {boolean} true if the attack hit the target, false otherwise.
+   * @param {integer} roll: the total attack (attack roll + hit bonuses) of the attacker.
+   * @param {integer} difficulty: the score to beat to be successful.
+   * @return {boolean} true if the action succeed, false otherwise.
    */
-  function doesHit(attack, defence) {
-    return attack > defence;
+  function isSuccess(roll, difficulty) {
+    return roll > difficulty;
   }
 
   /**
-   * Determine if an attack is a critical.
+   * Determine if an action is a critical success.
+   * Happens on a 20 - or lower with some weapons.
    *
-   * @param {integer} attack: the attack roll of the attacker.
-   * @param {integer} weaponCritical: the score to reach for a critical.
-   * @return {boolean} true if the attack is a critical hit, false otherwise.
+   * @param {integer} roll: the unmodified action's roll.
+   * @param {integer} criticalRate: [optional] the score to reach for a critical.
+   * @return {boolean} true if the action is a critical success, false otherwise.
    */
-  function isCriticalHit(attack, weaponCritical) {
-    return attack >= weaponCritical;
+  function isCriticalSuccess(roll, criticalRate) {
+    if (_.isUndefined(criticalRate)) {
+      criticalRate = 20;
+    }
+    return roll >= criticalRate;
+  }
+
+  /**
+   * Determine if an action is a critical failure.
+   * Happens on a 1.
+   *
+   * @param {integer} roll: the unmodified action's roll.
+   * @return {boolean} true if the action is a critical failure, false otherwise.
+   */
+  function isCriticalFailure(roll) {
+    return roll === 1;
   }
 
   /**
@@ -67,7 +82,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
     var exp = $scope.mob.xpReward;
     console.log("You got " + exp + " XP!");
     CharServ.getXP(exp);
-    
+
     if (_.random(7) === 0) {
       console.log("You gain a Resurection Stone.");
       CharServ.gainItem("Resurection Stone");
@@ -86,20 +101,26 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
     // player actions
 
     // attack roll
-    var playerAtt = rollAttack();
+    var playerAtt = actionRoll();
 
-    if (isCriticalHit(playerAtt, $scope.player.weapon.critical[0])) {
-      // critical hits automatically
+    if (isCriticalSuccess(playerAtt, $scope.player.weapon.critical[0])) {
+      // critical success hits automatically with improved damages
       console.log("You landed a critical hit!");
       var playerCritDmg = (rollDamages($scope.player.weapon.damages) + $scope.player.attribute.strength) * $scope.player.weapon.critical[1];
       console.log("you do: " + playerCritDmg + " damages");
       $scope.mob.life -= playerCritDmg;
 
+    } else if (isCriticalFailure(playerAtt)) {
+      // critical failure misses always and cause bad outcome
+      console.log("You slip and wound yourself.");
+      console.log("you recieve: " + 2 + " damages");
+      $scope.player.stats.life -= 2;
+
     } else {
       playerAtt += $scope.player.stats.hitBonus;
       console.log("player att: " + playerAtt + "    vs def: " + $scope.mob.defence);
 
-      if (doesHit(playerAtt, $scope.mob.defence)) {
+      if (isSuccess(playerAtt, $scope.mob.defence)) {
         // do some damages if the attack hit
         var playerDmg = rollDamages($scope.player.weapon.damages) + $scope.player.attribute.strength;
         console.log("you do: " + playerDmg + " damages");
@@ -117,19 +138,25 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
     // mob actions
 
     // attack roll
-    var mobAtt = rollAttack();
-    if (isCriticalHit(mobAtt, 20)) {
+    var mobAtt = actionRoll();
+    if (isCriticalSuccess(mobAtt)) {
       // critical hits automatically
       console.log("You recieve a critical hit!");
       var mobCritDmg = rollDamages($scope.mob.damages) * 2;
       console.log("you recieve: " + mobCritDmg + " damages");
       $scope.player.stats.life -= mobCritDmg;
 
+    } else if (isCriticalFailure(mobAtt)) {
+      // critical failure misses always and cause bad outcome
+      console.log("The monster wounds himself.");
+      console.log("He recieve: " + 2 + " damages");
+      $scope.mob.life -= 2;
+
     } else {
       mobAtt += $scope.mob.hitBonus;
       console.log("mob att: " + mobAtt + "    vs def: " + $scope.player.stats.defence);
 
-      if (doesHit(mobAtt, $scope.player.stats.defence)) {
+      if (isSuccess(mobAtt, $scope.player.stats.defence)) {
         // do some damages if the attack hit
         var mobDmg = rollDamages($scope.mob.damages) + 2;
         console.log("you recieve: " + mobDmg + " damages");
