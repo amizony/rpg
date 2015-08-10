@@ -185,6 +185,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         $scope.inventory[name] += 1;
       }
     },
+
     /**
      * When the life reaches 0 the character dies. A Resurection Stone allows to continue,
      * else a new game is started.
@@ -201,6 +202,20 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         this.create();
         $scope.position = temp;
       }
+    },
+
+    /**
+     * Regain 1 mana point.
+     */
+    manaRegen: function() {
+      $scope.stats.mana = Math.min($scope.stats.mana + 1, $scope.stats.manaMax);
+    },
+
+    /**
+     * Regain 1 life point.
+     */
+    lifeRegen: function() {
+      $scope.stats.life = Math.min($scope.stats.life + 1, $scope.stats.lifeMax);
     }
   };
 

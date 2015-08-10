@@ -97,6 +97,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
    */
   function fightRound() {
     console.log("-------- fight round --------");
+    // regain 1 mana pro round
+    CharServ.manaRegen();
 
     // player actions
 
@@ -171,7 +173,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       return false;
     }
 
-    console.log("your life: " + $scope.player.stats.life + "/" + $scope.player.stats.lifeMax);
+    console.log("your life: " + $scope.player.stats.life + "/" + $scope.player.stats.lifeMax + "   your mana: " + $scope.player.stats.mana + "/" + $scope.player.stats.manaMax);
     console.log("mob's life: " + $scope.mob.life + "/" + $scope.mob.lifeMax);
     return fightRound();
   }
