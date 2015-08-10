@@ -45,11 +45,15 @@ angular.module("rpgApp").service("MapServ", function () {
      * Check whether a specific cell is a wall.
      *
      * @param {array} cell: coordinates of cell to test, as [x, y].
-     * @return {boolean} true if the cell is a wall, false otherwise.
+     * @return {boolean} true if the cell is a wall or outside range, false otherwise.
      */
     isWall: function(cell) {
-      // The map is stored row-wise (y-axis first).
-      return $scope.map[cell[1]][cell[0]] === 0;
+      if ((cell[0] >= $scope.map[0].length) || (cell[1] >= $scope.map.length)) {
+        return true;
+      } else {
+        // The map is stored row-wise (y-axis first).
+        return $scope.map[cell[1]][cell[0]] === 0;
+      }
     },
     getMap: function() {
       return $scope.map;

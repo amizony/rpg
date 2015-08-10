@@ -89,7 +89,7 @@ angular.module("rpgApp").service("GameDraw", function () {
      */
     init: function(mapData, charPosition) {
       $scope.dungeon = new PIXI.Container();
-      $scope.dungeon.position.x = 150;
+      $scope.dungeon.position.x = 160;
       //init textures
       $scope.texture = {
         ground: PIXI.Texture.fromImage("images/ground.png"),

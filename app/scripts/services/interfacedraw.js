@@ -20,8 +20,8 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
   function createMenu() {
     $scope.menuList.lineStyle(2, 0x0000FF, 1);
     $scope.menuList.beginFill(0xFF0000);
-    $scope.menuList.drawRect(0, 0, 150, 608);
-    $scope.menuList.drawRect(150, 508, 650, 100);
+    $scope.menuList.drawRect(0, 0, 160, 600);
+    $scope.menuList.drawRect(160, 512, 650, 100);
     $scope.menuList.endFill();
 
     var buttons = [
@@ -40,7 +40,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     }
 
     $scope.menuWindow = new PIXI.Container();
-    $scope.menuWindow.position.x = 150;
+    $scope.menuWindow.position.x = 160;
     $scope.menuWindow.renderable = false;
     $scope.interface.addChild($scope.menuWindow);
 
