@@ -4,14 +4,19 @@
  * @ngdoc function
  * @name rpgApp.service:InterfaceDraw
  * @description
- * #InterfaceDraw
- * Service of the rpgApp
-**/
+ * Service responsible for drawing the interface:
+ *    - left panel containing buttons to open/close menus
+ *    - bottom panel containing the combat log (not yet implemented)
+ *    - overlay for displaying the menus
+ */
 
 angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharServ) {
 
   var $scope = {};
 
+  /**
+   * Draw the menu and the buttons.
+   */
   function createMenu() {
     $scope.menuList.lineStyle(2, 0x0000FF, 1);
     $scope.menuList.beginFill(0xFF0000);
@@ -45,6 +50,15 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuWindow.addChild($scope.activeMenu);
   }
 
+  /**
+   * Draw an interactive button;
+   * when clicked, it opens the corresponding menu.
+   * The menus are all drawn in the same container (activeMenu).
+   *
+   * @param {hash} name: the button's name,
+   *               open: the function drawing the contnt of the menu when he is open
+   * @return {pixi.container} the button we just create.
+   */
   function createMenuItem(obj) {
     var item = new PIXI.Container();
     var button = new PIXI.Sprite($scope.texture.button);
@@ -82,10 +96,16 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     return item;
   }
 
+  /**
+   * Clear the content of the menu in order to draw a new one.
+   */
   function destroyMenu() {
     $scope.activeMenu.removeChildren();
   }
 
+  /**
+   * Draw the content of the character page.
+   */
   function characterMenu() {
     $scope.menuTitle = new PIXI.Text("Character");
     $scope.menuTitle.position.x = 20;
@@ -115,6 +135,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     console.log(CharServ.getAllDatas());
   }
 
+  /**
+   * Draw the content of the inventory page.
+   */
   function inventoryMenu() {
     $scope.menuTitle = new PIXI.Text("Inventory");
     $scope.menuTitle.position.x = 20;
@@ -122,6 +145,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.activeMenu.addChild($scope.menuTitle);
   }
 
+  /**
+   * Draw the content of the spells page.
+   */
   function spellsMenu() {
     $scope.menuTitle = new PIXI.Text("Spells");
     $scope.menuTitle.position.x = 20;
@@ -129,6 +155,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.activeMenu.addChild($scope.menuTitle);
   }
 
+  /**
+   * Draw the content of the quests page.
+   */
   function questsMenu() {
     $scope.menuTitle = new PIXI.Text("Quests");
     $scope.menuTitle.position.x = 20;
@@ -136,6 +165,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.activeMenu.addChild($scope.menuTitle);
   }
 
+  /**
+   * Draw the content of the help page.
+   */
   function helpMenu() {
     $scope.menuTitle = new PIXI.Text("Help");
     $scope.menuTitle.position.x = 20;
@@ -145,9 +177,16 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
 
   return {
+    /**
+     * @return {pixi.container} interface container to be rendered.
+     */
     getInterface: function() {
       return $scope.interface;
     },
+
+    /**
+     * @return {pixi.container} interface container.
+     */
     init: function() {
       $scope.interface = new PIXI.Container();
 
@@ -165,7 +204,5 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
       return $scope.interface;
     },
-
   };
-
 }]);

@@ -4,9 +4,7 @@
  * @ngdoc overview
  * @name rpgApp
  * @description
- * # rpgApp
- *
- * Main module of the application.
+ * Route provider of the application.
  */
 angular.module("rpgApp", ["ngCookies", "ngRoute", "ngSanitize"]).config(function ($routeProvider) {
   $routeProvider
