@@ -36,7 +36,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
   function randAttribute() {
     var dice1 = _.random(1, 6);
     var dice2 = _.random(1, 6);
-    var attribute = (dice1 + dice2 - 4) / 2;
+    var attribute = _.floor((dice1 + dice2 - 4) / 2);
     return Math.max(0, attribute);
   }
 
@@ -100,7 +100,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         enhancement: 0
       };
 
-      $scope.stats.defence = 10 + $scope.stats.level + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
+      $scope.stats.defence = 10 + _.floor($scope.stats.level / 2) + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
 
       $scope.spells = {
         "Heavy Blow": {

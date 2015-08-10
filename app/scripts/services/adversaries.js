@@ -46,7 +46,7 @@ angular.module("rpgApp").service("AdversariesDB", function () {
       lifeMax: $scope.level * (6 + _.random(2) * $scope.difficulty),
       manaMax: $scope.level * (2 + _.random(2) * $scope.difficulty),
       hitBonus: $scope.level + _.random(2) * $scope.difficulty,
-      defence: 10 + _.random(2) * $scope.difficulty,
+      defence: 10 + _.floor($scope.level / 2) + _.random(2) * $scope.difficulty,
       damages: "1d8"
     };
     $scope.stats.life = $scope.stats.lifeMax;
