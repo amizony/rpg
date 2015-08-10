@@ -27,6 +27,19 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     return [posX, posY];
   }
 
+
+  /**
+   * Randomize attribute with a non-linear repartition
+   *
+   * @return {integer} attribute, between 0 and 4.
+   */
+  function randAttribute() {
+    var dice1 = _.random(1, 6);
+    var dice2 = _.random(1, 6);
+    var attribute = (dice1 + dice2 - 4) / 2;
+    return Math.max(0, attribute);
+  }
+
   /**
    * Provide a level increase to the player.
    * Increase and recalculate the player's stats.
@@ -57,11 +70,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       };
 
       $scope.attribute = {
-        strength: 4,
-        dexterity: 2,
-        endurance: 3,
-        intelligence: 0,
-        wisdom: 1,
+        strength: randAttribute(),
+        dexterity: randAttribute(),
+        endurance: randAttribute(),
+        intelligence: randAttribute(),
+        wisdom: randAttribute()
       };
 
       $scope.stats = {
