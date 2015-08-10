@@ -5,20 +5,20 @@
  * @name rpgApp.service:FightEngine
  * @description
  * Turn-based fight engine.
-**/
+ */
 
 angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", function (CharServ, AdversariesDB) {
 
   var $scope = {};
 
+  /**
+   * Calculate the random damages from a weapon done by an attack
+   *
+   * @param {string} weaponDamage: damages possibilities of weapon, as 'integer'd'integer' (1d8 , 3d12, 6d4)
+   *                               the first integer is the number of dices and the second the dices' faces' number.
+   * @return {integer} damages done.
+   */
   function rollDamages(weaponDamage) {
-    /**
-     * Calculate the random damages from a weapon done by an attack
-     *
-     * @param {string} weaponDamage: damages possibilities of weapon, as 'integer'd'integer' (1d8 , 3d12, 6d4)
-     *                               the first integer is the number of dices and the second the dices' faces' number.
-     * @return {integer} damages done.
-    **/
     var nb = weaponDamage.slice(0, weaponDamage.indexOf("d"));
     var dice = weaponDamage.slice(weaponDamage.indexOf("d") + 1, weaponDamage.length);
     var damages = 0;
@@ -30,32 +30,31 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
     return damages;
   }
 
+  /**
+   * @return {integer} attack roll bewteen 1 and 20.
+   */
   function rollAttack() {
-    /**
-     * @return {integer} attack roll bewteen 1 and 20.
-    **/
     return _.random(1,20);
   }
 
+  /**
+   * Determine if an attack hit or miss.
+   *
+   * @param {integer} attack: the total attack (attack roll + hit bonuses) of the attacker.
+   * @param {integer} defence: the total defence of the defender.
+   * @return {boolean} true if the attack hit the target, false otherwise.
+   */
   function doesHit(attack, defence) {
-    /**
-     * Determine if an attack hit or miss.
-     *
-     * @param {integer} attack: the total attack (attack roll + hit bonuses) of the attacker.
-     * @param {integer} defence: the total defence of the defender.
-     * @return {boolean} true if the attack hit the target, false otherwise.
-    **/
     return attack > defence;
   }
 
+  /**
+   * Reccursive function  computing all action of one round.
+   * The fight ends when the life of someone reaches 0.
+   *
+   * @return {boolean} true if the player won the fight, false otherwise.
+   */
   function fightRound() {
-    /**
-     * Reccursive function  computing all action of one round.
-     * The fight ends when the life of someone reaches 0.
-     *
-     * @return {boolean} true if the player won the fight, false otherwise.
-    **/
-
     console.log("-------- fight round --------");
 
     // player actions
@@ -106,12 +105,12 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
 
 
   return {
+    /**
+     * Launch the turn based engine.
+     *
+     * @return {boolean} true the player won the fight, false otherwise.
+     */
     fight: function() {
-      /**
-       * Launch the turn based engine.
-       *
-       * @return {boolean} true the player won the fight, false otherwise.
-      **/
       $scope.player = CharServ.getAllDatas();
       $scope.mob = AdversariesDB.getStats();
       var victory = fightRound();

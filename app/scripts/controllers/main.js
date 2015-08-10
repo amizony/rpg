@@ -4,8 +4,8 @@
  * @ngdoc function
  * @name rpgApp.controller:MainCtrl
  * @description
- * Main controller of the game
-**/
+ * Main controller of the game.
+ */
 
 
 angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", "FightEngine", "AdversariesDB", function ($scope, CharServ, MapServ, PixiServ, FightEngine, AdversariesDB) {
@@ -38,15 +38,15 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
     requestAnimationFrame(animate);
   }
 
+  /**
+   * Responding to event and requesting the character's movement.
+   * Movement happens if there is no wall, and if the character can move.
+   * After each move the map may need to be re-centered, and a monster may be
+   * encoutered (thus launching a fight).
+   *
+   * @param {array} direction: adjustment of position to apply, as [+x, +y].
+   */
   function move(direction) {
-    /**
-     * Responding to event and requesting the character's movement.
-     * Movement happens if there is no wall, and if the character can move.
-     * After each move the map may need to be re-centered, and a monster can be
-     * encoutered (launching then a fight).
-     *
-     * @param {array} direction: adjustment of position to apply, as [+x, +y].
-    **/
     var newCell = [CharServ.getPosition()[0] + direction[0], CharServ.getPosition()[1] + direction[1]];
     if ( !MapServ.isWall(newCell) ) {
       PixiServ.moveChar(direction)
@@ -64,10 +64,10 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
     }
   }
 
+  /**
+   * Launch the fight and take action depending on the outcome.
+   */
   function launchFight() {
-    /**
-     * Launch the fight and take action depending on the outcome.
-    **/
     var victory = FightEngine.fight();
 
     if (victory) {
@@ -82,7 +82,7 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
 
   /**
    * Events - key bindings.
-  **/
+   */
 
   window.addEventListener("keydown", function(event) {
     // left key

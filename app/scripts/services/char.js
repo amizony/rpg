@@ -6,18 +6,18 @@
  * @description
  * Service holding every data related to the character.
  * Provide functions to access or modify them.
-**/
+ */
 
 angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
   var $scope = {};
 
+  /**
+   * Determine the initial position of the player.
+   *
+   * @return {array} position of hero, as [x,y].
+   */
   function randPos() {
-    /**
-     * Determine the initial position of the player.
-     *
-     * @return {array} position of hero, as [x,y].
-    **/
     var posX = _.random(1,23);
     var posY = _.random(1,17);
     while (MapServ.isWall([posX, posY])) {
@@ -27,11 +27,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     return [posX, posY];
   }
 
+  /**
+   * Provide a level increase to the player.
+   * Increase and recalculate the player's stats.
+   */
   function levelUP() {
-    /**
-     * Provide a level increase to the player.
-     * Increase and recalculate the player's stats.
-    **/
     $scope.stats.experience -= $scope.stats.level *1000;
     $scope.stats.level += 1;
 
@@ -46,10 +46,10 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
   }
 
   return {
+    /**
+     * Create the character.
+     */
     create: function() {
-      /**
-       * Create the character.
-      **/
       var position = randPos();
       $scope.position = {
         x: position[0],
@@ -108,20 +108,22 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
 
     },
+    /**
+     * @return {array} cell coordinates of player, as [x,y].
+     */
     getPosition: function() {
-      /**
-       * @return {array} cell coordinates of player, as [x,y].
-      **/
       return [$scope.position.x, $scope.position.y];
     },
+
+    /**
+     * @param {array} direction: adjustment of position to apply, as [+x, +y].
+     */
     updatePosition: function(direction) {
-      /**
-       * @param {array} direction: adjustment of position to apply, as [+x, +y].
-      **/
       $scope.position.x += direction[0];
       $scope.position.y += direction[1];
       //console.log("New hero location: " + $scope.position.x + ", " + $scope.position.y);
     },
+
     getAllDatas: function() {
       return {
         stats: $scope.stats,
@@ -133,21 +135,23 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         quests: $scope.quests
       };
     },
+
+    /**
+     * function not yet used
+     *
+     * @param {integer} dmg: damages taken by the player.
+     */
     takeDamages: function(dmg) {
-      /**
-       * function not yet used
-       *
-       * @param {integer} dmg: damages taken by the player.
-      **/
       $scope.stats.life -= dmg;
       if ($scope.stats.life < 1) {
         this.dying();
       }
     },
+
+    /**
+     * @param {integer} exp: experience gained by the player.
+     */
     getXP: function(exp) {
-      /**
-       * @param {integer} exp: experience gained by the player.
-      **/
       $scope.stats.experience += exp;
       if ($scope.stats.experience >= $scope.stats.level * 1000) {
         levelUP();
