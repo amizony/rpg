@@ -74,8 +74,12 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
       var exp = AdversariesDB.getStats().xpReward;
       console.log("You got " + exp + " XP!");
       CharServ.getXP(exp);
+      if (_.random(7) === 0) {
+        console.log("You gain a Resurection Stone");
+        CharServ.gainItem("Resurection Stone");
+      }
     } else {
-      CharServ.dying();
+      CharServ.die();
     }
   }
 

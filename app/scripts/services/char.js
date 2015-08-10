@@ -116,7 +116,9 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         }
       };
 
-      $scope.inventory = {};
+      $scope.inventory = {
+        "Resurection Stone": 3
+      };
 
       $scope.quests = {};
 
@@ -158,7 +160,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     takeDamages: function(dmg) {
       $scope.stats.life -= dmg;
       if ($scope.stats.life < 1) {
-        this.dying();
+        this.die();
       }
     },
 
@@ -171,10 +173,34 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         levelUP();
       }
     },
-    dying: function() {
-      // for now only a 'resurection'
-      console.log("The gods are merciful, you can continue your quest.");
-      $scope.stats.life = $scope.stats.lifeMax;
+    /**
+     * Gaining a new item or increasing the number of on already in inventory.
+     *
+     * @param {string} name: the item to add to the inventory.
+     */
+    gainItem: function(name) {
+      if (_.isUndefined($scope.inventory[name])) {
+        $scope.inventory[name] = 1;
+      } else {
+        $scope.inventory[name] += 1;
+      }
+    },
+    /**
+     * When the life reaches 0 the character dies. A Resurection Stone allows to continue,
+     * else a new game is started.
+     */
+    die: function() {
+      if ($scope.inventory["Resurection Stone"] > 0) {
+        $scope.inventory["Resurection Stone"] -= 1;
+        $scope.stats.life = $scope.stats.lifeMax;
+        console.log("You felt inconscious, but the use of a Resurection Stone allow you to continue your adventure (" + $scope.inventory["Resurection Stone"] + " left).");
+      } else {
+        console.log("You die - Game Over.");
+        console.log("New game started");
+        var temp = $scope.position;
+        this.create();
+        $scope.position = temp;
+      }
     }
   };
 
