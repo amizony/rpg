@@ -58,28 +58,9 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
         var encounter = true;
         if (encounter) {
           AdversariesDB.defineAdversary(CharServ.getAllDatas().stats.level);
-          launchFight();
+          FightEngine.fight();
         }
       });
-    }
-  }
-
-  /**
-   * Launch the fight and take action depending on the outcome.
-   */
-  function launchFight() {
-    var victory = FightEngine.fight();
-
-    if (victory) {
-      var exp = AdversariesDB.getStats().xpReward;
-      console.log("You got " + exp + " XP!");
-      CharServ.getXP(exp);
-      if (_.random(7) === 0) {
-        console.log("You gain a Resurection Stone");
-        CharServ.gainItem("Resurection Stone");
-      }
-    } else {
-      CharServ.die();
     }
   }
 

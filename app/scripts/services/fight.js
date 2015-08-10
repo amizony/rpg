@@ -60,7 +60,22 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
   }
 
   /**
-   * Reccursive function  computing all action of one round.
+   * Give a reward to the player when he wins a fight.
+   * XP is always awarded and a random item may be awarded.
+   */
+  function gainReward() {
+    var exp = $scope.mob.xpReward;
+    console.log("You got " + exp + " XP!");
+    CharServ.getXP(exp);
+    
+    if (_.random(7) === 0) {
+      console.log("You gain a Resurection Stone.");
+      CharServ.gainItem("Resurection Stone");
+    }
+  }
+
+  /**
+   * Recursive function computing all actions of one round.
    * The fight ends when the life of someone reaches 0.
    *
    * @return {boolean} true if the player won the fight, false otherwise.
@@ -137,16 +152,19 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
 
   return {
     /**
-     * Launch the turn based engine.
-     *
-     * @return {boolean} true the player won the fight, false otherwise.
+     * Launch the fight and take action depending on the outcome.
      */
     fight: function() {
       $scope.player = CharServ.getAllDatas();
       $scope.mob = AdversariesDB.getStats();
+
       var victory = fightRound();
 
-      return victory;
+      if (victory) {
+        gainReward();
+      } else {
+        CharServ.die();
+      }
     }
   };
 
