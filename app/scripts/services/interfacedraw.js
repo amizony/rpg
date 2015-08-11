@@ -29,7 +29,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       {name: "Inventory", open: inventoryMenu},
       {name: "Spells",    open: spellsMenu},
       {name: "Quests",    open: questsMenu},
-      {name: "Help",      open: helpMenu}
+      {name: "Help",      open: combatLog}
     ];
 
     $scope.menuItems = [];
@@ -203,11 +203,44 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     createText("Help", [20, 10]);
   }
 
+  function combatLog() {
+    $scope.menuTitle = createText("Mario   -- VS --   Monster (level 3)", [30, 10]);
+    var style = {};
+
+    var mario = new PIXI.Sprite($scope.texture.char);
+    mario.scale.set(0.28);
+    mario.position.x = 80;
+    mario.position.y = 70;
+    $scope.activeMenu.addChild(mario);
+    createText("life  4 / 7", [80, 250], style);
+    createText("mana  3 / 3", [80, 280], style);
+
+    var hydre = new PIXI.Sprite($scope.texture.monster);
+    hydre.position.x = 340;
+    hydre.position.y = 70;
+    $scope.activeMenu.addChild(hydre);
+    createText("life  12 / 12", [360, 250], style);
+
+    var actions = [
+      "You attack and miss (8 vs 11).",
+      "The monster attack and hit you (16 vs 13).",
+      "You recieve 3 damages",
+      ""
+    ];
+
+    var i = 20;
+    createText("Fight Round #", [200, 330]);
+    _.forIn(actions, function(value) {
+      createText(value, [40, 360 + i], {font: 'bold 16px Arial'});
+      i += 20;
+    });
+  }
+
   /**
    * Display a Pixi Text in the active menu window.
    *
    * @param {string} text: the text we want to display.
-   * @param {array} position: the location inside $scope.activeMenu to display it.
+   * @param {array} position: the location inside $scope.activeMenu to display it, as [x, y].
    * @param {hash} style: [optional] a particular style to apply to the text.
    * @return {Pixi.Text} the Text we create.
    */
@@ -218,12 +251,6 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         fill : '#F7EDCA',
         stroke : '#4a1850',
         strokeThickness : 5,
-        dropShadow : true,
-        dropShadowColor : '#000000',
-        dropShadowAngle : Math.PI / 6,
-        dropShadowDistance : 6,
-        wordWrap : true,
-        wordWrapWidth : 440
       };
     }
     var newText = new PIXI.Text(text, style);
@@ -259,6 +286,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
         menuBackground: PIXI.Texture.fromImage("images/menubackground.png"),
         char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
+        monster: PIXI.Texture.fromImage("images/Typhon_Monster.png"),
         empty: PIXI.Texture.fromImage("images/empty.png")
       };
 
