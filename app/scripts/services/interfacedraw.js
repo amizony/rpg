@@ -135,9 +135,6 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       i += 30;
     });
 
-
-
-    console.log(datas);
   }
 
   /**
@@ -145,6 +142,44 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    */
   function inventoryMenu() {
     $scope.menuTitle = createText("Inventory", [20, 10]);
+
+    var datas = CharServ.getAllDatas();
+    var style = {};
+
+    var i = 30;
+    _.forIn(datas.inventory, function(value, key) {
+      if (value.quantity > 0) {
+        if (value.usable) {
+          var clickable = new PIXI.Container();
+          var button = new PIXI.Sprite($scope.texture.empty);
+          clickable.addChild(button);
+          clickable.position.x = 45;
+          clickable.position.y = 50 + i;
+          clickable.buttonMode = true;
+          clickable.interactive = true;
+
+          var textHover = createText("Click to use item", [350, 50 + i], style);
+          textHover.renderable = false;
+
+          clickable
+            .on("mouseover", function() {
+              textHover.renderable = true;
+            })
+            .on("mouseout", function() {
+              textHover. renderable = false;
+            })
+            .on("click", function() {
+              console.log("You use an item, but nothing is happening (not implemented).");
+            });
+          createText("- " + value.quantity + " " + key, [40, 50 + i], style);
+          $scope.activeMenu.addChild(clickable);
+
+        } else {
+          createText("- " + value.quantity + " " + key, [40, 50 + i], style);
+        }
+        i += 30;
+      }
+    });
   }
 
   /**
@@ -168,6 +203,14 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     createText("Help", [20, 10]);
   }
 
+  /**
+   * Display a Pixi Text in the active menu window.
+   *
+   * @param {string} text: the text we want to display.
+   * @param {array} position: the location inside $scope.activeMenu to display it.
+   * @param {hash} style: [optional] a particular style to apply to the text.
+   * @return {Pixi.Text} the Text we create.
+   */
   function createText(text, position, style) {
     if (_.isUndefined(style)) {
       style = {
@@ -215,7 +258,8 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         button: PIXI.Texture.fromImage("images/button.png"),
         buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
         menuBackground: PIXI.Texture.fromImage("images/menubackground.png"),
-        char: PIXI.Texture.fromImage("images/SuaRQmP.png")
+        char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
+        empty: PIXI.Texture.fromImage("images/empty.png")
       };
 
       createMenu();

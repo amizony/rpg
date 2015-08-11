@@ -117,7 +117,14 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       };
 
       $scope.inventory = {
-        "Resurection Stone": 3
+        "Resurection Stone": {
+          quantity: 3,
+          usable: false
+        },
+        "Life Potion": {
+          quantity: 5,
+          usable: true
+        }
       };
 
       $scope.quests = {};
@@ -174,15 +181,16 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       }
     },
     /**
-     * Gaining a new item or increasing the number of on already in inventory.
+     * Gaining a new item or increasing the number of one already in inventory.
      *
      * @param {string} name: the item to add to the inventory.
      */
     gainItem: function(name) {
       if (_.isUndefined($scope.inventory[name])) {
-        $scope.inventory[name] = 1;
+        $scope.inventory[name].quantity = 1;
+        $scope.inventory[name].usable = false; // will require an item DB
       } else {
-        $scope.inventory[name] += 1;
+        $scope.inventory[name].quantity += 1;
       }
     },
 
@@ -191,10 +199,10 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
      * else a new game is started.
      */
     die: function() {
-      if ($scope.inventory["Resurection Stone"] > 0) {
-        $scope.inventory["Resurection Stone"] -= 1;
+      if ($scope.inventory["Resurection Stone"].quantity > 0) {
+        $scope.inventory["Resurection Stone"].quantity -= 1;
         $scope.stats.life = $scope.stats.lifeMax;
-        console.log("The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"] + " left).");
+        console.log("The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"].quantity + " left).");
       } else {
         console.log("No Resurection Stones left - Game Over.");
         console.log("New game started");
