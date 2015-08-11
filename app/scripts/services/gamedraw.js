@@ -67,6 +67,19 @@ angular.module("rpgApp").service("GameDraw", function () {
     $scope.dungeon.addChild($scope.character);
   }
 
+  /**
+   * Draw the boss.
+   * He is drawn in the middle of its cell in the center of the map.
+   */
+  function CreateBoss() {
+    $scope.boss = new PIXI.Sprite($scope.texture.boss);
+    $scope.boss.anchor.set(0.5);
+    $scope.boss.scale.set(0.05);
+    $scope.boss.position.x = 18 * 32 + 16;
+    $scope.boss.position.y = 14 * 32 + 16;
+    $scope.dungeon.addChild($scope.boss);
+  }
+
   return {
     /**
      * @return {pixi.container} game container to be rendered.
@@ -89,14 +102,16 @@ angular.module("rpgApp").service("GameDraw", function () {
      */
     init: function(mapData, charPosition) {
       $scope.dungeon = new PIXI.Container();
-      $scope.dungeon.position.x = 150;
+      $scope.dungeon.position.x = 160;
       //init textures
       $scope.texture = {
         ground: PIXI.Texture.fromImage("images/ground.png"),
         wall: PIXI.Texture.fromImage("images/wall.png"),
-        char: PIXI.Texture.fromImage("images/SuaRQmP.png")
+        char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
+        boss: PIXI.Texture.fromImage("images/SuaRQmP-invert.png")
       };
       createMap(mapData);
+      CreateBoss();
       createChar(charPosition);
 
       return $scope.dungeon;

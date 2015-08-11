@@ -18,13 +18,26 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
    * @return {array} position of hero, as [x,y].
    */
   function randPos() {
-    var posX = _.random(1,23);
-    var posY = _.random(1,17);
+    var posX = _.random(0,37);
+    var posY = _.random(0,29);
     while (MapServ.isWall([posX, posY])) {
-      posX = _.random(1,23);
-      posY = _.random(1,17);
+      posX = _.random(0,37);
+      posY = _.random(0,29);
     }
     return [posX, posY];
+  }
+
+
+  /**
+   * Randomize attribute with a non-linear repartition
+   *
+   * @return {integer} attribute, between 0 and 4.
+   */
+  function randAttribute() {
+    var dice1 = _.random(1, 6);
+    var dice2 = _.random(1, 6);
+    var attribute = _.floor((dice1 + dice2 - 4) / 2);
+    return Math.max(0, attribute);
   }
 
   /**
@@ -57,11 +70,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       };
 
       $scope.attribute = {
-        strength: 4,
-        dexterity: 2,
-        endurance: 3,
-        intelligence: 0,
-        wisdom: 1,
+        strength: randAttribute(),
+        dexterity: randAttribute(),
+        endurance: randAttribute(),
+        intelligence: randAttribute(),
+        wisdom: randAttribute()
       };
 
       $scope.stats = {
@@ -76,6 +89,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       $scope.weapon = {
         name: "Rusty sword",
         damages: "1d6",
+        critical: [19, 2],
         enhancement: 0
       };
 
@@ -87,7 +101,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         enhancement: 0
       };
 
-      $scope.stats.defence = 10 + $scope.stats.level + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
+      $scope.stats.defence = 10 + _.floor($scope.stats.level / 2) + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
 
       $scope.spells = {
         "Heavy Blow": {
@@ -102,7 +116,9 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         }
       };
 
-      $scope.inventory = {};
+      $scope.inventory = {
+        "Resurection Stone": 3
+      };
 
       $scope.quests = {};
 
@@ -144,7 +160,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     takeDamages: function(dmg) {
       $scope.stats.life -= dmg;
       if ($scope.stats.life < 1) {
-        this.dying();
+        this.die();
       }
     },
 
@@ -157,10 +173,49 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         levelUP();
       }
     },
-    dying: function() {
-      // for now only a 'resurection'
-      console.log("The gods are merciful, you can continue your quest.");
-      $scope.stats.life = $scope.stats.lifeMax;
+    /**
+     * Gaining a new item or increasing the number of on already in inventory.
+     *
+     * @param {string} name: the item to add to the inventory.
+     */
+    gainItem: function(name) {
+      if (_.isUndefined($scope.inventory[name])) {
+        $scope.inventory[name] = 1;
+      } else {
+        $scope.inventory[name] += 1;
+      }
+    },
+
+    /**
+     * When the life reaches 0 the character dies. A Resurection Stone allows to continue,
+     * else a new game is started.
+     */
+    die: function() {
+      if ($scope.inventory["Resurection Stone"] > 0) {
+        $scope.inventory["Resurection Stone"] -= 1;
+        $scope.stats.life = $scope.stats.lifeMax;
+        console.log("The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"] + " left).");
+      } else {
+        console.log("No Resurection Stones left - Game Over.");
+        console.log("New game started");
+        var temp = $scope.position;
+        this.create();
+        $scope.position = temp;
+      }
+    },
+
+    /**
+     * Regain 1 mana point.
+     */
+    manaRegen: function() {
+      $scope.stats.mana = Math.min($scope.stats.mana + 1, $scope.stats.manaMax);
+    },
+
+    /**
+     * Regain 1 life point.
+     */
+    lifeRegen: function() {
+      $scope.stats.life = Math.min($scope.stats.life + 1, $scope.stats.lifeMax);
     }
   };
 

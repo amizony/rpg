@@ -89,7 +89,7 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
      */
     init: function(mapData, charPosition) {
       // init rendering
-      $scope.renderer = PIXI.autoDetectRenderer(800, 608, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
+      $scope.renderer = PIXI.autoDetectRenderer(800, 600, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
 
       // init display containers
       $scope.stage = new PIXI.Container();
@@ -128,16 +128,22 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
     mapScroll: function() {
       var dir = [0,0];
 
-      if (($scope.dungeon.position.x === 150) && (GameDraw.getCharPosition()[0] > 16 * 32)) {
-        dir[0] -= 4.6875;
-      } else if (($scope.dungeon.position.x === 0) && (GameDraw.getCharPosition()[0] < 6 * 32)) {
-        dir[0] += 4.6875;
+      // horizontal scrolling
+      // initial position: 160,
+      // after scrolling: -384
+      if (($scope.dungeon.position.x === 160) && (GameDraw.getCharPosition()[0] > 19 * 32)) {
+        dir[0] -= 17;
+      } else if (($scope.dungeon.position.x === -384) && (GameDraw.getCharPosition()[0] < 18 * 32)) {
+        dir[0] += 17;
       }
 
-      if (($scope.dungeon.position.y === 0) && (GameDraw.getCharPosition()[1] > 12 * 32)) {
-        dir[1] -= 3;
-      } else if (($scope.dungeon.position.y === -96) && (GameDraw.getCharPosition()[1] < 6 * 32)) {
-        dir[1] += 3;
+      // vertical scrolling
+      // initial position: 0,
+      // after scrolling: -416
+      if (($scope.dungeon.position.y === 0) && (GameDraw.getCharPosition()[1] > 15 * 32)) {
+        dir[1] -= 13;
+      } else if (($scope.dungeon.position.y === -416) && (GameDraw.getCharPosition()[1] < 14 * 32)) {
+        dir[1] += 13;
       }
       if ((dir[0] !== 0) || (dir[1] !== 0)) {
         moveMap(dir);
