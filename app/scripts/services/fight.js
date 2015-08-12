@@ -7,7 +7,7 @@
  * Turn-based fight engine.
  */
 
-angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", function (CharServ, AdversariesDB) {
+angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "InterfaceDraw", function (CharServ, AdversariesDB, InterfaceDraw) {
 
   var $scope = {};
 
@@ -134,6 +134,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       // fight ends if the monster dies
       console.log("--------  end fight  --------");
       console.log("you killed the monster");
+      renderRound();
       return true;
     }
 
@@ -170,12 +171,22 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       // fight ends if the player dies
       console.log("--------  end fight  --------");
       console.log("you were killed");
+      renderRound();
       return false;
     }
 
     console.log("your life: " + $scope.player.stats.life + "/" + $scope.player.stats.lifeMax + "   your mana: " + $scope.player.stats.mana + "/" + $scope.player.stats.manaMax);
     console.log("mob's life: " + $scope.mob.life + "/" + $scope.mob.lifeMax);
+
+    renderRound();
     return fightRound();
+  }
+
+  /**
+   * Send the information to display into the combat log.
+   */
+  function renderRound() {
+    InterfaceDraw.renderFight($scope.messages, [$scope.player.stats, $scope.mob]);
   }
 
 
@@ -187,6 +198,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       $scope.player = CharServ.getAllDatas();
       $scope.mob = AdversariesDB.getStats();
 
+      InterfaceDraw.openCombatLog($scope.player, $scope.mob);
+
       var victory = fightRound();
 
       if (victory) {
@@ -194,6 +207,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", fu
       } else {
         CharServ.die();
       }
+      InterfaceDraw.closeCombatLog($scope.messages);
     }
   };
 

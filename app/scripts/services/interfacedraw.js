@@ -29,7 +29,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       {name: "Inventory", open: inventoryMenu},
       {name: "Spells",    open: spellsMenu},
       {name: "Quests",    open: questsMenu},
-      {name: "Help",      open: combatLog}
+      {name: "Help",      open: helpMenu}
     ];
 
     $scope.menuItems = [];
@@ -200,7 +200,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Draw the content of the help page.
    */
   function helpMenu() {
-    createText("Help", [20, 10]);
+    $scope.menuTitle = createText("Help", [20, 10]);
   }
 
   function combatLog() {
@@ -294,5 +294,34 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
       return $scope.interface;
     },
+
+    /**
+     * Open the combat log window and initialise it.
+     *
+     * @param {hash} player: datas relative to the player - only life and mana are useful yet.
+     * @param {hash} mob: datas relative to the mob - only life and level are useful yet.
+     */
+    openCombatLog: function(player, mob) {
+
+    },
+
+    /**
+     * Display the action of a fight round.
+     *
+     * @param {array} meaages: array of strings describing all action that hapend
+     * @param {array} damages: life lost this round by each fighter, as [damagesToPlayer, damagesToMob].
+     */
+    renderFight: function(messages, damages) {
+
+    },
+
+    /**
+     * Display the outcome of the fight (rewards or death), ad then close the combat log.
+     *
+     * @param {array} messages: array of string to display.
+     */
+    closeCombatLog: function(messages) {
+
+    }
   };
 }]);
