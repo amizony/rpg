@@ -75,13 +75,15 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         button.texture = $scope.texture.button;
       })
       .on("click", function() {
-        if (!$scope.menuWindow.renderable || $scope.menuTitle._text !== obj.name) {
-          $scope.menuWindow.renderable = true;
-          destroyMenu();
-          obj.open();
-        } else {
-          $scope.menuWindow.renderable = false;
-          destroyMenu();
+        if (_.isUndefined($scope.menuTitle) || $scope.menuTitle._text.slice(0, 5) !== "Mario") {
+          if (!$scope.menuWindow.renderable || $scope.menuTitle._text !== obj.name) {
+            $scope.menuWindow.renderable = true;
+            destroyMenu();
+            obj.open();
+          } else {
+            $scope.menuWindow.renderable = false;
+            destroyMenu();
+          }
         }
       });
 
@@ -100,6 +102,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    */
   function destroyMenu() {
     $scope.activeMenu.removeChildren();
+    $scope.menuTitle = undefined;
   }
 
   /**
@@ -203,6 +206,12 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuTitle = createText("Help", [20, 10]);
   }
 
+  /**
+   * Draw the title, the two fighters and their life.
+   *
+   * @param {hash} player: stats relative to the player - only life and mana are useful yet.
+   * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
+   */
   function drawFighters(player, mob) {
     $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + mob.level + ")", [30, 10]);
     var style = {};
@@ -328,6 +337,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       createText("Fight Ended ", [200, 330]);
       window.setTimeout(function() {
         $scope.menuWindow.renderable = false;
+        destroyMenu();
       }, 2000);
     }
   };
