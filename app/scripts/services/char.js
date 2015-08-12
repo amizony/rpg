@@ -197,18 +197,19 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     /**
      * When the life reaches 0 the character dies. A Resurection Stone allows to continue,
      * else a new game is started.
+     *
+     * @return {string} message to display in the combat log.
      */
     die: function() {
       if ($scope.inventory["Resurection Stone"].quantity > 0) {
         $scope.inventory["Resurection Stone"].quantity -= 1;
         $scope.stats.life = $scope.stats.lifeMax;
-        console.log("The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"].quantity + " left).");
+        return ["The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"].quantity + " left)."];
       } else {
-        console.log("No Resurection Stones left - Game Over.");
-        console.log("New game started");
         var temp = $scope.position;
         this.create();
         $scope.position = temp;
+        return ["No Resurection Stones left - Game Over.", "New Game started"];
       }
     },
 

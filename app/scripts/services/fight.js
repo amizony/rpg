@@ -80,11 +80,11 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
    */
   function gainReward() {
     var exp = $scope.mob.xpReward;
-    console.log("You got " + exp + " XP!");
+    $scope.messages.push("You got " + exp + " XP!");
     CharServ.getXP(exp);
 
     if (_.random(7) === 0) {
-      console.log("You gain a Resurection Stone.");
+      $scope.messages.push("You gain a Resurection Stone.");
       CharServ.gainItem("Resurection Stone");
     }
   }
@@ -96,12 +96,11 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
    * @return {boolean} true if the player won the fight, false otherwise.
    */
   function fightRound() {
-    console.log("-------- fight round --------");
     // regain 1 mana pro round
     CharServ.manaRegen();
 
+    $scope.messages = [];
 
-    $scope.messages = ["", "OK " + _.random(5)];
     // player actions
 
     // attack roll
@@ -109,33 +108,32 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
     if (isCriticalSuccess(playerAtt, $scope.player.weapon.critical[0])) {
       // critical success hits automatically with improved damages
-      console.log("You landed a critical hit!");
+      $scope.messages.push("You landed a critical hit!");
       var playerCritDmg = (rollDamages($scope.player.weapon.damages) + $scope.player.attribute.strength) * $scope.player.weapon.critical[1];
-      console.log("you do: " + playerCritDmg + " damages");
+      $scope.messages.push("you do: " + playerCritDmg + " damages");
       $scope.mob.life -= playerCritDmg;
 
     } else if (isCriticalFailure(playerAtt)) {
       // critical failure misses always and cause bad outcome
-      console.log("You slip and wound yourself.");
-      console.log("you recieve: " + 2 + " damages");
+      $scope.messages.push("You slip and wound yourself.");
+      $scope.messages.push("you recieve: " + 2 + " damages");
       $scope.player.stats.life -= 2;
 
     } else {
       playerAtt += $scope.player.stats.hitBonus;
-      console.log("player att: " + playerAtt + "    vs def: " + $scope.mob.defence);
+      $scope.messages.push("player att: " + playerAtt + "    vs def: " + $scope.mob.defence);
 
       if (isSuccess(playerAtt, $scope.mob.defence)) {
         // do some damages if the attack hit
         var playerDmg = rollDamages($scope.player.weapon.damages) + $scope.player.attribute.strength;
-        console.log("you do: " + playerDmg + " damages");
+        $scope.messages.push("you do: " + playerDmg + " damages");
         $scope.mob.life -= playerDmg;
       }
     }
 
     if ($scope.mob.life < 1) {
       // fight ends if the monster dies
-      console.log("--------  end fight  --------");
-      console.log("you killed the monster");
+      $scope.messages.push("you killed the monster");
       renderRound();
       return true;
     }
@@ -146,40 +144,35 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
     var mobAtt = actionRoll();
     if (isCriticalSuccess(mobAtt)) {
       // critical hits automatically
-      console.log("You recieve a critical hit!");
+      $scope.messages.push("You recieve a critical hit!");
       var mobCritDmg = rollDamages($scope.mob.damages) * 2;
-      console.log("you recieve: " + mobCritDmg + " damages");
+      $scope.messages.push("you recieve: " + mobCritDmg + " damages");
       $scope.player.stats.life -= mobCritDmg;
 
     } else if (isCriticalFailure(mobAtt)) {
       // critical failure misses always and cause bad outcome
-      console.log("The monster wounds himself.");
-      console.log("He recieve: " + 2 + " damages");
+      $scope.messages.push("The monster wounds himself.");
+      $scope.messages.push("He recieve: " + 2 + " damages");
       $scope.mob.life -= 2;
 
     } else {
       mobAtt += $scope.mob.hitBonus;
-      console.log("mob att: " + mobAtt + "    vs def: " + $scope.player.stats.defence);
+      $scope.messages.push("mob att: " + mobAtt + "    vs def: " + $scope.player.stats.defence);
 
       if (isSuccess(mobAtt, $scope.player.stats.defence)) {
         // do some damages if the attack hit
         var mobDmg = rollDamages($scope.mob.damages) + 2;
-        console.log("you recieve: " + mobDmg + " damages");
+        $scope.messages.push("you recieve: " + mobDmg + " damages");
         $scope.player.stats.life -= mobDmg;
       }
     }
 
     if ($scope.player.stats.life < 1) {
       // fight ends if the player dies
-      console.log("--------  end fight  --------");
-      console.log("you were killed");
+      $scope.messages.push("you were killed");
       renderRound();
       return false;
     }
-
-    console.log("your life: " + $scope.player.stats.life + "/" + $scope.player.stats.lifeMax + "   your mana: " + $scope.player.stats.mana + "/" + $scope.player.stats.manaMax);
-    console.log("mob's life: " + $scope.mob.life + "/" + $scope.mob.lifeMax);
-
     renderRound();
     return fightRound();
   }
@@ -215,11 +208,13 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
       var victory = fightRound();
 
+      $scope.messages = [];
       if (victory) {
         gainReward();
       } else {
-        CharServ.die();
+        $scope.messages = CharServ.die();
       }
+      $scope.messages.push("");
       window.setTimeout(function() {
         InterfaceDraw.closeCombatLog($scope.messages, $scope.mob);
       }, $scope.roundNumber * 1000);

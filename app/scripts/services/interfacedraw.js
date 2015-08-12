@@ -334,7 +334,13 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     closeCombatLog: function(messages, mob) {
       destroyMenu();
       $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + mob.level + ")", [30, 10]);
+
+      var i = 20;
       createText("Fight Ended ", [200, 330]);
+      _.forIn(messages, function(value) {
+        createText(value, [40, 360 + i], {font: 'bold 16px Arial'});
+        i += 20;
+      });
       window.setTimeout(function() {
         $scope.menuWindow.renderable = false;
         destroyMenu();
