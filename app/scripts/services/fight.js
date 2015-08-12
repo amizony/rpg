@@ -100,6 +100,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
     // regain 1 mana pro round
     CharServ.manaRegen();
 
+
+    $scope.messages = ["", "OK " + _.random(5)];
     // player actions
 
     // attack roll
@@ -184,9 +186,19 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
   /**
    * Send the information to display into the combat log.
+   * Each round is displayed with a 1 second interval.
    */
   function renderRound() {
-    InterfaceDraw.renderFight($scope.messages, [$scope.player.stats, $scope.mob]);
+    var roundNumberTemp = $scope.roundNumber;
+    var messagesTemp = $scope.messages;
+    var playerTemp = {};
+    var mobTemp = {};
+    playerTemp = _.extend(playerTemp, $scope.player.stats);
+    mobTemp = _.extend(mobTemp, $scope.mob);
+    window.setTimeout(function() {
+      InterfaceDraw.renderFight(messagesTemp, playerTemp, mobTemp, roundNumberTemp);
+    }, $scope.roundNumber * 1000);
+    $scope.roundNumber += 1;
   }
 
 
@@ -198,7 +210,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       $scope.player = CharServ.getAllDatas();
       $scope.mob = AdversariesDB.getStats();
 
-      InterfaceDraw.openCombatLog($scope.player, $scope.mob);
+      InterfaceDraw.openCombatLog($scope.player.stats, $scope.mob);
+      $scope.roundNumber = 1;
 
       var victory = fightRound();
 
@@ -207,7 +220,9 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       } else {
         CharServ.die();
       }
-      InterfaceDraw.closeCombatLog($scope.messages);
+      window.setTimeout(function() {
+        InterfaceDraw.closeCombatLog($scope.messages, $scope.mob);
+      }, $scope.roundNumber * 1000);
     }
   };
 

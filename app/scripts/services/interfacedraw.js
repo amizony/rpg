@@ -203,8 +203,8 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuTitle = createText("Help", [20, 10]);
   }
 
-  function combatLog() {
-    $scope.menuTitle = createText("Mario   -- VS --   Monster (level 3)", [30, 10]);
+  function drawFighters(player, mob) {
+    $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + mob.level + ")", [30, 10]);
     var style = {};
 
     var mario = new PIXI.Sprite($scope.texture.char);
@@ -212,28 +212,14 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     mario.position.x = 80;
     mario.position.y = 70;
     $scope.activeMenu.addChild(mario);
-    createText("life  4 / 7", [80, 250], style);
-    createText("mana  3 / 3", [80, 280], style);
+    createText("life " + player.life + " / " + player.lifeMax, [80, 250], style);
+    createText("mana " + player.mana + " / " + player.manaMax, [80, 280], style);
 
     var hydre = new PIXI.Sprite($scope.texture.monster);
     hydre.position.x = 340;
     hydre.position.y = 70;
     $scope.activeMenu.addChild(hydre);
-    createText("life  12 / 12", [360, 250], style);
-
-    var actions = [
-      "You attack and miss (8 vs 11).",
-      "The monster attack and hit you (16 vs 13).",
-      "You recieve 3 damages",
-      ""
-    ];
-
-    var i = 20;
-    createText("Fight Round #", [200, 330]);
-    _.forIn(actions, function(value) {
-      createText(value, [40, 360 + i], {font: 'bold 16px Arial'});
-      i += 20;
-    });
+    createText("life " + mob.life + " / " + mob.lifeMax, [360, 250], style);
   }
 
   /**
@@ -298,30 +284,51 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     /**
      * Open the combat log window and initialise it.
      *
-     * @param {hash} player: datas relative to the player - only life and mana are useful yet.
-     * @param {hash} mob: datas relative to the mob - only life and level are useful yet.
+     * @param {hash} player: stats relative to the player - only life and mana are useful yet.
+     * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
      */
     openCombatLog: function(player, mob) {
-
+      destroyMenu();
+      $scope.menuWindow.renderable = true;
+      drawFighters(player, mob);
     },
 
     /**
      * Display the action of a fight round.
      *
-     * @param {array} meaages: array of strings describing all action that hapend
-     * @param {array} damages: life lost this round by each fighter, as [damagesToPlayer, damagesToMob].
+     * @param {array} messages: array of strings describing all action that hapend
+     * @param {hash} player: stats relative to the player - only life and mana are useful yet.
+     * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
+     * @param {integer} round: number of the current round.
      */
-    renderFight: function(messages, damages) {
-
+    renderFight: function(messages, player, mob, round) {
+      destroyMenu();
+      drawFighters(player, mob);
+      var style = {};
+      var i = 20;
+      createText("Fight Round " + round, [200, 330]);
+      _.forIn(messages, function(value) {
+        createText(value, [40, 360 + i], {font: 'bold 16px Arial'});
+        i += 20;
+      });
+      $scope.playerLifeText = createText("life " + player.life + " / " + player.lifeMax, [80, 250], style);
+      $scope.playerManaText = createText("mana " + player.mana + " / " + player.manaMax, [80, 280], style);
+      $scope.mobLifeText = createText("life " + mob.life + " / " + mob.lifeMax, [360, 250], style);
     },
 
     /**
-     * Display the outcome of the fight (rewards or death), ad then close the combat log.
+     * Display the outcome of the fight (rewards or death), and then close the combat log.
      *
      * @param {array} messages: array of string to display.
+     * @param {hash} mob: stats relative to the mob - only level is useful yet.
      */
-    closeCombatLog: function(messages) {
-
+    closeCombatLog: function(messages, mob) {
+      destroyMenu();
+      $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + mob.level + ")", [30, 10]);
+      createText("Fight Ended ", [200, 330]);
+      window.setTimeout(function() {
+        $scope.menuWindow.renderable = false;
+      }, 2000);
     }
   };
 }]);

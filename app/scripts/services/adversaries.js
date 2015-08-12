@@ -42,6 +42,7 @@ angular.module("rpgApp").service("AdversariesDB", function () {
    */
   function setStats() {
     $scope.stats = {
+      level: $scope.level,
       xpReward: $scope.level * (100 + 20 * $scope.difficulty),
       lifeMax: $scope.level * (6 + _.random(2) * $scope.difficulty),
       manaMax: $scope.level * (2 + _.random(2) * $scope.difficulty),
