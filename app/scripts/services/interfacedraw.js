@@ -305,7 +305,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     /**
      * Display the action of a fight round.
      *
-     * @param {array} messages: array of strings describing all action that hapend
+     * @param {array} messages: array of strings describing all actions that happended
      * @param {hash} player: stats relative to the player - only life and mana are useful yet.
      * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
      * @param {integer} round: number of the current round.

@@ -116,7 +116,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
     } else if (isCriticalFailure(playerAtt)) {
       // critical failure misses always and cause bad outcome
       $scope.messages.push("You slip and wound yourself.");
-      $scope.messages.push("you recieve: " + 2 + " damages");
+      $scope.messages.push("you receive: " + 2 + " damages");
       $scope.player.stats.life -= 2;
 
     } else {
@@ -144,15 +144,15 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
     var mobAtt = actionRoll();
     if (isCriticalSuccess(mobAtt)) {
       // critical hits automatically
-      $scope.messages.push("You recieve a critical hit!");
+      $scope.messages.push("You receive a critical hit!");
       var mobCritDmg = rollDamages($scope.mob.damages) * 2;
-      $scope.messages.push("you recieve: " + mobCritDmg + " damages");
+      $scope.messages.push("you receive: " + mobCritDmg + " damages");
       $scope.player.stats.life -= mobCritDmg;
 
     } else if (isCriticalFailure(mobAtt)) {
       // critical failure misses always and cause bad outcome
       $scope.messages.push("The monster wounds himself.");
-      $scope.messages.push("He recieve: " + 2 + " damages");
+      $scope.messages.push("He receive: " + 2 + " damages");
       $scope.mob.life -= 2;
 
     } else {
@@ -162,7 +162,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       if (isSuccess(mobAtt, $scope.player.stats.defence)) {
         // do some damages if the attack hit
         var mobDmg = rollDamages($scope.mob.damages) + 2;
-        $scope.messages.push("you recieve: " + mobDmg + " damages");
+        $scope.messages.push("you receive: " + mobDmg + " damages");
         $scope.player.stats.life -= mobDmg;
       }
     }
