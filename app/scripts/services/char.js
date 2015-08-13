@@ -53,8 +53,6 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     $scope.stats.mana = $scope.stats.manaMax;
     $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength; //+ $scope.weapon.enhancement;
     $scope.stats.defence = 10 + $scope.stats.level + $scope.attribute.dexterity; //+ $scope.armor.defence + $scope.armor.enhancement;
-
-    console.log("You gained a level! You are now level " + $scope.stats.level);
   }
 
   return {
@@ -172,12 +170,16 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
     /**
      * @param {integer} exp: experience gained by the player.
+     * @return {string} message to display in the combat log.
      */
     getXP: function(exp) {
+      var message = ["You got " + exp + " XP!"];
       $scope.stats.experience += exp;
       if ($scope.stats.experience >= $scope.stats.level * 1000) {
         levelUP();
+        message.push("You gained a level! You are now level " + $scope.stats.level);
       }
+      return message;
     },
     /**
      * Gaining a new item or increasing the number of one already in inventory.

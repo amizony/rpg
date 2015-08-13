@@ -80,8 +80,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
    */
   function gainReward() {
     var exp = $scope.mob.xpReward;
-    $scope.messages.push("You got " + exp + " XP!");
-    CharServ.getXP(exp);
+    $scope.messages = CharServ.getXP(exp);
 
     if (_.random(7) === 0) {
       $scope.messages.push("You gain a Resurection Stone.");
