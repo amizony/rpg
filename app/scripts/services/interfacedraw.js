@@ -253,6 +253,54 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     return newText;
   }
 
+  var combatLog = {
+    newRound: function(arg) {
+      // clear log
+      // reinit position (for messages)
+    },
+    attack: function(arg) {
+      // animation (for later)
+      // increase position (for messages)
+    },
+    damages: function(arg) {
+      // update life for the right fighter
+      // increase position (for messages)
+    },
+    reward: function(arg) {
+      // .?.
+      // increase position (for messages)
+    },
+    die: function(arg) {
+      // make the fighter's sprite disapear
+      // increase position (for messages)
+    }
+  };
+
+  function computeMessage(messages) {
+    if (messages[0].type !== "End") {
+
+      var position =[0,0];
+      // take some action depending on the type of message
+      combatLog[messages[0].type](messages[0]);
+
+      // display the message in log
+      createText(messages[0].text, position, $scope.style[messages[0].type]);
+
+
+      messages.shift();
+      // wait 0.5s and take care of the next message
+      window.setTimeout(function() {
+        computeMessage(messages);
+      }, 500);
+    } else {
+      // when reaching the end of the fight, close the combat log
+      window.setTimeout(function() {
+        $scope.overlayWindow.renderable = false;
+        destroyMenu();
+      }, 1000);
+    }
+  }
+
 
 
   return {
@@ -272,7 +320,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       $scope.leftPanel = new PIXI.Graphics();
       $scope.interface.addChild($scope.leftPanel);
 
-      //init textures
+      // init textures
       $scope.texture = {
         button: PIXI.Texture.fromImage("images/button.png"),
         buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
@@ -281,6 +329,12 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
         monster: PIXI.Texture.fromImage("images/Typhon_Monster.png"),
         empty: PIXI.Texture.fromImage("images/empty.png")
+      };
+
+      // init styles for messages in the combat log
+      $scope.style = {
+        newRound: {},
+        reward: {}
       };
 
       createMenu();
@@ -310,40 +364,10 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      */
     renderFight: function(messages) {
       console.log(messages);
-      destroyMenu();
-      drawFighters(player, mob);
-      var style = {};
-      var i = 20;
-      createText("Fight Round " + round, [200, 330]);
-      _.forIn(messages, function(value) {
-        createText(value, [40, 360 + i], {font: 'bold 16px Arial'});
-        i += 20;
-      });
-      $scope.playerLifeText = createText("life " + player.life + " / " + player.lifeMax, [80, 250], style);
-      $scope.playerManaText = createText("mana " + player.mana + " / " + player.manaMax, [80, 280], style);
-      $scope.mobLifeText = createText("life " + mob.life + " / " + mob.lifeMax, [360, 250], style);
-    },
 
-    /**
-     * Display the outcome of the fight (rewards or death), and then close the combat log.
-     *
-     * @param {array} messages: array of string to display.
-     * @param {hash} mob: stats relative to the mob - only level is useful yet.
-     */
-    closeCombatLog: function(messages, mob) {
-      destroyMenu();
-      $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + mob.level + ")", [30, 10]);
+      // call the recursive function displaying all the messages
+      computeMessage(messages);
 
-      var i = 20;
-      createText("Fight Ended ", [200, 330]);
-      _.forIn(messages, function(value) {
-        createText(value, [40, 360 + i], {font: 'bold 16px Arial'});
-        i += 20;
-      });
-      window.setTimeout(function() {
-        $scope.overlayWindow.renderable = false;
-        destroyMenu();
-      }, 2000);
     }
   };
 }]);

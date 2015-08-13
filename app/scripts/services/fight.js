@@ -83,7 +83,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
     _.forIn(message, function(value) {
       $scope.messages.push({
         text: value,
-        type: ""
+        type: "reward"
       });
     });
 
@@ -91,7 +91,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       CharServ.gainItem("Resurection Stone");
       $scope.messages.push({
         text: "You gain a Resurection Stone.",
-        type: ""
+        type: "reward"
       });
     }
   }
@@ -126,12 +126,12 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
       $scope.messages.push({
         text: "You attack: " + playerAtt + "   -- CRITICAL HIT!",
-        type: ""
+        type: "attack"
       });
 
       $scope.messages.push({
         text: "You hit the enemy and inflict " + playerCritDmg + " damages.",
-        type: "",
+        type: "playerDmg",
         dmg: playerCritDmg
       });
 
@@ -266,7 +266,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       $scope.player = CharServ.getAllDatas();
       $scope.mob = AdversariesDB.getStats();
 
-      InterfaceDraw.openCombatLog($scope.player.stats, $scope.mob);
+      InterfaceDraw.openCombatLog(_.extend({}, $scope.player.stats), _.extend({}, $scope.mob));
       $scope.roundNumber = 0;
       $scope.messages = [];
 
@@ -292,6 +292,10 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
         });
       }
 
+      $scope.messages.push({
+        text: "",
+        type: "End"
+      });
       InterfaceDraw.renderFight($scope.messages);
     }
   };
