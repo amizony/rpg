@@ -21,7 +21,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuList.lineStyle(2, 0x0000FF, 1);
     $scope.menuList.beginFill(0xFF0000);
     $scope.menuList.drawRect(0, 0, 160, 600);
-    $scope.menuList.drawRect(160, 512, 650, 100);
+    //$scope.menuList.drawRect(160, 512, 650, 100);
     $scope.menuList.endFill();
 
     var buttons = [

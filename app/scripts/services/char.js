@@ -19,10 +19,10 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
    */
   function randPos() {
     var posX = _.random(0,37);
-    var posY = _.random(0,29);
+    var posY = _.random(0,35);
     while (MapServ.isWall([posX, posY])) {
       posX = _.random(0,37);
-      posY = _.random(0,29);
+      posY = _.random(0,35);
     }
     return [posX, posY];
   }

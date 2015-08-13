@@ -140,10 +140,10 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
       // vertical scrolling
       // initial position: 0,
       // after scrolling: -416
-      if (($scope.dungeon.position.y === 0) && (GameDraw.getCharPosition()[1] > 15 * 32)) {
-        dir[1] -= 13;
-      } else if (($scope.dungeon.position.y === -416) && (GameDraw.getCharPosition()[1] < 14 * 32)) {
-        dir[1] += 13;
+      if (($scope.dungeon.position.y === 0) && (GameDraw.getCharPosition()[1] > 18 * 32)) {
+        dir[1] -= 16;
+      } else if (($scope.dungeon.position.y === -512) && (GameDraw.getCharPosition()[1] < 17 * 32)) {
+        dir[1] += 16;
       }
       if ((dir[0] !== 0) || (dir[1] !== 0)) {
         moveMap(dir);

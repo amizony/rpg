@@ -76,7 +76,7 @@ angular.module("rpgApp").service("GameDraw", function () {
     $scope.boss.anchor.set(0.5);
     $scope.boss.scale.set(0.05);
     $scope.boss.position.x = 18 * 32 + 16;
-    $scope.boss.position.y = 14 * 32 + 16;
+    $scope.boss.position.y = 17 * 32 + 16;
     $scope.dungeon.addChild($scope.boss);
   }
 

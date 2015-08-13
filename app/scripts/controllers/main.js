@@ -55,7 +55,7 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
         PixiServ.mapScroll();
       })
       .then(function() {
-        if ((CharServ.getPosition()[0] === 18) && (CharServ.getPosition()[1] === 14)) {
+        if ((CharServ.getPosition()[0] === 18) && (CharServ.getPosition()[1] === 17)) {
           AdversariesDB.setBoss(CharServ.getAllDatas().stats.level);
           FightEngine.fight();
         } else {
