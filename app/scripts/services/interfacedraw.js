@@ -308,7 +308,8 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
      * @param {integer} round: number of the current round.
      */
-    renderFight: function(messages, player, mob, round) {
+    renderFight: function(messages) {
+      console.log(messages);
       destroyMenu();
       drawFighters(player, mob);
       var style = {};

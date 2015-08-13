@@ -79,12 +79,20 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
    * XP is always awarded and a random item may be awarded.
    */
   function gainReward() {
-    var exp = $scope.mob.xpReward;
-    $scope.messages = CharServ.getXP(exp);
+    var message = CharServ.getXP($scope.mob.xpReward);
+    _.forIn(message, function(value) {
+      $scope.messages.push({
+        text: value,
+        type: ""
+      });
+    });
 
     if (_.random(7) === 0) {
-      $scope.messages.push("You gain a Resurection Stone.");
       CharServ.gainItem("Resurection Stone");
+      $scope.messages.push({
+        text: "You gain a Resurection Stone.",
+        type: ""
+      });
     }
   }
 
@@ -95,10 +103,15 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
    * @return {boolean} true if the player won the fight, false otherwise.
    */
   function fightRound() {
+    $scope.roundNumber += 1;
+    $scope.messages.push({
+      text: "Round " + $scope.roundNumber,
+      type: "newRound"
+    });
+
     // regain 1 mana pro round
     CharServ.manaRegen();
 
-    $scope.messages = [];
 
     // player actions
 
@@ -107,33 +120,67 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
     if (isCriticalSuccess(playerAtt, $scope.player.weapon.critical[0])) {
       // critical success hits automatically with improved damages
-      $scope.messages.push("You landed a critical hit!");
+      playerAtt += $scope.player.stats.hitBonus;
       var playerCritDmg = (rollDamages($scope.player.weapon.damages) + $scope.player.attribute.strength) * $scope.player.weapon.critical[1];
-      $scope.messages.push("you do: " + playerCritDmg + " damages");
       $scope.mob.life -= playerCritDmg;
+
+      $scope.messages.push({
+        text: "You attack: " + playerAtt + "   -- CRITICAL HIT!",
+        type: ""
+      });
+
+      $scope.messages.push({
+        text: "You hit the enemy and inflict " + playerCritDmg + " damages.",
+        type: "",
+        dmg: playerCritDmg
+      });
 
     } else if (isCriticalFailure(playerAtt)) {
       // critical failure misses always and cause bad outcome
-      $scope.messages.push("You slip and wound yourself.");
-      $scope.messages.push("you receive: " + 2 + " damages");
+      playerAtt += $scope.player.stats.hitBonus;
       $scope.player.stats.life -= 2;
 
+      $scope.messages.push({
+        text: "You attack: " + playerAtt + "   -- CRITICAL FAILURE!",
+        type: ""
+      });
+
+      $scope.messages.push({
+        text: "You hit yourself for " + 2 + " damages.",
+        type: "",
+        dmg: 2
+      });
     } else {
       playerAtt += $scope.player.stats.hitBonus;
-      $scope.messages.push("player att: " + playerAtt + "    vs def: " + $scope.mob.defence);
 
       if (isSuccess(playerAtt, $scope.mob.defence)) {
         // do some damages if the attack hit
         var playerDmg = rollDamages($scope.player.weapon.damages) + $scope.player.attribute.strength;
-        $scope.messages.push("you do: " + playerDmg + " damages");
         $scope.mob.life -= playerDmg;
+        $scope.messages.push({
+          text: "You attack: " + playerAtt + "    vs enemy defence: " + $scope.mob.defence + " -- Hit",
+          type: ""
+        });
+
+        $scope.messages.push({
+          text: "You hit the enemy and inflict " + playerDmg + " damages.",
+          type: "",
+          dmg: playerDmg
+        });
+      } else {
+        $scope.messages.push({
+          text: "You attack: " + playerAtt + "    vs enemy defence: " + $scope.mob.defence + " -- Miss",
+          type: ""
+        });
       }
     }
 
     if ($scope.mob.life < 1) {
       // fight ends if the monster dies
-      $scope.messages.push("you killed the monster");
-      renderRound();
+      $scope.messages.push({
+        text: "The enemy dies.",
+        type: ""
+      });
       return true;
     }
 
@@ -143,54 +190,71 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
     var mobAtt = actionRoll();
     if (isCriticalSuccess(mobAtt)) {
       // critical hits automatically
-      $scope.messages.push("You receive a critical hit!");
+      mobAtt += $scope.mob.hitBonus;
       var mobCritDmg = rollDamages($scope.mob.damages) * 2;
-      $scope.messages.push("you receive: " + mobCritDmg + " damages");
       $scope.player.stats.life -= mobCritDmg;
+
+      $scope.messages.push({
+        text: "The enemy attacks: " + mobAtt + "   -- CRITICAL HIT!",
+        type: ""
+      });
+
+      $scope.messages.push({
+        text: "You are hit and receive " + mobCritDmg + " damages.",
+        type: "",
+        dmg: mobCritDmg
+      });
 
     } else if (isCriticalFailure(mobAtt)) {
       // critical failure misses always and cause bad outcome
-      $scope.messages.push("The monster wounds himself.");
-      $scope.messages.push("He receive: " + 2 + " damages");
+      mobAtt += $scope.mob.hitBonus;
       $scope.mob.life -= 2;
 
+      $scope.messages.push({
+        text: "The enemy attacks: " + mobAtt + "   -- CRITICAL FAILURE!",
+        type: ""
+      });
+
+      $scope.messages.push({
+        text: "The enemy wounds himself for " + 2 + " damages.",
+        type: "",
+        dmg: 2
+      });
     } else {
       mobAtt += $scope.mob.hitBonus;
-      $scope.messages.push("mob att: " + mobAtt + "    vs def: " + $scope.player.stats.defence);
 
       if (isSuccess(mobAtt, $scope.player.stats.defence)) {
         // do some damages if the attack hit
         var mobDmg = rollDamages($scope.mob.damages) + 2;
-        $scope.messages.push("you receive: " + mobDmg + " damages");
         $scope.player.stats.life -= mobDmg;
+
+        $scope.messages.push({
+          text: "The enemy attacks: " + mobAtt + "    vs your defence: " + $scope.player.stats.defence + " -- Hit",
+          type: ""
+        });
+
+        $scope.messages.push({
+          text: "You are hit and receive " + mobDmg + " damages.",
+          type: "",
+          dmg: mobDmg
+        });
+      } else {
+        $scope.messages.push({
+          text: "The enemy attacks: " + mobAtt + "    vs your defence: " + $scope.player.stats.defence + " -- Miss",
+          type: ""
+        });
       }
     }
 
     if ($scope.player.stats.life < 1) {
       // fight ends if the player dies
-      $scope.messages.push("you were killed");
-      renderRound();
+      $scope.messages.push({
+        text: "You fall to the ground, critically wounded.",
+        type: ""
+      });
       return false;
     }
-    renderRound();
     return fightRound();
-  }
-
-  /**
-   * Send the information to display into the combat log.
-   * Each round is displayed with a 1 second interval.
-   */
-  function renderRound() {
-    var roundNumberTemp = $scope.roundNumber;
-    var messagesTemp = $scope.messages;
-    var playerTemp = {};
-    var mobTemp = {};
-    playerTemp = _.extend(playerTemp, $scope.player.stats);
-    mobTemp = _.extend(mobTemp, $scope.mob);
-    window.setTimeout(function() {
-      InterfaceDraw.renderFight(messagesTemp, playerTemp, mobTemp, roundNumberTemp);
-    }, $scope.roundNumber * 1000);
-    $scope.roundNumber += 1;
   }
 
 
@@ -203,20 +267,32 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       $scope.mob = AdversariesDB.getStats();
 
       InterfaceDraw.openCombatLog($scope.player.stats, $scope.mob);
-      $scope.roundNumber = 1;
+      $scope.roundNumber = 0;
+      $scope.messages = [];
 
       var victory = fightRound();
 
-      $scope.messages = [];
       if (victory) {
+        $scope.messages.push({
+          text: "Victory!",
+          type: "newRound"
+        });
         gainReward();
       } else {
-        $scope.messages = CharServ.die();
+        $scope.messages.push({
+          text: "Defeat!",
+          type: "newRound"
+        });
+        var message = CharServ.die();
+        _.forIn(message, function(value) {
+          $scope.messages.push({
+            text: value,
+            type: ""
+          });
+        });
       }
-      $scope.messages.push("");
-      window.setTimeout(function() {
-        InterfaceDraw.closeCombatLog($scope.messages, $scope.mob);
-      }, $scope.roundNumber * 1000);
+
+      InterfaceDraw.renderFight($scope.messages);
     }
   };
 
