@@ -18,11 +18,8 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Draw the menu and the buttons.
    */
   function createMenu() {
-    $scope.menuList.lineStyle(2, 0x0000FF, 1);
-    $scope.menuList.beginFill(0xFF0000);
-    $scope.menuList.drawRect(0, 0, 160, 600);
-    //$scope.menuList.drawRect(160, 512, 650, 100);
-    $scope.menuList.endFill();
+    $scope.leftPanelBackground = new PIXI.Sprite($scope.texture.leftPanelBackground);
+    $scope.leftPanel.addChild($scope.leftPanelBackground);
 
     var buttons = [
       {name: "Character", open: characterMenu},
@@ -36,24 +33,22 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     for (var i = 0; i < buttons.length; i++) {
       $scope.menuItems.push(createMenuItem(buttons[i]));
       $scope.menuItems[i].position.y = 10 + i*55;
-      $scope.menuList.addChild($scope.menuItems[i]);
+      $scope.leftPanel.addChild($scope.menuItems[i]);
     }
 
-    $scope.menuWindow = new PIXI.Container();
-    $scope.menuWindow.position.x = 160;
-    $scope.menuWindow.renderable = false;
-    $scope.interface.addChild($scope.menuWindow);
+    $scope.overlayWindow = new PIXI.Container();
+    $scope.overlayWindow.position.x = 160;
+    $scope.overlayWindow.renderable = false;
+    $scope.interface.addChild($scope.overlayWindow);
 
-    $scope.menuBackground = new PIXI.Sprite($scope.texture.menuBackground);
-    $scope.menuWindow.addChild($scope.menuBackground);
-    $scope.activeMenu = new PIXI.Container();
-    $scope.menuWindow.addChild($scope.activeMenu);
+    $scope.overlayBackground = new PIXI.Sprite($scope.texture.overlayBackground);
+    $scope.overlayWindow.addChild($scope.overlayBackground);
   }
 
   /**
    * Draw an interactive button;
    * when clicked, it opens the corresponding menu.
-   * The menus are all drawn in the same container (activeMenu).
+   * The menus are all drawn in the same container (overlayWindow).
    *
    * @param {hash} name: the button's name,
    *               open: the function drawing the contnt of the menu when he is open
@@ -76,12 +71,12 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       })
       .on("click", function() {
         if (_.isUndefined($scope.menuTitle) || $scope.menuTitle._text.slice(0, 5) !== "Mario") {
-          if (!$scope.menuWindow.renderable || $scope.menuTitle._text !== obj.name) {
-            $scope.menuWindow.renderable = true;
+          if (!$scope.overlayWindow.renderable || $scope.menuTitle._text !== obj.name) {
+            $scope.overlayWindow.renderable = true;
             destroyMenu();
             obj.open();
           } else {
-            $scope.menuWindow.renderable = false;
+            $scope.overlayWindow.renderable = false;
             destroyMenu();
           }
         }
@@ -101,8 +96,10 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Clear the content of the menu in order to draw a new one.
    */
   function destroyMenu() {
-    $scope.activeMenu.removeChildren();
+    $scope.overlayWindow.removeChildren();
     $scope.menuTitle = undefined;
+    $scope.overlayBackground = new PIXI.Sprite($scope.texture.overlayBackground);
+    $scope.overlayWindow.addChild($scope.overlayBackground);
   }
 
   /**
@@ -120,7 +117,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     char.position.x = 30;
     char.position.y = 150;
     char.scale.set(0.4);
-    $scope.activeMenu.addChild(char);
+    $scope.overlayWindow.addChild(char);
 
     // stats
     createText("Level " + datas.stats.level + "  (" + datas.stats.experience + " / " + datas.stats.level * 1000 + ")", [350, 100], style);
@@ -175,7 +172,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
               console.log("You use an item, but nothing is happening (not implemented).");
             });
           createText("- " + value.quantity + " " + key, [40, 50 + i], style);
-          $scope.activeMenu.addChild(clickable);
+          $scope.overlayWindow.addChild(clickable);
 
         } else {
           createText("- " + value.quantity + " " + key, [40, 50 + i], style);
@@ -220,14 +217,14 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     mario.scale.set(0.28);
     mario.position.x = 80;
     mario.position.y = 70;
-    $scope.activeMenu.addChild(mario);
+    $scope.overlayWindow.addChild(mario);
     createText("life " + player.life + " / " + player.lifeMax, [80, 250], style);
     createText("mana " + player.mana + " / " + player.manaMax, [80, 280], style);
 
     var hydre = new PIXI.Sprite($scope.texture.monster);
     hydre.position.x = 340;
     hydre.position.y = 70;
-    $scope.activeMenu.addChild(hydre);
+    $scope.overlayWindow.addChild(hydre);
     createText("life " + mob.life + " / " + mob.lifeMax, [360, 250], style);
   }
 
@@ -235,7 +232,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Display a Pixi Text in the active menu window.
    *
    * @param {string} text: the text we want to display.
-   * @param {array} position: the location inside $scope.activeMenu to display it, as [x, y].
+   * @param {array} position: the location inside the overlayWindow to display it, as [x, y].
    * @param {hash} style: [optional] a particular style to apply to the text.
    * @return {Pixi.Text} the Text we create.
    */
@@ -251,7 +248,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     var newText = new PIXI.Text(text, style);
     newText.position.x = position[0];
     newText.position.y = position[1];
-    $scope.activeMenu.addChild(newText);
+    $scope.overlayWindow.addChild(newText);
 
     return newText;
   }
@@ -272,14 +269,15 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     init: function() {
       $scope.interface = new PIXI.Container();
 
-      $scope.menuList = new PIXI.Graphics();
-      $scope.interface.addChild($scope.menuList);
+      $scope.leftPanel = new PIXI.Graphics();
+      $scope.interface.addChild($scope.leftPanel);
 
       //init textures
       $scope.texture = {
         button: PIXI.Texture.fromImage("images/button.png"),
         buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
-        menuBackground: PIXI.Texture.fromImage("images/menubackground.png"),
+        overlayBackground: PIXI.Texture.fromImage("images/menubackground.png"),
+        leftPanelBackground: PIXI.Texture.fromImage("images/leftbackground.png"),
         char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
         monster: PIXI.Texture.fromImage("images/Typhon_Monster.png"),
         empty: PIXI.Texture.fromImage("images/empty.png")
@@ -298,7 +296,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      */
     openCombatLog: function(player, mob) {
       destroyMenu();
-      $scope.menuWindow.renderable = true;
+      $scope.overlayWindow.renderable = true;
       drawFighters(player, mob);
     },
 
@@ -342,7 +340,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         i += 20;
       });
       window.setTimeout(function() {
-        $scope.menuWindow.renderable = false;
+        $scope.overlayWindow.renderable = false;
         destroyMenu();
       }, 2000);
     }
