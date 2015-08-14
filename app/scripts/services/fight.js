@@ -97,7 +97,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
   }
 
   /**
-   * Recursive function computing all actions of one round.
+   * Recursive function computing all actions of one round, and compiling in
+   * $scope.messages for the rendering in the combatLog.
    * The fight ends when the life of someone reaches 0.
    *
    * @return {boolean} true if the player won the fight, false otherwise.
@@ -261,6 +262,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
   return {
     /**
      * Launch the fight and take action depending on the outcome.
+     * And then initiate the rendering of the fight.
      */
     fight: function() {
       $scope.player = CharServ.getAllDatas();
@@ -296,6 +298,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
         text: "",
         type: "End"
       });
+
+
       InterfaceDraw.renderFight($scope.messages);
     }
   };

@@ -254,6 +254,12 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
   }
 
   var combatLog = {
+    /**
+     * Refresh the display for a new round.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use}
+     */
     newRound: function(message) {
       destroyMenu();
       drawFighters();
@@ -261,12 +267,25 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       createText(message.text, $scope.position, $scope.style[message.type]);
       $scope.position[1] += 20;
     },
+
+    /**
+     * Display the message for an attack, and maybe adding an animation later
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use}
+     */
     attack: function(message) {
-      // animation (for later)
       $scope.position[0] = 40;
       $scope.position[1] += 30;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
+    /**
+     * Display the message when the player takes damages and update his life.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use
+     *                            dmg: damages taken}
+     */
     damagesToPlayer: function(message) {
       $scope.player.life -= message.dmg;
       $scope.playerLife.renderable = false;
@@ -274,6 +293,14 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
+
+    /**
+     * Display the message when the mob takes damages and update his life.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use
+     *                            dmg: damages taken}
+     */
     damagesToMob: function(message) {
       $scope.mob.life -= message.dmg;
       $scope.mobLife.renderable = false;
@@ -281,12 +308,26 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
+
+    /**
+     * Display the message when the player is awarded XP or an item.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use
+     *                            dmg: damages taken}
+     */
     reward: function(message) {
-      // .?.
       $scope.position[0] = 40;
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
+
+    /**
+     * Display the message when the player dies and remove his sprite.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use}
+     */
     playerDeath: function(message) {
       $scope.playerSprite.renderable = false;
       $scope.playerLife.renderable = false;
@@ -294,12 +335,26 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
+
+    /**
+     * Display the message when the mob dies and remove his sprite.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use}
+     */
     mobDeath: function(message) {
       $scope.mobSprite.renderable = false;
       $scope.mobLife.renderable = false;
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
+
+    /**
+     * Display the Defeat or victory message at the end of the fight.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use}
+     */
     endFight: function(message) {
       $scope.position[0] = 200;
       $scope.position[1] += 40;
@@ -308,26 +363,32 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     }
   };
 
+  /**
+   * Recursive function to display all messages with the appropriate method.
+   * Display the messages with a 1 second interval, and close the combat log
+   * at the end of all the messages.
+   *
+   * @param {array} messages: array of hashs describing all actions that happended, as:
+   *                         {text: message to display,
+   *                          type: method (and style) to use to display it,
+   *                          dmg: [optional] damages done during the action}
+   */
   function computeMessage(messages) {
     if (messages[0].type !== "End") {
-
-      // take some action depending on the type of message
       combatLog[messages[0].type](messages[0]);
 
       messages.shift();
-      // wait 1s and take care of the next message
       window.setTimeout(function() {
         computeMessage(messages);
       }, 1000);
+
     } else {
-      // when reaching the end of the fight, close the combat log
       window.setTimeout(function() {
         $scope.overlayWindow.renderable = false;
         destroyMenu();
       }, 1500);
     }
   }
-
 
 
   return {
@@ -405,19 +466,15 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     },
 
     /**
-     * Display the action of a fight round.
+     * call the recursive function displaying all the messages
      *
-     * @param {array} messages: array of strings describing all actions that happended
-     * @param {hash} player: stats relative to the player - only life and mana are useful yet.
-     * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
-     * @param {integer} round: number of the current round.
+     * @param {array} messages: array of hashs describing all actions that happended, as:
+     *                         {text: message to display,
+     *                          type: method (and style) to use to display it,
+     *                          dmg: [optional] damages done during the action}
      */
     renderFight: function(messages) {
-      console.log(messages);
-
-      // call the recursive function displaying all the messages
       computeMessage(messages);
-
     }
   };
 }]);
