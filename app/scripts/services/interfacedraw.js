@@ -23,15 +23,15 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
     var buttons = [
       {name: "Character", open: characterMenu},
+      {name: "Equipment", open: equipmentMenu},
       {name: "Inventory", open: inventoryMenu},
       {name: "Spells",    open: spellsMenu},
-      {name: "Quests",    open: questsMenu},
       {name: "Help",      open: helpMenu}
     ];
 
     $scope.menuItems = [];
     for (var i = 0; i < buttons.length; i++) {
-      $scope.menuItems.push(createMenuItem(buttons[i]));
+      $scope.menuItems.push(createMenuButton(buttons[i]));
       $scope.menuItems[i].position.y = 10 + i*55;
       $scope.leftPanel.addChild($scope.menuItems[i]);
     }
@@ -46,7 +46,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
   }
 
   /**
-   * Draw an interactive button;
+   * Draw an interactive button,
    * when clicked, it opens the corresponding menu.
    * The menus are all drawn in the same container (overlayWindow).
    *
@@ -54,7 +54,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    *               open: the function drawing the contnt of the menu when he is open
    * @return {pixi.container} the button we just create.
    */
-  function createMenuItem(obj) {
+  function createMenuButton(obj) {
     var item = new PIXI.Container();
     var button = new PIXI.Sprite($scope.texture.button);
     button.scale.set(0.70);
@@ -144,42 +144,48 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuTitle = createText("Inventory", [20, 10]);
 
     var datas = CharServ.getAllDatas();
-    var style = {};
 
     var i = 30;
     _.forIn(datas.inventory, function(value, key) {
       if (value.quantity > 0) {
-        if (value.usable) {
-          var clickable = new PIXI.Container();
-          var button = new PIXI.Sprite($scope.texture.empty);
-          clickable.addChild(button);
-          clickable.position.x = 45;
-          clickable.position.y = 50 + i;
-          clickable.buttonMode = true;
-          clickable.interactive = true;
-
-          var textHover = createText("Click to use item", [350, 50 + i], style);
-          textHover.renderable = false;
-
-          clickable
-            .on("mouseover", function() {
-              textHover.renderable = true;
-            })
-            .on("mouseout", function() {
-              textHover. renderable = false;
-            })
-            .on("click", function() {
-              console.log("You use an item, but nothing is happening (not implemented).");
-            });
-          createText("- " + value.quantity + " " + key, [40, 50 + i], style);
-          $scope.overlayWindow.addChild(clickable);
-
-        } else {
-          createText("- " + value.quantity + " " + key, [40, 50 + i], style);
-        }
+        createItem(key, value.quantity, value.usable, i);
         i += 30;
       }
     });
+  }
+
+  function createItem(name, quantity, usable, position) {
+    var style = {};
+
+    var clickable = new PIXI.Container();
+    var button = new PIXI.Sprite($scope.texture.empty);
+    clickable.addChild(button);
+    clickable.position.x = 45;
+    clickable.position.y = 50 + position;
+    clickable.buttonMode = true;
+    clickable.interactive = true;
+
+    var textHover;
+
+    if (usable) {
+      textHover = createText("Click to use item", [350, 50 + position], {});
+      clickable.on("click", function() {
+        console.log("You use an item, but nothing is happening (not implemented).");
+      });
+    } else {
+      textHover = createText("Not usable", [350, 50 + position], {});
+    }
+    textHover.renderable = false;
+      clickable
+        .on("mouseover", function() {
+          textHover.renderable = true;
+        })
+        .on("mouseout", function() {
+          textHover. renderable = false;
+        });
+
+      createText("- " + quantity + " " + name, [40, 50 + position], style);
+      $scope.overlayWindow.addChild(clickable);
   }
 
   /**
@@ -187,13 +193,14 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    */
   function spellsMenu() {
     $scope.menuTitle = createText("Spells", [20, 10]);
+    createText("Not yet implemented", [50, 80], {});
   }
 
   /**
    * Draw the content of the quests page.
    */
-  function questsMenu() {
-    $scope.menuTitle = createText("Quests", [20, 10]);
+  function equipmentMenu() {
+    $scope.menuTitle = createText("Equipment", [20, 10]);
   }
 
   /**
@@ -201,6 +208,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    */
   function helpMenu() {
     $scope.menuTitle = createText("Help", [20, 10]);
+    createText("Sorry you can't count on anyone's help for now", [50, 80], {font: 'bold 20px Arial'});
   }
 
   /**
@@ -279,6 +287,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       $scope.position[1] += 30;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
+
     /**
      * Display the message when the player takes damages and update his life.
      *
