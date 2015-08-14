@@ -209,23 +209,23 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * @param {hash} player: stats relative to the player - only life and mana are useful yet.
    * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
    */
-  function drawFighters(player, mob) {
-    $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + mob.level + ")", [30, 10]);
-    var style = {};
+  function drawFighters() {
+    $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.level + ")", [30, 10]);
 
-    var mario = new PIXI.Sprite($scope.texture.char);
-    mario.scale.set(0.28);
-    mario.position.x = 80;
-    mario.position.y = 70;
-    $scope.overlayWindow.addChild(mario);
-    createText("life " + player.life + " / " + player.lifeMax, [80, 250], style);
-    createText("mana " + player.mana + " / " + player.manaMax, [80, 280], style);
+    $scope.playerSprite = new PIXI.Sprite($scope.texture.char);
+    $scope.playerSprite.scale.set(0.28);
+    $scope.playerSprite.position.x = 80;
+    $scope.playerSprite.position.y = 70;
+    $scope.overlayWindow.addChild($scope.playerSprite);
 
-    var hydre = new PIXI.Sprite($scope.texture.monster);
-    hydre.position.x = 340;
-    hydre.position.y = 70;
-    $scope.overlayWindow.addChild(hydre);
-    createText("life " + mob.life + " / " + mob.lifeMax, [360, 250], style);
+    $scope.playerLife = createText("life " + $scope.player.life + " / " + $scope.player.lifeMax, [80, 250], $scope.style.playerLife);
+    $scope.playerMana = createText("mana " + $scope.player.mana + " / " + $scope.player.manaMax, [80, 280], $scope.style.playerMana);
+
+    $scope.mobSprite = new PIXI.Sprite($scope.texture.monster);
+    $scope.mobSprite.position.x = 340;
+    $scope.mobSprite.position.y = 70;
+    $scope.overlayWindow.addChild($scope.mobSprite);
+    $scope.mobLife = createText("life " + $scope.mob.life + " / " + $scope.mob.lifeMax, [360, 250], $scope.style.mobLife);
   }
 
   /**
@@ -254,50 +254,77 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
   }
 
   var combatLog = {
-    newRound: function(arg) {
-      // clear log
-      // reinit position (for messages)
+    newRound: function(message) {
+      destroyMenu();
+      drawFighters();
+      $scope.position = [200, 330];
+      createText(message.text, $scope.position, $scope.style[message.type]);
+      $scope.position[1] += 20;
     },
-    attack: function(arg) {
+    attack: function(message) {
       // animation (for later)
-      // increase position (for messages)
+      $scope.position[0] = 40;
+      $scope.position[1] += 30;
+      createText(message.text, $scope.position, $scope.style[message.type]);
     },
-    damages: function(arg) {
-      // update life for the right fighter
-      // increase position (for messages)
+    damagesToPlayer: function(message) {
+      $scope.player.life -= message.dmg;
+      $scope.playerLife.renderable = false;
+      $scope.playerLife = createText("life " + $scope.player.life + " / " + $scope.player.lifeMax, [80, 250], $scope.style.playerLife);
+      $scope.position[1] += 20;
+      createText(message.text, $scope.position, $scope.style[message.type]);
     },
-    reward: function(arg) {
+    damagesToMob: function(message) {
+      $scope.mob.life -= message.dmg;
+      $scope.mobLife.renderable = false;
+      $scope.mobLife = createText("life " + $scope.mob.life + " / " + $scope.mob.lifeMax, [360, 250], $scope.style.mobLife);
+      $scope.position[1] += 20;
+      createText(message.text, $scope.position, $scope.style[message.type]);
+    },
+    reward: function(message) {
       // .?.
-      // increase position (for messages)
+      $scope.position[0] = 40;
+      $scope.position[1] += 20;
+      createText(message.text, $scope.position, $scope.style[message.type]);
     },
-    die: function(arg) {
-      // make the fighter's sprite disapear
-      // increase position (for messages)
+    playerDeath: function(message) {
+      $scope.playerSprite.renderable = false;
+      $scope.playerLife.renderable = false;
+      $scope.playerMana.renderable = false;
+      $scope.position[1] += 20;
+      createText(message.text, $scope.position, $scope.style[message.type]);
+    },
+    mobDeath: function(message) {
+      $scope.mobSprite.renderable = false;
+      $scope.mobLife.renderable = false;
+      $scope.position[1] += 20;
+      createText(message.text, $scope.position, $scope.style[message.type]);
+    },
+    endFight: function(message) {
+      $scope.position[0] = 200;
+      $scope.position[1] += 40;
+      createText(message.text, $scope.position, $scope.style[message.type]);
+      $scope.position[1] += 30;
     }
   };
 
   function computeMessage(messages) {
     if (messages[0].type !== "End") {
 
-      var position =[0,0];
       // take some action depending on the type of message
       combatLog[messages[0].type](messages[0]);
 
-      // display the message in log
-      createText(messages[0].text, position, $scope.style[messages[0].type]);
-
-
       messages.shift();
-      // wait 0.5s and take care of the next message
+      // wait 1s and take care of the next message
       window.setTimeout(function() {
         computeMessage(messages);
-      }, 500);
+      }, 1000);
     } else {
       // when reaching the end of the fight, close the combat log
       window.setTimeout(function() {
         $scope.overlayWindow.renderable = false;
         destroyMenu();
-      }, 1000);
+      }, 1500);
     }
   }
 
@@ -333,8 +360,27 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
       // init styles for messages in the combat log
       $scope.style = {
-        newRound: {},
-        reward: {}
+        newRound: {
+          font : 'bold italic 36px Arial',
+          fill : '#F7EDCA',
+          stroke : '#4a1850',
+          strokeThickness : 5
+        },
+        endFight: {
+          font : 'bold italic 36px Arial',
+          fill : '#F7EDCA',
+          stroke : '#4a1850',
+          strokeThickness : 5
+        },
+        reward: {font: 'bold 16px Arial'},
+        playerLife: {font: 'bold 30px Arial'},
+        playerMana: {font: 'bold 30px Arial'},
+        mobLife: {font: 'bold 30px Arial'},
+        damagesToMob: {font: 'bold 16px Arial'},
+        damagesToPlayer: {font: 'bold 16px Arial'},
+        playerDeath: {font: 'bold 16px Arial'},
+        mobDeath: {font: 'bold 16px Arial'},
+        attack: {font: 'bold 16px Arial'}
       };
 
       createMenu();
@@ -351,7 +397,11 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     openCombatLog: function(player, mob) {
       destroyMenu();
       $scope.overlayWindow.renderable = true;
-      drawFighters(player, mob);
+
+      $scope.player = player;
+      $scope.mob = mob;
+
+      drawFighters();
     },
 
     /**

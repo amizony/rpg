@@ -131,7 +131,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
       $scope.messages.push({
         text: "You hit the enemy and inflict " + playerCritDmg + " damages.",
-        type: "playerDmg",
+        type: "damagesToMob",
         dmg: playerCritDmg
       });
 
@@ -142,12 +142,12 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
       $scope.messages.push({
         text: "You attack: " + playerAtt + "   -- CRITICAL FAILURE!",
-        type: ""
+        type: "attack"
       });
 
       $scope.messages.push({
         text: "You hit yourself for " + 2 + " damages.",
-        type: "",
+        type: "damagesToPlayer",
         dmg: 2
       });
     } else {
@@ -159,18 +159,18 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
         $scope.mob.life -= playerDmg;
         $scope.messages.push({
           text: "You attack: " + playerAtt + "    vs enemy defence: " + $scope.mob.defence + " -- Hit",
-          type: ""
+          type: "attack"
         });
 
         $scope.messages.push({
           text: "You hit the enemy and inflict " + playerDmg + " damages.",
-          type: "",
+          type: "damagesToMob",
           dmg: playerDmg
         });
       } else {
         $scope.messages.push({
           text: "You attack: " + playerAtt + "    vs enemy defence: " + $scope.mob.defence + " -- Miss",
-          type: ""
+          type: "attack"
         });
       }
     }
@@ -179,7 +179,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       // fight ends if the monster dies
       $scope.messages.push({
         text: "The enemy dies.",
-        type: ""
+        type: "mobDeath"
       });
       return true;
     }
@@ -196,12 +196,12 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
       $scope.messages.push({
         text: "The enemy attacks: " + mobAtt + "   -- CRITICAL HIT!",
-        type: ""
+        type: "attack"
       });
 
       $scope.messages.push({
         text: "You are hit and receive " + mobCritDmg + " damages.",
-        type: "",
+        type: "damagesToPlayer",
         dmg: mobCritDmg
       });
 
@@ -212,12 +212,12 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
       $scope.messages.push({
         text: "The enemy attacks: " + mobAtt + "   -- CRITICAL FAILURE!",
-        type: ""
+        type: "attack"
       });
 
       $scope.messages.push({
         text: "The enemy wounds himself for " + 2 + " damages.",
-        type: "",
+        type: "damagesToMob",
         dmg: 2
       });
     } else {
@@ -230,18 +230,18 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
         $scope.messages.push({
           text: "The enemy attacks: " + mobAtt + "    vs your defence: " + $scope.player.stats.defence + " -- Hit",
-          type: ""
+          type: "attack"
         });
 
         $scope.messages.push({
           text: "You are hit and receive " + mobDmg + " damages.",
-          type: "",
+          type: "damagesToPlayer",
           dmg: mobDmg
         });
       } else {
         $scope.messages.push({
           text: "The enemy attacks: " + mobAtt + "    vs your defence: " + $scope.player.stats.defence + " -- Miss",
-          type: ""
+          type: "attack"
         });
       }
     }
@@ -250,7 +250,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       // fight ends if the player dies
       $scope.messages.push({
         text: "You fall to the ground, critically wounded.",
-        type: ""
+        type: "playerDeath"
       });
       return false;
     }
@@ -275,19 +275,19 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       if (victory) {
         $scope.messages.push({
           text: "Victory!",
-          type: "newRound"
+          type: "endFight"
         });
         gainReward();
       } else {
         $scope.messages.push({
           text: "Defeat!",
-          type: "newRound"
+          type: "endFight"
         });
         var message = CharServ.die();
         _.forIn(message, function(value) {
           $scope.messages.push({
             text: value,
-            type: ""
+            type: "reward"
           });
         });
       }
