@@ -77,7 +77,43 @@ angular.module("rpgApp").service("ItemsDB", function () {
     }
   };
 
-  var armors = {};
+  var armors = {
+    1: {
+      name: "Padded Armor",
+      defence: 1
+    },
+    2: {
+      name: "Leather Armor",
+      defence: 2
+    },
+    3: {
+      name: "Hide Armor",
+      defence: 3
+    },
+    4: {
+      name: "Scale Mail",
+      defence: 4
+    },
+    5: {
+      name: "Chain Mail",
+      defence: 5
+    },
+    6: {
+      name: "Splint Mail",
+      defence: 6
+    },
+    7: {
+      name: "Half Plate",
+      defence: 7
+    },
+    8: {
+      name: "Full Plate",
+      defence: 8
+    },
+  };
+
+
+
   var potions = {};
   var rares = {};
 
@@ -96,11 +132,32 @@ angular.module("rpgApp").service("ItemsDB", function () {
    *
    * @param {string} damages: damages possibilities of weapon, as 'integer'd'integer' (1d8 , 3d12, 6d4)
    *                          the first integer is the number of dices and the second the dices' faces' number.
-   * @return {string} the new damages for the weapon
+   * @return {string} the new damages for the weapon.
    */
   function increaseDamages(damages) {
     var diceNumber = _.slice(damages, 0, 1) + 1;
     return diceNumber + _.slice(damages, 1);
+  }
+
+  /**
+   * Reduce the defence provided by an armor.
+   * Half and full plate decreased by 2, the others by 1.
+   *
+   * @param {integer} defence: protection provided by one armor.
+   * @return {integer} the new defence for the armor.
+   */
+  function wornArmor(defence) {
+    return _.floor(defence * 0.85);
+  }
+
+  /**
+   * Increase the defence provided by an armor.
+   *
+   * @param {integer} defence: protection provided by one armor.
+   * @return {integer} the new defence for the armor.
+   */
+  function goodArmor(defence) {
+    return defence + 1;
   }
 
   return {
@@ -108,7 +165,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random weapon from the list with some improvments to give to the player.
      */
     randomWeapon: function() {
-      var weapon = weapons[_.random(weapon.length)];
+      var weapon = weapons[_.random(weapon.length - 1)];
 
       if (_.random(3) === 0) {
         weapon.critical[0] = sharpen(weapon.critical[0]);
@@ -123,7 +180,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
       // enhancement between 0 and 3
       weapon.enhancement = _.max([_.floor(_.random(13) / 3) - 1, 0]);
       if (weapon.enhancement > 0) {
-        weapon.name += " + " + weapon.enhancement
+        weapon.name += " + " + weapon.enhancement;
       }
 
       return weapon;
@@ -133,7 +190,23 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random armor from the list to give the player.
      */
     randomArmor: function() {
+      var armor = armors[_.random(armors.length - 1)];
 
+      if (_.random(3) === 0) {
+        armor.defence = wornArmor(armor.defence);
+        armor.name = "Worn" + armor.name;
+      } else if (_.random(3) === 0) {
+        armor.defence = goodArmor(armor.defence);
+        armor.name += " of good quality";
+      }
+
+      // enhancement between 0 and 3
+      armor.enhancement = _.max([_.floor(_.random(13) / 3) - 1, 0]);
+      if (armor.enhancement > 0) {
+        armor.name += " + " + armor.enhancement;
+      }
+
+      return armor;
     },
 
     /**
