@@ -207,15 +207,13 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     // draw weapon
     createText("Weapon", [220, 80]);
     createText("[image]", [80, 180]);
+    createText(datas.weapon.name, [330, 150], {});
     if (datas.weapon.enhancement === 0) {
-      createText(datas.weapon.name, [330, 150], {});
       createText("damages: " + datas.weapon.damages, [330, 180], {});
-      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [330,210], {});
     } else {
-      createText(datas.weapon.name + " + " + datas.weapon.enhancement, [350, 150], {});
       createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [350, 180], {});
-      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [350,210], {});
     }
+    createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [350,210], {});
 
     // draw armor
     createText("Armor", [220, 340]);
