@@ -42,6 +42,7 @@ angular.module("rpgApp").service("AdversariesDB", function () {
    */
   function setStats() {
     $scope.stats = {
+      level: $scope.level,
       xpReward: $scope.level * (100 + 20 * $scope.difficulty),
       lifeMax: $scope.level * (6 + _.random(2) * $scope.difficulty),
       manaMax: $scope.level * (2 + _.random(2) * $scope.difficulty),
@@ -70,7 +71,6 @@ angular.module("rpgApp").service("AdversariesDB", function () {
       setStats();
 
       console.log("");
-      console.log("");
       console.log("You encounter a level " + $scope.level + " monster with difficulty " + $scope.difficulty + ".");
     },
 
@@ -85,7 +85,6 @@ angular.module("rpgApp").service("AdversariesDB", function () {
       setStats();
       $scope.stats.damages = "2d8";
 
-      console.log("");
       console.log("");
       console.log("You encounter a boss (level " + $scope.level + ", difficulty " + $scope.difficulty + ")");
     }

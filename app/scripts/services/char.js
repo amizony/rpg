@@ -18,12 +18,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
    * @return {array} position of hero, as [x,y].
    */
   function randPos() {
-    var posX = _.random(0,37);
-    var posY = _.random(0,29);
-    while (MapServ.isWall([posX, posY])) {
+    var posX, posY;
+    do {
       posX = _.random(0,37);
-      posY = _.random(0,29);
-    }
+      posY = _.random(0,35);
+    } while (MapServ.isWall([posX, posY]));
     return [posX, posY];
   }
 
@@ -54,8 +53,6 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     $scope.stats.mana = $scope.stats.manaMax;
     $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength; //+ $scope.weapon.enhancement;
     $scope.stats.defence = 10 + $scope.stats.level + $scope.attribute.dexterity; //+ $scope.armor.defence + $scope.armor.enhancement;
-
-    console.log("You gained a level! You are now level " + $scope.stats.level);
   }
 
   return {
@@ -117,7 +114,14 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       };
 
       $scope.inventory = {
-        "Resurection Stone": 3
+        "Resurection Stone": {
+          quantity: 3,
+          usable: false
+        },
+        "Life Potion": {
+          quantity: 5,
+          usable: true
+        }
       };
 
       $scope.quests = {};
@@ -166,41 +170,47 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
     /**
      * @param {integer} exp: experience gained by the player.
+     * @return {string} message to display in the combat log.
      */
     getXP: function(exp) {
+      var message = ["You got " + exp + " XP!"];
       $scope.stats.experience += exp;
       if ($scope.stats.experience >= $scope.stats.level * 1000) {
         levelUP();
+        message.push("You gained a level! You are now level " + $scope.stats.level);
       }
+      return message;
     },
     /**
-     * Gaining a new item or increasing the number of on already in inventory.
+     * Gaining a new item or increasing the number of one already in inventory.
      *
      * @param {string} name: the item to add to the inventory.
      */
     gainItem: function(name) {
       if (_.isUndefined($scope.inventory[name])) {
-        $scope.inventory[name] = 1;
+        $scope.inventory[name].quantity = 1;
+        $scope.inventory[name].usable = false; // will require an item DB
       } else {
-        $scope.inventory[name] += 1;
+        $scope.inventory[name].quantity += 1;
       }
     },
 
     /**
      * When the life reaches 0 the character dies. A Resurection Stone allows to continue,
      * else a new game is started.
+     *
+     * @return {string} message to display in the combat log.
      */
     die: function() {
-      if ($scope.inventory["Resurection Stone"] > 0) {
-        $scope.inventory["Resurection Stone"] -= 1;
+      if ($scope.inventory["Resurection Stone"].quantity > 0) {
+        $scope.inventory["Resurection Stone"].quantity -= 1;
         $scope.stats.life = $scope.stats.lifeMax;
-        console.log("The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"] + " left).");
+        return ["The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"].quantity + " left)."];
       } else {
-        console.log("No Resurection Stones left - Game Over.");
-        console.log("New game started");
         var temp = $scope.position;
         this.create();
         $scope.position = temp;
+        return ["No Resurection Stones left - Game Over.", "New Game started"];
       }
     },
 
