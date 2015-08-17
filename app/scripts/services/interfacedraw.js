@@ -197,10 +197,36 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
   }
 
   /**
-   * Draw the content of the quests page.
+   * Draw the equiped objects of the character.
    */
   function equipmentMenu() {
     $scope.menuTitle = createText("Equipment", [20, 10]);
+
+    var datas = CharServ.getAllDatas();
+
+    // draw weapon
+    createText("Weapon", [220, 80]);
+    createText("[image]", [80, 180]);
+    if (datas.weapon.enhancement === 0) {
+      createText(datas.weapon.name, [330, 150], {});
+      createText("damages: " + datas.weapon.damages, [330, 180], {});
+      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [330,210], {});
+    } else {
+      createText(datas.weapon.name + " + " + datas.weapon.enhancement, [350, 150], {});
+      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [350, 180], {});
+      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [350,210], {});
+    }
+
+    // draw armor
+    createText("Armor", [220, 340]);
+    createText("[image]", [80, 410]);
+    if (datas.armor.enhancement === 0) {
+      createText(datas.armor.name, [330, 410], {});
+      createText("armor: " + datas.armor.defence, [330, 440], {});
+    } else {
+      createText(datas.armor.name, [330, 410], {});
+      createText("armor: " + datas.armor.defence, [330, 440], {});
+    }
   }
 
   /**
