@@ -38,11 +38,10 @@ function Fighter(fighter) {
   var _target = null;
 
   var options = {
-    difficulty: _target.stats.defence,
     bonus: self.stats.defence,
     criticalThreshold: self.weapon.critical[0]
   };
-  var diceRoll = new DiceRoller(options);
+  var diceRoll;
 
   return {
     get target() {
@@ -51,6 +50,8 @@ function Fighter(fighter) {
 
     set target(target) {
       _target = target;
+      options.difficulty = target.stats.defence;
+      diceRoll = new DiceRoller(options);
     },
 
     attack: function() {
