@@ -7,7 +7,7 @@
  * Turn-based fight engine.
  */
 
-angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "InterfaceDraw", function (CharServ, AdversariesDB, InterfaceDraw) {
+angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", "InterfaceDraw", function (CharServ, AdversariesServ, InterfaceDraw) {
 
   var $scope = {};
 
@@ -78,13 +78,13 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
    * Give a reward to the player when he wins a fight.
    * XP is always awarded and a random item may be awarded.
    */
-  function gainReward() {
-    var messages = CharServ.getXP($scope.mob.xpReward);
+  function gainReward(mob) {
+    var messages = CharServ.getXP(mob.stats.xpReward);
     addMessages(messages, "reward");
 
     if (_.random(7) === 0) {
       CharServ.gainItem("Resurection Stone");
-      addMessages("You gain a Resurection Stone.", "reward");
+      addMessages(["You gain a Resurection Stone."], "reward");
     }
   }
 
@@ -109,7 +109,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
     var playerDamages, mobDamages;
 
     $scope.roundNumber += 1;
-    addMessages("Round " + $scope.roundNumber, "newRound");
+    addMessages(["Round " + $scope.roundNumber], "newRound");
 
     // regain 1 mana pro round
     CharServ.manaRegen();
@@ -121,8 +121,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       playerDamages = (fighters.player.rollDamages() + fighters.player.attribute.strength) * fighters.player.weapon.critical[1];
       fighters.mob.takeDamages(playerDamages);
 
-      addMessages("You attack: " + playerAtt.roll + "   -- CRITICAL HIT!", "attack");
-      addMessages("You hit the enemy and inflict " + playerDamages + " damages.", "damagesToMob", playerDamages);
+      addMessages(["You attack: " + playerAtt.roll + "   -- CRITICAL HIT!"], "attack");
+      addMessages(["You hit the enemy and inflict " + playerDamages + " damages."], "damagesToMob", playerDamages);
     }
 
     if (playerAtt.result === "criticalFailure") {
@@ -130,8 +130,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       playerDamages = 2;
       fighters.player.takeDamages(playerDamages);
 
-      addMessages("You attack: " + playerAtt.roll + "   -- CRITICAL FAILURE!", "attack");
-      addMessages("You hit yourself for " + 2 + " damages.", "damagesToPlayer", playerDamages);
+      addMessages(["You attack: " + playerAtt.roll + "   -- CRITICAL FAILURE!"], "attack");
+      addMessages(["You hit yourself for " + playerDamages + " damages."], "damagesToPlayer", playerDamages);
     }
 
     if (playerAtt.result === "success") {
@@ -139,24 +139,24 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       playerDamages = fighters.player.rollDamages() + fighters.player.attribute.strength;
       fighters.mob.takeDamages(playerDamages);
 
-      addMessages("You attack: " + playerAtt.roll + "    vs enemy defence: " + fighters.mob.stats.defence + " -- Hit", "attack");
-      addMessages("You hit the enemy and inflict " + playerDamages + " damages.", "damagesToMob", playerDamages);
+      addMessages(["You attack: " + playerAtt.roll + "    vs enemy defence: " + fighters.mob.stats.defence + " -- Hit"], "attack");
+      addMessages(["You hit the enemy and inflict " + playerDamages + " damages."], "damagesToMob", playerDamages);
     }
 
     if (playerAtt.result === "failure") {
       // nothing happens
-      addMessages("You attack: " + playerAtt.roll + "    vs enemy defence: " + fighters.mob.stats.defence + " -- Miss", "attack");
+      addMessages(["You attack: " + playerAtt.roll + "    vs enemy defence: " + fighters.mob.stats.defence + " -- Miss"], "attack");
     }
 
     if (fighters.player.stats.life < 1) {
       // fight ends if the player dies
-      addMessages("You fall to the ground, critically wounded.", "playerDeath");
+      addMessages(["You fall to the ground, critically wounded."], "playerDeath");
       return false;
     }
 
     if (fighters.mob.stats.life < 1) {
       // fight ends if the monster dies
-      addMessages("The enemy dies.", "mobDeath");
+      addMessages(["The enemy dies."], "mobDeath");
       return true;
     }
 
@@ -168,8 +168,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       mobDamages = (fighters.mob.rollDamages() + fighters.mob.attribute.strength) * fighters.mob.weapon.critical[1];
       fighters.player.takeDamages(mobDamages);
 
-      addMessages("The enemy attacks: " + mobAtt.roll + "   -- CRITICAL HIT!", "attack");
-      addMessages("You are hit and receive " + mobDamages + " damages.", "damagesToPlayer", mobDamages);
+      addMessages(["The enemy attacks: " + mobAtt.roll + "   -- CRITICAL HIT!"], "attack");
+      addMessages(["You are hit and receive " + mobDamages + " damages."], "damagesToPlayer", mobDamages);
     }
 
     if (mobAtt.result === "criticalFailure") {
@@ -177,8 +177,8 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       mobDamages = 2;
       fighters.mob.takeDamages(mobDamages);
 
-      addMessages("The enemy attacks: " + mobAtt.roll + "   -- CRITICAL FAILURE!", "attack");
-      addMessages("The enemy wounds himself for " + mobDamages + " damages.", "damagesToMob", mobDamages);
+      addMessages(["The enemy attacks: " + mobAtt.roll + "   -- CRITICAL FAILURE!"], "attack");
+      addMessages(["The enemy wounds himself for " + mobDamages + " damages."], "damagesToMob", mobDamages);
     }
 
     if (mobAtt.result === "success") {
@@ -186,24 +186,24 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
       mobDamages = fighters.mob.rollDamages() + fighters.mob.attribute.strength;
       fighters.player.takeDamages(mobDamages);
 
-      addMessages("The enemy attacks: " + mobAtt.roll + "    vs your defence: " + fighters.player.stats.defence + " -- Hit", "attack");
-      addMessages("You are hit and receive " + mobDamages + " damages.", "damagesToPlayer", mobDamages);
+      addMessages(["The enemy attacks: " + mobAtt.roll + "    vs your defence: " + fighters.player.stats.defence + " -- Hit"], "attack");
+      addMessages(["You are hit and receive " + mobDamages + " damages."], "damagesToPlayer", mobDamages);
     }
 
     if (mobAtt.result === "failure") {
       // nothing happens
-      addMessages("The enemy attacks: " + mobAtt.roll + "    vs your defence: " + fighters.player.stats.defence + " -- Miss", "attack");
+      addMessages(["The enemy attacks: " + mobAtt.roll + "    vs your defence: " + fighters.player.stats.defence + " -- Miss"], "attack");
     }
 
     if (fighters.player.stats.life < 1) {
       // fight ends if the player dies
-      addMessages("You fall to the ground, critically wounded.", "playerDeath");
+      addMessages(["You fall to the ground, critically wounded."], "playerDeath");
       return false;
     }
 
     if (fighters.mob.stats.life < 1) {
       // fight ends if the monster dies
-      addMessages("The enemy dies.", "mobDeath");
+      addMessages(["The enemy dies."], "mobDeath");
       return true;
     }
 
@@ -223,27 +223,28 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesDB", "I
 
       var fighters = {
         player: new Fighter(_.extend({}, CharServ.getAllDatas())),
-        mob: new Fighter(_.extend({}, AdversariesDB.getStats()))
+        mob: new Fighter(_.extend({}, AdversariesServ.getStats()))
       };
 
       fighters.player.target = fighters.mob;
       fighters.mob.target = fighters.player;
 
-      InterfaceDraw.openCombatLog(_.extend({}, CharServ.getAllDatas()), _.extend({}, AdversariesDB.getStats()));
+      InterfaceDraw.openCombatLog(_.extend({}, CharServ.getAllDatas()), _.extend({}, AdversariesServ.getStats()));
 
 
       var victory = fightRound(fighters);
 
       if (victory) {
-        addMessages("Victory!", "endFight");
-        gainReward();
+        addMessages(["Victory!"], "endFight");
+        gainReward(fighters.mob);
       } else {
-        addMessages("Defeat!", "endFight");
+        addMessages(["Defeat!"], "endFight");
         var messages = CharServ.die();
         addMessages(messages, "reward");
       }
 
-      addMessages("", "End");
+      addMessages(["END"], "End");
+      console.log($scope.messages);
 
       InterfaceDraw.renderFight($scope.messages);
     }

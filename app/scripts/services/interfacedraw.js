@@ -244,7 +244,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
    */
   function drawFighters() {
-    $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.level + ")", [30, 10]);
+    $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.stats.level + ")", [30, 10]);
 
     $scope.playerSprite = new PIXI.Sprite($scope.texture.char);
     $scope.playerSprite.scale.set(0.28);
@@ -252,14 +252,14 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.playerSprite.position.y = 70;
     $scope.overlayWindow.addChild($scope.playerSprite);
 
-    $scope.playerLife = createText("life " + $scope.player.life + " / " + $scope.player.lifeMax, [80, 250], $scope.style.playerLife);
-    $scope.playerMana = createText("mana " + $scope.player.mana + " / " + $scope.player.manaMax, [80, 280], $scope.style.playerMana);
+    $scope.playerLife = createText("life " + $scope.player.stats.life + " / " + $scope.player.stats.lifeMax, [80, 250], $scope.style.playerLife);
+    $scope.playerMana = createText("mana " + $scope.player.stats.mana + " / " + $scope.player.stats.manaMax, [80, 280], $scope.style.playerMana);
 
     $scope.mobSprite = new PIXI.Sprite($scope.texture.monster);
     $scope.mobSprite.position.x = 340;
     $scope.mobSprite.position.y = 70;
     $scope.overlayWindow.addChild($scope.mobSprite);
-    $scope.mobLife = createText("life " + $scope.mob.life + " / " + $scope.mob.lifeMax, [360, 250], $scope.style.mobLife);
+    $scope.mobLife = createText("life " + $scope.mob.stats.life + " / " + $scope.mob.stats.lifeMax, [360, 250], $scope.style.mobLife);
   }
 
   /**
@@ -322,9 +322,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *                            dmg: damages taken}
      */
     damagesToPlayer: function(message) {
-      $scope.player.life -= message.dmg;
+      $scope.player.stats.life -= message.dmg;
       $scope.playerLife.renderable = false;
-      $scope.playerLife = createText("life " + $scope.player.life + " / " + $scope.player.lifeMax, [80, 250], $scope.style.playerLife);
+      $scope.playerLife = createText("life " + $scope.player.stats.life + " / " + $scope.player.stats.lifeMax, [80, 250], $scope.style.playerLife);
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },
@@ -337,9 +337,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *                            dmg: damages taken}
      */
     damagesToMob: function(message) {
-      $scope.mob.life -= message.dmg;
+      $scope.mob.stats.life -= message.dmg;
       $scope.mobLife.renderable = false;
-      $scope.mobLife = createText("life " + $scope.mob.life + " / " + $scope.mob.lifeMax, [360, 250], $scope.style.mobLife);
+      $scope.mobLife = createText("life " + $scope.mob.stats.life + " / " + $scope.mob.stats.lifeMax, [360, 250], $scope.style.mobLife);
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
     },

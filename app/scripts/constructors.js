@@ -44,6 +44,10 @@ function Fighter(fighter) {
   var diceRoll;
 
   return {
+    stats: self.stats,
+    weapon: self.weapon,
+    attribute: self.attribute,
+
     get target() {
       return _target;
     },
@@ -60,7 +64,7 @@ function Fighter(fighter) {
 
     rollDamages: function() {
       var nb = self.weapon.damages.slice(0, self.weapon.damages.indexOf("d"));
-      var dice = self.weapon.damages.slice(self.weapondamages.indexOf("d") + 1, self.weapon.damages.length);
+      var dice = self.weapon.damages.slice(self.weapon.damages.indexOf("d") + 1, self.weapon.damages.length);
       var damages = 0;
 
       for (var i = 0; i < nb; i++) {
