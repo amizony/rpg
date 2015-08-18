@@ -175,6 +175,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       }
       return message;
     },
+
     /**
      * Gaining a new item or increasing the number of one already in inventory.
      *
@@ -186,6 +187,33 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         $scope.inventory[name].usable = false; // will require an item DB
       } else {
         $scope.inventory[name].quantity += 1;
+      }
+    },
+
+    /**
+     * Receiving a new weapon, and changing it (if it's a better one).
+     *
+     * @param {hash} armor as: {name: {string}
+     *                          damages: {string}
+     *                          critical: {array} as [range, multiplier],
+     *                          enhancement: {integer} }
+     */
+    gainWeapon: function(weapon) {
+      if (true) {
+        $scope.weapon = weapon;
+      }
+    },
+
+    /**
+     * Receiving a new armor, and changing it if it's a better one.
+     *
+     * @param {hash} armor as: {name: {string}
+     *                          defence: {integer}
+     *                          enhancement: {integer}}
+     */
+    gainArmor: function(armor) {
+      if (armor.defence + armor.enhancement > $scope.armor.defence + $scope.armor.enhancement) {
+        $scope.armor = armor;
       }
     },
 

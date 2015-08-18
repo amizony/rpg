@@ -9,108 +9,108 @@
 
 angular.module("rpgApp").service("ItemsDB", function () {
 
-  var weapons = {
-    1: {
+  var weapons = [
+    {
       name: "dagger",
       damages: "1d4",
       critical: [19, 2]
     },
-    2: {
+    {
       name: "Rapier",
       damages: "1d6",
       critical: [18, 2]
     },
-    3: {
+    {
       name: "Sword",
       damages: "1d8",
       critical: [19, 2]
     },
-    4: {
+    {
       name: "Bastard Sword",
       damages: "1d10",
       critical: [19, 2]
     },
-    5: {
-      name: "Twohanded Sword",
+    {
+      name: "Two-handed Sword",
       damages: "2d6",
       critical: [19, 2]
     },
-    6: {
+    {
       name: "Mace",
       damages: "1d6",
       critical: [20, 2]
     },
-    7: {
+    {
       name: "Warhammer",
       damages: "1d8",
       critical: [20, 3]
     },
-    8: {
+    {
       name: "Heavy Flail",
       damages: "1d10",
       critical: [19, 2]
     },
-    9: {
+    {
       name: "Hand Axe",
       damages: "1d6",
       critical: [20, 3]
     },
-    10: {
+    {
       name: "Battle Axe",
       damages: "1d8",
       critical: [20, 3]
     },
-    11: {
+    {
       name: "Halleberd",
       damages: "1d10",
       critical: [20, 3]
     },
-    12: {
+    {
       name: "Great Axe",
       damages: "1d12",
       critical: [20, 3]
     },
-    13: {
+    {
       name: "Scythe",
       damages: "2d4",
       critical: [20, 4]
     }
-  };
+  ];
 
-  var armors = {
-    1: {
+  var armors = [
+    {
       name: "Padded Armor",
       defence: 1
     },
-    2: {
+    {
       name: "Leather Armor",
       defence: 2
     },
-    3: {
+    {
       name: "Hide Armor",
       defence: 3
     },
-    4: {
+    {
       name: "Scale Mail",
       defence: 4
     },
-    5: {
+    {
       name: "Chain Mail",
       defence: 5
     },
-    6: {
+    {
       name: "Splint Mail",
       defence: 6
     },
-    7: {
+    {
       name: "Half Plate",
       defence: 7
     },
-    8: {
+    {
       name: "Full Plate",
       defence: 8
     },
-  };
+  ];
 
 
 
@@ -165,11 +165,11 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random weapon from the list with some improvments to give to the player.
      */
     randomWeapon: function() {
-      var weapon = weapons[_.random(weapon.length - 1)];
+      var weapon = weapons[_.random(weapons.length - 1)];
 
       if (_.random(3) === 0) {
         weapon.critical[0] = sharpen(weapon.critical[0]);
-        weapon.name = "Sharp" + weapon.name;
+        weapon.name = "Sharp " + weapon.name;
       }
 
       if (_.random(3) === 0) {

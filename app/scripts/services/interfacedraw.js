@@ -51,7 +51,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * The menus are all drawn in the same container (overlayWindow).
    *
    * @param {hash} name: the button's name,
-   *               open: the function drawing the contnt of the menu when he is open
+   *               open: the function drawing the content of the menu when he is open
    * @return {pixi.container} the button we just create.
    */
   function createMenuButton(obj) {
@@ -211,20 +211,16 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     if (datas.weapon.enhancement === 0) {
       createText("damages: " + datas.weapon.damages, [330, 180], {});
     } else {
-      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [350, 180], {});
+      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [330, 180], {});
     }
-    createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [350,210], {});
+    createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [330,210], {});
 
     // draw armor
     createText("Armor", [220, 340]);
     createText("[image]", [80, 410]);
-    if (datas.armor.enhancement === 0) {
-      createText(datas.armor.name, [330, 410], {});
-      createText("armor: " + datas.armor.defence, [330, 440], {});
-    } else {
-      createText(datas.armor.name, [330, 410], {});
-      createText("armor: " + datas.armor.defence, [330, 440], {});
-    }
+    createText(datas.armor.name, [330, 410], {});
+    var def = datas.armor.defence + datas.armor.enhancement;
+    createText("armor: " + def, [330, 440], {});
   }
 
   /**

@@ -7,7 +7,7 @@
  * Turn-based fight engine.
  */
 
-angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", "InterfaceDraw", function (CharServ, AdversariesServ, InterfaceDraw) {
+angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", "InterfaceDraw", "ItemsDB", function (CharServ, AdversariesServ, InterfaceDraw, ItemsDB) {
 
   var $scope = {};
 
@@ -24,6 +24,34 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
     if (_.random(7) === 0) {
       CharServ.gainItem("Resurection Stone");
       addMessages(["You gain a Resurection Stone."], "reward");
+    }
+
+    if (_.random(5) === 0) {
+      var weapon = ItemsDB.randomWeapon();
+      CharServ.gainWeapon(weapon);
+      console.log("New weapon: ", weapon);
+      $scope.messages.push({
+        text: "You find a new Weapon: " + weapon.name,
+        type: "reward"
+      });
+    }
+
+    if (_.random(5) === 0) {
+      var armor = ItemsDB.randomArmor();
+      CharServ.gainArmor(armor);
+      console.log("New armor: ", armor);
+      $scope.messages.push({
+        text: "You find a new Armor: " + armor.name,
+        type: "reward"
+      });
+    }
+
+    if (_.random(7) === 0) {
+      CharServ.gainItem("Resurection Stone");
+      $scope.messages.push({
+        text: "You gain a Resurection Stone.",
+        type: "reward"
+      });
     }
   }
 
@@ -42,7 +70,6 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
         dmg: opt
       });
     });
-  }
 
   /**
    * Recursive function computing all actions of one round, and compiling in
