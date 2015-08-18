@@ -80,7 +80,7 @@ angular.module("rpgApp").service("AdversariesServ", function () {
   return {
     getStats: function() {
       return {
-        stats: $scope.stats,
+        stats: _.extend({}, $scope.stats),
         attribute: $scope.attribute,
         weapon: $scope.weapon,
         armor: $scope.armor,
@@ -99,7 +99,6 @@ angular.module("rpgApp").service("AdversariesServ", function () {
       setDifficulty(charLevel);
       setStats();
 
-      console.log("");
       console.log("You encounter a level " + $scope.level + " monster with difficulty " + $scope.difficulty + ".");
     },
 
@@ -114,7 +113,6 @@ angular.module("rpgApp").service("AdversariesServ", function () {
       setStats();
       $scope.stats.damages = "2d8";
 
-      console.log("");
       console.log("You encounter a boss (level " + $scope.level + ", difficulty " + $scope.difficulty + ")");
     }
   };

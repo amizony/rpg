@@ -143,7 +143,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
     getAllDatas: function() {
       return {
-        stats: $scope.stats,
+        stats: _.extend({}, $scope.stats),
         attribute: $scope.attribute,
         weapon: $scope.weapon,
         armor: $scope.armor,

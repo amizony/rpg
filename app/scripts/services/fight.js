@@ -222,14 +222,14 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
       $scope.messages = [];
 
       var fighters = {
-        player: new Fighter(_.extend({}, CharServ.getAllDatas())),
-        mob: new Fighter(_.extend({}, AdversariesServ.getStats()))
+        player: new Fighter(CharServ.getAllDatas()),
+        mob: new Fighter(AdversariesServ.getStats())
       };
 
       fighters.player.target = fighters.mob;
       fighters.mob.target = fighters.player;
 
-      InterfaceDraw.openCombatLog(_.extend({}, CharServ.getAllDatas()), _.extend({}, AdversariesServ.getStats()));
+      InterfaceDraw.openCombatLog(CharServ.getAllDatas(), AdversariesServ.getStats());
 
 
       var victory = fightRound(fighters);
@@ -237,6 +237,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
       if (victory) {
         addMessages(["Victory!"], "endFight");
         gainReward(fighters.mob);
+        CharServ.takeDamages(CharServ.getAllDatas().stats.life - fighters.player.stats.life);
       } else {
         addMessages(["Defeat!"], "endFight");
         var messages = CharServ.die();
@@ -244,7 +245,6 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
       }
 
       addMessages(["END"], "End");
-      console.log($scope.messages);
 
       InterfaceDraw.renderFight($scope.messages);
     }
