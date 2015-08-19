@@ -30,28 +30,14 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
       var weapon = ItemsDB.randomWeapon();
       CharServ.gainWeapon(weapon);
       console.log("New weapon: ", weapon);
-      $scope.messages.push({
-        text: "You find a new Weapon: " + weapon.name,
-        type: "reward"
-      });
+      addMessages(["You find a new Weapon: " + weapon.name], "reward");
     }
 
     if (_.random(5) === 0) {
       var armor = ItemsDB.randomArmor();
       CharServ.gainArmor(armor);
       console.log("New armor: ", armor);
-      $scope.messages.push({
-        text: "You find a new Armor: " + armor.name,
-        type: "reward"
-      });
-    }
-
-    if (_.random(7) === 0) {
-      CharServ.gainItem("Resurection Stone");
-      $scope.messages.push({
-        text: "You gain a Resurection Stone.",
-        type: "reward"
-      });
+      addMessages(["You find a new Armor: " + armor.name], "reward");
     }
   }
 
@@ -70,6 +56,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
         dmg: opt
       });
     });
+  }
 
   /**
    * Recursive function computing all actions of one round, and compiling in
@@ -210,7 +197,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
 
       if (victory) {
         addMessages(["Victory!"], "endFight");
-        gainReward(fighters.mob);
+        gainReward(fighters.mob.stats.xpReward);
         CharServ.takeDamages(CharServ.getAllDatas().stats.life - fighters.player.stats.life);
       } else {
         addMessages(["Defeat!"], "endFight");
