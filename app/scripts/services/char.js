@@ -193,7 +193,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     },
 
     /**
-     * Receiving a new weapon, and changing it (if it's a better one).
+     * Receiving a new weapon, and changing it if it's a better one.
      *
      * @param {hash} armor as: {name: {string}
      *                          damages: {string}
@@ -201,7 +201,15 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
      *                          enhancement: {integer} }
      */
     gainWeapon: function(weapon) {
-      if (true) {
+      var newNb = weapon.damages.slice(0, weapon.damages.indexOf("d"));
+      var newDice = weapon.damages.slice(weapon.damages.indexOf("d") + 1, weapon.damages.length);
+
+      var nb = $scope.weapon.damages.slice(0, $scope.weapon.damages.indexOf("d"));
+      var dice = $scope.weapon.damages.slice($scope.weapon.damages.indexOf("d") + 1, $scope.weapon.damages.length);
+
+      var betterWeapon = ((newDice+1)*newNb/2 + weapon.enhancement) > ((dice+1)*nb/2 + $scope.weapon.enhancement);
+
+      if (betterWeapon) {
         $scope.weapon = weapon;
         recalculateStats();
       }
