@@ -135,8 +135,8 @@ angular.module("rpgApp").service("ItemsDB", function () {
    * @return {string} the new damages for the weapon.
    */
   function increaseDamages(damages) {
-    var diceNumber = _.slice(damages, 0, 1) + 1;
-    return diceNumber + _.slice(damages, 1);
+    var diceNumber = parseInt(damages.slice(0, 1)) + 1;
+    return diceNumber + damages.slice(1);
   }
 
   /**
@@ -165,7 +165,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random weapon from the list with some improvments to give to the player.
      */
     randomWeapon: function() {
-      var weapon = weapons[_.random(weapons.length - 1)];
+      var weapon = _.extend({}, weapons[_.random(weapons.length - 1)]);
 
       if (_.random(3) === 0) {
         weapon.critical[0] = sharpen(weapon.critical[0]);
@@ -190,7 +190,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random armor from the list to give the player.
      */
     randomArmor: function() {
-      var armor = armors[_.random(armors.length - 1)];
+      var armor = _.extend({}, armors[_.random(armors.length - 1)]);
 
       if (_.random(3) === 0) {
         armor.defence = wornArmor(armor.defence);
