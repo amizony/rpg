@@ -153,8 +153,6 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     },
 
     /**
-     * function not yet used
-     *
      * @param {integer} dmg: damages taken by the player.
      */
     takeDamages: function(dmg) {

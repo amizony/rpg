@@ -12,74 +12,13 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
   var $scope = {};
 
   /**
-   * Calculate the random damages from a weapon done by an attack
-   *
-   * @param {string} weaponDamage: damages possibilities of weapon, as 'integer'd'integer' (1d8 , 3d12, 6d4)
-   *                               the first integer is the number of dices and the second the dices' faces' number.
-   * @return {integer} damages done.
-   */
-  function rollDamages(weaponDamage) {
-    var nb = weaponDamage.slice(0, weaponDamage.indexOf("d"));
-    var dice = weaponDamage.slice(weaponDamage.indexOf("d") + 1, weaponDamage.length);
-    var damages = 0;
-
-    for (var i = 0; i < nb; i++) {
-      damages += _.random(1, dice);
-    }
-
-    return damages;
-  }
-
-  /**
-   * @return {integer} action roll bewteen 1 and 20.
-   */
-  function actionRoll() {
-    return _.random(1,20);
-  }
-
-  /**
-   * Determine if an action is a success or a failure.
-   *
-   * @param {integer} roll: the total attack (attack roll + hit bonuses) of the attacker.
-   * @param {integer} difficulty: the score to beat to be successful.
-   * @return {boolean} true if the action succeed, false otherwise.
-   */
-  function isSuccess(roll, difficulty) {
-    return roll > difficulty;
-  }
-
-  /**
-   * Determine if an action is a critical success.
-   * Happens on a 20 - or lower with some weapons.
-   *
-   * @param {integer} roll: the unmodified action's roll.
-   * @param {integer} criticalRate: [optional] the score to reach for a critical.
-   * @return {boolean} true if the action is a critical success, false otherwise.
-   */
-  function isCriticalSuccess(roll, criticalRate) {
-    if (_.isUndefined(criticalRate)) {
-      criticalRate = 20;
-    }
-    return roll >= criticalRate;
-  }
-
-  /**
-   * Determine if an action is a critical failure.
-   * Happens on a 1.
-   *
-   * @param {integer} roll: the unmodified action's roll.
-   * @return {boolean} true if the action is a critical failure, false otherwise.
-   */
-  function isCriticalFailure(roll) {
-    return roll === 1;
-  }
-
-  /**
    * Give a reward to the player when he wins a fight.
    * XP is always awarded and a random item may be awarded.
+   *
+   * @param {integer} xp: amount of experience points for killing this enemy.
    */
-  function gainReward(mob) {
-    var messages = CharServ.getXP(mob.stats.xpReward);
+  function gainReward(xp) {
+    var messages = CharServ.getXP(xp);
     addMessages(messages, "reward");
 
     if (_.random(7) === 0) {
@@ -88,6 +27,13 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
     }
   }
 
+  /**
+   * Push messages in $scope.messages with the right keys.
+   *
+   * @param {array} messages: an array of strings containing the messages.
+   * @param {string} type: information about the way the message will be displayed.
+   * @param {integer} opt: [optional] extra data to the message, used fo the damages done with the action.
+   */
   function addMessages(messages, type, opt) {
     _.forIn(messages, function(value) {
       $scope.messages.push({
@@ -103,6 +49,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
    * $scope.messages for the rendering in the combatLog.
    * The fight ends when the life of someone reaches 0.
    *
+   * @param {hash} fighters: the participants of the fight.
    * @return {boolean} true if the player won the fight, false otherwise.
    */
   function fightRound(fighters) {
