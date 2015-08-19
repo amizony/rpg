@@ -124,9 +124,6 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         }
       };
 
-      $scope.quests = {};
-
-
     },
     /**
      * @return {array} cell coordinates of player, as [x,y].
@@ -146,19 +143,16 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
     getAllDatas: function() {
       return {
-        stats: $scope.stats,
+        stats: _.extend({}, $scope.stats),
         attribute: $scope.attribute,
         weapon: $scope.weapon,
         armor: $scope.armor,
         spells: $scope.spells,
         inventory: $scope.inventory,
-        quests: $scope.quests
       };
     },
 
     /**
-     * function not yet used
-     *
      * @param {integer} dmg: damages taken by the player.
      */
     takeDamages: function(dmg) {

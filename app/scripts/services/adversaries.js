@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc function
- * @name rpgApp.service:AdversariesDB
+ * @name rpgApp.service:AdversariesServ
  * @description
  * Service generating an adversary for each fight depending of the player's level.
  * Adversary are meant to be weak at the beginning and may (depending of randomisation)
  * be stronger than the player as he gains levels.
  */
 
-angular.module("rpgApp").service("AdversariesDB", function () {
+angular.module("rpgApp").service("AdversariesServ", function () {
 
   var $scope = {};
 
@@ -41,23 +41,52 @@ angular.module("rpgApp").service("AdversariesDB", function () {
    * @param {integer} charLevel: player's level.
    */
   function setStats() {
+    $scope.attribute = {
+      strength: _.random(0,2),
+      dexterity: _.random(0,2),
+      endurance: _.random(0,2),
+      intelligence: _.random(0,2),
+      wisdom: _.random(0,2)
+    };
     $scope.stats = {
       level: $scope.level,
-      xpReward: $scope.level * (100 + 20 * $scope.difficulty),
-      lifeMax: $scope.level * (6 + _.random(2) * $scope.difficulty),
-      manaMax: $scope.level * (2 + _.random(2) * $scope.difficulty),
-      hitBonus: $scope.level + _.random(2) * $scope.difficulty,
-      defence: 10 + _.floor($scope.level / 2) + _.random(2) * $scope.difficulty,
-      damages: "1d8"
+      xpReward: $scope.level * (100 + 20 * $scope.difficulty)
     };
+    $scope.stats.lifeMax = $scope.stats.level * (6 + $scope.attribute.endurance + _.random(2) * $scope.difficulty);
     $scope.stats.life = $scope.stats.lifeMax;
+    $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom + _.random(2) * $scope.difficulty);
     $scope.stats.mana = $scope.stats.manaMax;
+
+    $scope.weapon = {
+      name: "Rusty sword",
+      damages: "1d6",
+      critical: [19, 2],
+      enhancement: 0
+    };
+
+    $scope.armor = {
+      name: "Leather Armor",
+      defence: 2,
+      enhancement: 0
+    };
+
+    $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength + $scope.weapon.enhancement + _.random(2) * $scope.difficulty;
+
+    $scope.stats.defence = 10 + _.floor($scope.stats.level / 2) + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + _.random(2) * $scope.difficulty;
+
   }
 
 
   return {
     getStats: function() {
-      return $scope.stats;
+      return {
+        stats: _.extend({}, $scope.stats),
+        attribute: $scope.attribute,
+        weapon: $scope.weapon,
+        armor: $scope.armor,
+        spells: $scope.spells,
+        inventory: $scope.inventory,
+      };
     },
 
     /**
@@ -70,7 +99,6 @@ angular.module("rpgApp").service("AdversariesDB", function () {
       setDifficulty(charLevel);
       setStats();
 
-      console.log("");
       console.log("You encounter a level " + $scope.level + " monster with difficulty " + $scope.difficulty + ".");
     },
 
@@ -85,7 +113,6 @@ angular.module("rpgApp").service("AdversariesDB", function () {
       setStats();
       $scope.stats.damages = "2d8";
 
-      console.log("");
       console.log("You encounter a boss (level " + $scope.level + ", difficulty " + $scope.difficulty + ")");
     }
   };

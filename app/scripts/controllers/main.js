@@ -8,7 +8,7 @@
  */
 
 
-angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", "FightEngine", "AdversariesDB", function ($scope, CharServ, MapServ, PixiServ, FightEngine, AdversariesDB) {
+angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", "FightEngine", "AdversariesServ", function ($scope, CharServ, MapServ, PixiServ, FightEngine, AdversariesServ) {
 
   initialisation();
 
@@ -56,12 +56,12 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
       })
       .then(function() {
         if ((CharServ.getPosition()[0] === 18) && (CharServ.getPosition()[1] === 17)) {
-          AdversariesDB.setBoss(CharServ.getAllDatas().stats.level);
+          AdversariesServ.setBoss(CharServ.getAllDatas().stats.level);
           FightEngine.fight();
         } else {
           var encounter = true;
           if (encounter) {
-            AdversariesDB.defineAdversary(CharServ.getAllDatas().stats.level);
+            AdversariesServ.defineAdversary(CharServ.getAllDatas().stats.level);
             FightEngine.fight();
           } else {
             CharServ.manaRegen();
