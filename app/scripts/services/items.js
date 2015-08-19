@@ -194,7 +194,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
 
       if (_.random(3) === 0) {
         armor.defence = wornArmor(armor.defence);
-        armor.name = "Worn" + armor.name;
+        armor.name = "Worn " + armor.name;
       } else if (_.random(3) === 0) {
         armor.defence = goodArmor(armor.defence);
         armor.name += " of good quality";
