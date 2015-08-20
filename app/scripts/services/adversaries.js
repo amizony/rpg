@@ -57,9 +57,9 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
     $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom + _.random(2) * $scope.difficulty);
     $scope.stats.mana = $scope.stats.manaMax;
 
-    $scope.weapon = ItemsDB.randomWeapon();
+    $scope.weapon = ItemsDB.randomBaseWeapon($scope.difficulty);
 
-    $scope.armor = ItemsDB.randomArmor();
+    $scope.armor = ItemsDB.randomBaseArmor($scope.difficulty);
 
     $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100)) + _.random(2) * $scope.difficulty;
 

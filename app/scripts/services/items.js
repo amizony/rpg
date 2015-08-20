@@ -246,6 +246,32 @@ angular.module("rpgApp").service("ItemsDB", function () {
 
   return {
     /**
+     * @param {integer} difficulty: mob's difficulty parameter, influencing the enhancement.
+     * @return {hash} a random base weapon from the list for mobs.
+     */
+    randomBaseWeapon: function(difficulty) {
+      var weapon = _.extend({}, weapons[_.random(weapons.length - 1)]);
+      weapon.enhancement = _.max([difficulty + 1, 0]);
+      if (weapon.enhancement > 0) {
+        weapon.name += " + " + weapon.enhancement;
+      }
+      return weapon;
+    },
+
+    /**
+    * @param {integer} difficulty: mob's difficulty parameter, influencing the enhancement.
+     * @return {hash} a random base armor from the list for mobs.
+     */
+    randomBaseArmor: function(difficulty) {
+      var armor = _.extend({}, armors[_.random(armors.length - 1)]);
+      armor.enhancement = _.max([difficulty + 1, 0]);
+      if (armor.enhancement > 0) {
+        armor.name += " + " + armor.enhancement;
+      }
+      return armor;
+    },
+
+    /**
      * @return {hash} a random weapon from the list with some improvments to give to the player.
      */
     randomWeapon: function() {
