@@ -168,7 +168,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
       var weapon = _.extend({}, weapons[_.random(weapons.length - 1)]);
 
       if (_.random(3) === 0) {
-        weapon.critical[0] = sharpen(weapon.critical[0]);
+        weapon.critical = [sharpen(weapon.critical[0]), weapon.critical[1]];
         weapon.name = "Sharp " + weapon.name;
       }
 
