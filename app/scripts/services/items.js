@@ -250,7 +250,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random base weapon from the list for mobs.
      */
     randomBaseWeapon: function(difficulty) {
-      var weapon = _.extend({}, weapons[_.random(weapons.length - 1)]);
+      var weapon = _.merge({}, weapons[_.random(weapons.length - 1)]);
       weapon.enhancement = _.max([difficulty + 1, 0]);
       if (weapon.enhancement > 0) {
         weapon.name += " + " + weapon.enhancement;
@@ -263,7 +263,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random base armor from the list for mobs.
      */
     randomBaseArmor: function(difficulty) {
-      var armor = _.extend({}, armors[_.random(armors.length - 1)]);
+      var armor = _.merge({}, armors[_.random(armors.length - 1)]);
       armor.enhancement = _.max([difficulty + 1, 0]);
       if (armor.enhancement > 0) {
         armor.name += " + " + armor.enhancement;
@@ -275,7 +275,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random weapon from the list with some improvments to give to the player.
      */
     randomWeapon: function() {
-      var weapon = _.extend({}, weapons[_.random(weapons.length - 1)]);
+      var weapon = _.merge({}, weapons[_.random(weapons.length - 1)]);
 
       var firstPrefix = _.random(10);
       var secondPrefix = _.random(10);
@@ -287,7 +287,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
       }
 
       if (sufix >8) {
-        weapon.critical = [weapon.critical[0], increaseCriticalMultiplier(weapon.critical[1])];
+        weapon.critical[1] = increaseCriticalMultiplier(weapon.critical[1]);
         weapon.name += " of Extermination";
       }
 
@@ -297,7 +297,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
       }
 
       if (secondPrefix > 8) {
-        weapon.critical = [increaseCriticalChance(weapon.critical[0]), weapon.critical[1]];
+        weapon.critical[0] = increaseCriticalChance(weapon.critical[0]);
         weapon.name = "Sharp " + weapon.name;
       }
 
@@ -324,7 +324,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random armor from the list to give the player.
      */
     randomArmor: function() {
-      var armor = _.extend({}, armors[_.random(armors.length - 1)]);
+      var armor = _.merge({}, armors[_.random(armors.length - 1)]);
 
       var firstPrefix = _.random(10);
       var secondPrefix = _.random(10);
