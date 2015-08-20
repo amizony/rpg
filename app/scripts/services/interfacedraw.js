@@ -120,14 +120,16 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.overlayWindow.addChild(char);
 
     // stats
-    createText("Level " + datas.stats.level + "  (" + datas.stats.experience + " / " + datas.stats.level * 1000 + ")", [350, 100], style);
-    createText("Life " + datas.stats.life + " / " + datas.stats.lifeMax, [350, 150], style);
-    createText("Mana " + datas.stats.mana + " / " + datas.stats.manaMax, [350, 200], style);
+    createText("Level  " + datas.stats.level + "  (" + datas.stats.experience + " / " + datas.stats.level * 1000 + ")", [350, 100], style);
+    createText("Life   " + datas.stats.life + " / " + datas.stats.lifeMax, [350, 150], style);
+    createText("Mana  " + datas.stats.mana + " / " + datas.stats.manaMax, [350, 185], style);
 
+    createText("Bonus to hit: " + datas.stats.hitBonus, [350, 235], style);
+    createText("Defence:      " + datas.stats.defence, [350, 270], style);
 
     // Attributes
     var posX = 350;
-    var posY = 250;
+    var posY = 320;
     var i = 30;
     createText("Attributes", [posX, posY], style);
     _.forIn(datas.attribute, function(value, key) {
@@ -203,24 +205,31 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuTitle = createText("Equipment", [20, 10]);
 
     var datas = CharServ.getAllDatas();
+    var style = {
+      font : 'bold italic 26px Arial',
+      fill : '#F7EDCA',
+      stroke : '#4a1850',
+      strokeThickness : 5,
+    };
 
     // draw weapon
-    createText("Weapon", [220, 80]);
+    createText(datas.weapon.name, [50, 80], style);
     createText("[image]", [80, 180]);
-    createText(datas.weapon.name, [330, 150], {});
     if (datas.weapon.enhancement === 0) {
-      createText("damages: " + datas.weapon.damages, [330, 180], {});
+      createText("damages: " + datas.weapon.damages, [330, 150], {});
     } else {
-      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [330, 180], {});
+      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [330, 150], {});
     }
+    var hit = datas.weapon.hitBonus + datas.weapon.enhancement;
+    createText("hit bonus: " + hit, [330, 180], {});
     createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [330,210], {});
 
     // draw armor
-    createText("Armor", [220, 340]);
+    createText(datas.armor.name, [50, 340], style);
     createText("[image]", [80, 410]);
-    createText(datas.armor.name, [330, 410], {});
     var def = datas.armor.defence + datas.armor.enhancement;
-    createText("armor: " + def, [330, 440], {});
+    createText("armor: " + def, [330, 410], {});
+    createText("weight: " + datas.armor.weight, [330, 440], {});
   }
 
   /**

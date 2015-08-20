@@ -55,8 +55,8 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
   function recalculateStats() {
     $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
     $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
-    $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength + $scope.weapon.enhancement;
-    $scope.stats.defence = 10 + _.floor($scope.stats.level / 2) + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
+    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100));
+    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
   }
 
   return {
@@ -86,15 +86,17 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       $scope.stats.mana = $scope.stats.manaMax;
 
       $scope.weapon = {
-        name: "Rusty sword",
+        name: "Rusty Sword",
         damages: "1d6",
+        hitBonus: 1,
         critical: [19, 2],
         enhancement: 0
       };
 
       $scope.armor = {
-        name: "Leather Armor",
-        defence: 2,
+        name: "Worn Leather Armor",
+        weight: 10,
+        defence: 1,
         enhancement: 0
       };
 

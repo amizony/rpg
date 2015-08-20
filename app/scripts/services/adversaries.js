@@ -9,7 +9,7 @@
  * be stronger than the player as he gains levels.
  */
 
-angular.module("rpgApp").service("AdversariesServ", function () {
+angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsDB) {
 
   var $scope = {};
 
@@ -57,22 +57,13 @@ angular.module("rpgApp").service("AdversariesServ", function () {
     $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom + _.random(2) * $scope.difficulty);
     $scope.stats.mana = $scope.stats.manaMax;
 
-    $scope.weapon = {
-      name: "Rusty sword",
-      damages: "1d6",
-      critical: [19, 2],
-      enhancement: 0
-    };
+    $scope.weapon = ItemsDB.randomWeapon();
 
-    $scope.armor = {
-      name: "Leather Armor",
-      defence: 2,
-      enhancement: 0
-    };
+    $scope.armor = ItemsDB.randomArmor();
 
-    $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength + $scope.weapon.enhancement + _.random(2) * $scope.difficulty;
+    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100)) + _.random(2) * $scope.difficulty;
 
-    $scope.stats.defence = 10 + _.floor($scope.stats.level / 2) + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + _.random(2) * $scope.difficulty;
+    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + _.random(2) * $scope.difficulty;
 
   }
 
@@ -111,11 +102,10 @@ angular.module("rpgApp").service("AdversariesServ", function () {
       $scope.level = 30;
       $scope.difficulty = _.floor(charLevel / 5);
       setStats();
-      $scope.stats.damages = "2d8";
 
       console.log("You encounter a boss (level " + $scope.level + ", difficulty " + $scope.difficulty + ")");
     }
   };
 
 
-});
+}]);
