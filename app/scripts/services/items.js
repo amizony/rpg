@@ -186,7 +186,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
    * @return {string} the new damages for the weapon.
    */
   function increaseDamages(damages) {
-    var diceNumber = parseInt(damages.slice(0, 1)) * 2;
+    var diceNumber = parseInt(damages.slice(0, 1), 10) * 2;
     return diceNumber + damages.slice(1);
   }
 
@@ -198,7 +198,7 @@ angular.module("rpgApp").service("ItemsDB", function () {
    * @return {string} the new damages for the weapon.
    */
   function decreaseDamages(damages) {
-    var dice = parseInt(damages.slice(damages.indexOf("d") + 1)) - 2;
+    var dice = parseInt(damages.slice(damages.indexOf("d") + 1), 10) - 2;
     return damages.slice(0, damages.indexOf("d") + 1) + dice;
   }
 
