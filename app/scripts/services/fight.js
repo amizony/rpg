@@ -26,18 +26,14 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
       addMessages(["You gain a Resurection Stone."], "reward");
     }
 
-    if (_.random(5) === 0) {
+    if (_.random(1) === 0) {
       var weapon = ItemsDB.randomWeapon();
-      CharServ.gainWeapon(weapon);
-      console.log("New weapon: ", weapon);
-      addMessages(["You find a new Weapon: " + weapon.name], "reward");
+      addMessages(["You find a new Weapon: " + weapon.name], "weaponReward", weapon);
     }
 
-    if (_.random(5) === 0) {
+    if (_.random(1) === 0) {
       var armor = ItemsDB.randomArmor();
-      CharServ.gainArmor(armor);
-      console.log("New armor: ", armor);
-      addMessages(["You find a new Armor: " + armor.name], "reward");
+      addMessages(["You find a new Armor: " + armor.name], "armorReward", armor);
     }
   }
 
@@ -46,14 +42,14 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
    *
    * @param {array} messages: an array of strings containing the messages.
    * @param {string} type: information about the way the message will be displayed.
-   * @param {integer} opt: [optional] extra data to the message, used fo the damages done with the action.
+   * @param {integer} opt: [optional] extra data to the message, used fo the damages done with the action or item rewarded.
    */
   function addMessages(messages, type, opt) {
     _.forIn(messages, function(value) {
       $scope.messages.push({
         text: value,
         type: type,
-        dmg: opt
+        opt: opt
       });
     });
   }

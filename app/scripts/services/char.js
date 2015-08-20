@@ -195,40 +195,30 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     },
 
     /**
-     * Receiving a new weapon, and changing it if it's a better one.
+     * Receiving a new weapon.
      *
-     * @param {hash} armor as: {name: {string}
-     *                          damages: {string}
+     * @param {hash} armor as: {name: {string},
+     *                          damages: {string},
+     *                          hiBonus: {integer},
      *                          critical: {array} as [range, multiplier],
-     *                          enhancement: {integer} }
+     *                          enhancement: {integer}}
      */
     gainWeapon: function(weapon) {
-      var newNb = weapon.damages.slice(0, weapon.damages.indexOf("d"));
-      var newDice = weapon.damages.slice(weapon.damages.indexOf("d") + 1, weapon.damages.length);
-
-      var nb = $scope.weapon.damages.slice(0, $scope.weapon.damages.indexOf("d"));
-      var dice = $scope.weapon.damages.slice($scope.weapon.damages.indexOf("d") + 1, $scope.weapon.damages.length);
-
-      var betterWeapon = ((newDice+1)*newNb/2 + weapon.enhancement) > ((dice+1)*nb/2 + $scope.weapon.enhancement);
-
-      if (betterWeapon) {
-        $scope.weapon = weapon;
-        recalculateStats();
-      }
+      $scope.weapon = weapon;
+      recalculateStats();
     },
 
     /**
-     * Receiving a new armor, and changing it if it's a better one.
+     * Receiving a new armor.
      *
-     * @param {hash} armor as: {name: {string}
-     *                          defence: {integer}
+     * @param {hash} armor as: {name: {string},
+     *                          defence: {integer},
+     *                          weight: {integer},
      *                          enhancement: {integer}}
      */
     gainArmor: function(armor) {
-      if (armor.defence + armor.enhancement > $scope.armor.defence + $scope.armor.enhancement) {
-        $scope.armor = armor;
-        recalculateStats();
-      }
+      $scope.armor = armor;
+      recalculateStats();
     },
 
     /**

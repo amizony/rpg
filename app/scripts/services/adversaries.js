@@ -89,8 +89,6 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
       setLevel(charLevel);
       setDifficulty(charLevel);
       setStats();
-
-      console.log("You encounter a level " + $scope.level + " monster with difficulty " + $scope.difficulty + ".");
     },
 
     /**
@@ -102,7 +100,6 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
       $scope.level = 30;
       $scope.difficulty = _.floor(charLevel / 5);
       setStats();
-
       console.log("You encounter a boss (level " + $scope.level + ", difficulty " + $scope.difficulty + ")");
     }
   };
