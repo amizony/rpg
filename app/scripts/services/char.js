@@ -117,16 +117,13 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         }
       };
 
-      $scope.inventory = {
-        "Resurection Stone": {
+      $scope.inventory = [
+        {
+          name: "Resurection Stone",
           quantity: 3,
           usable: false
         },
-        "Life Potion": {
-          quantity: 5,
-          usable: true
-        }
-      };
+      ];
 
     },
     /**
@@ -183,15 +180,33 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     /**
      * Gaining a new item or increasing the number of one already in inventory.
      *
-     * @param {string} name: the item to add to the inventory.
+     * @param {string} item: the item to add to the inventory.
      */
-    gainItem: function(name) {
-      if (_.isUndefined($scope.inventory[name])) {
-        $scope.inventory[name].quantity = 1;
-        $scope.inventory[name].usable = false; // will require an item DB
-      } else {
-        $scope.inventory[name].quantity += 1;
+    gainItem: function(item) {
+      var itemFound = false;
+      _.forIn($scope.inventory, function(value) {
+        if (value.name === item.name) {
+          value.quantity += 1;
+          itemFound = true;
+        }
+      });
+      if (!itemFound) {
+        item.quantity = 1;
+        $scope.inventory.push(item);
       }
+    },
+
+    /**
+     * Decrease the quantity of an item when used.
+     *
+     * @param {string} name: the used item.
+     */
+    useItem: function(name) {
+      _.forIn($scope.inventory, function(value) {
+        if (value.name === name) {
+          value.quantity -= 1;
+        }
+      });
     },
 
     /**
@@ -228,10 +243,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
      * @return {string} message to display in the combat log.
      */
     die: function() {
-      if ($scope.inventory["Resurection Stone"].quantity > 0) {
-        $scope.inventory["Resurection Stone"].quantity -= 1;
+      // Resurection Stones always first item in inventory.
+      if ($scope.inventory[0].quantity > 0) {
+        $scope.inventory[0].quantity -= 1;
         $scope.stats.life = $scope.stats.lifeMax;
-        return ["The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"].quantity + " left)."];
+        return ["The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory[0].quantity + " left)."];
       } else {
         var temp = $scope.position;
         this.create();
@@ -241,17 +257,23 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     },
 
     /**
-     * Regain 1 mana point.
+     * Regain a certain quantity of mana, or only 1 point if not specified.
+     *
+     * @param {integer} value: [optional] the quantity of mana to gain.
      */
-    manaRegen: function() {
-      $scope.stats.mana = Math.min($scope.stats.mana + 1, $scope.stats.manaMax);
+    manaRegen: function(value) {
+      var amount = value || 1;
+      $scope.stats.mana = Math.min($scope.stats.mana + amount, $scope.stats.manaMax);
     },
 
     /**
-     * Regain 1 life point.
-     */
-    lifeRegen: function() {
-      $scope.stats.life = Math.min($scope.stats.life + 1, $scope.stats.lifeMax);
+    * Regain a certain quantity of life, or only 1 point if not specified.
+    *
+    * @param {integer} value: [optional] the quantity of life to gain.
+    */
+    lifeRegen: function(value) {
+      var amount = value || 1;
+      $scope.stats.life = Math.min($scope.stats.life + amount, $scope.stats.lifeMax);
     }
   };
 

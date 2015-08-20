@@ -7,7 +7,7 @@
  * Service holding a data base of all items (weapons, armors and others).
  */
 
-angular.module("rpgApp").service("ItemsDB", function () {
+angular.module("rpgApp").service("ItemsDB", ["CharServ", function (CharServ) {
 
   var weapons = [
     {
@@ -133,10 +133,39 @@ angular.module("rpgApp").service("ItemsDB", function () {
     },
   ];
 
+  var potions = [
+    {
+      name: "Minor Life Potion",
+      description: "Regain 10 Life Points",
+      usable: true,
+      use: function() {
+        CharServ.lifeRegen(10);
+      }
+    },
+    {
+      name: "Medium Life Potion",
+      description: "Regain 50 Life Points",
+      usable: true,
+      use: function() {
+        CharServ.lifeRegen(50);
+      }
+    },
+    {
+      name: "Major Life Potion",
+      description: "Regain 100 Life Points",
+      usable: true,
+      use: function() {
+        CharServ.lifeRegen(100);
+      }
+    }
+  ];
 
-
-  var potions = {};
-  var rares = {};
+  var rares = [
+    {
+      name: "Resurection Stone",
+      usable: false,
+    }
+  ];
 
   /**
    * Double the critical range: 20 -> 19; 19 -> 17; 18 -> 15.
@@ -373,22 +402,16 @@ angular.module("rpgApp").service("ItemsDB", function () {
      * @return {hash} a random potion from the list to give the player.
      */
     randomPotion: function() {
-
+      var potion = _.merge({}, potions[_.random(potions.length - 1)]);
+      return potion;
     },
 
     /**
      * @return {hash} a random rare item from the list to give the player.
      */
     randomRare: function() {
-
-    },
-
-    /**
-     * @param {string} name: potion we want to use.
-     * @return {function} effect of the potion.
-     */
-    usePotion: function(name) {
-
+      var rare = _.merge({}, rares[_.random(rares.length - 1)]);
+      return rare;
     }
   };
-});
+}]);

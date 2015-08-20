@@ -22,16 +22,23 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
     addMessages(messages, "reward");
 
     if (_.random(7) === 0) {
-      CharServ.gainItem("Resurection Stone");
-      addMessages(["You gain a Resurection Stone."], "reward");
+      var rare = ItemsDB.randomRare();
+      CharServ.gainItem(rare);
+      addMessages(["You gain a " + rare.name + "."], "reward");
     }
 
-    if (_.random(1) === 0) {
+    if(_.random(2) === 0) {
+      var potion = ItemsDB.randomPotion();
+      CharServ.gainItem(potion);
+      addMessages(["You gain a " + potion.name + "."], "reward");
+    }
+
+    if (_.random(2) === 0) {
       var weapon = ItemsDB.randomWeapon();
       addMessages(["You find a new Weapon: " + weapon.name], "weaponReward", weapon);
     }
 
-    if (_.random(1) === 0) {
+    if (_.random(2) === 0) {
       var armor = ItemsDB.randomArmor();
       addMessages(["You find a new Armor: " + armor.name], "armorReward", armor);
     }

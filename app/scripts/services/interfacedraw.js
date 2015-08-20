@@ -148,15 +148,22 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     var datas = CharServ.getAllDatas();
 
     var i = 30;
-    _.forIn(datas.inventory, function(value, key) {
+    _.forIn(datas.inventory, function(value) {
       if (value.quantity > 0) {
-        createItem(key, value.quantity, value.usable, i);
+        createItem(value, i);
         i += 30;
       }
     });
   }
 
-  function createItem(name, quantity, usable, position) {
+  /**
+   * Draw an interactive (invisible) button for an inventory item.
+   * When clicked on, the usable object is used.
+   *
+   * @param {hash} item: the item to display, as: {name, quantity, usable, use, description}.
+   * @param {integer} position: the vertical position of the item.
+   */
+  function createItem(item, position) {
     var style = {};
 
     var clickable = new PIXI.Container();
@@ -169,10 +176,13 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
     var textHover;
 
-    if (usable) {
-      textHover = createText("Click to use item", [350, 50 + position], {});
+    if (item.usable) {
+      textHover = createText(item.description, [350, 50 + position], {});
       clickable.on("click", function() {
-        console.log("You use an item, but nothing is happening (not implemented).");
+        item.use();
+        CharServ.useItem(item.name);
+        destroyMenu();
+        inventoryMenu();
       });
     } else {
       textHover = createText("Not usable", [350, 50 + position], {});
@@ -186,7 +196,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         textHover. renderable = false;
       });
 
-    createText("- " + quantity + " " + name, [40, 50 + position], style);
+    createText("- " + item.quantity + " " + item.name, [40, 50 + position], style);
     $scope.overlayWindow.addChild(clickable);
   }
 
