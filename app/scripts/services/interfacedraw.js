@@ -114,9 +114,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     // name & picture
     createText(datas.stats.name, [50, 80], style);
     var char = new PIXI.Sprite($scope.texture.char);
-    char.position.x = 30;
+    char.position.x = 0;
     char.position.y = 150;
-    char.scale.set(0.4);
+    char.scale.set(2);
     $scope.overlayWindow.addChild(char);
 
     // stats
@@ -260,15 +260,20 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
 
     $scope.playerSprite = new PIXI.Sprite($scope.texture.char);
-    $scope.playerSprite.scale.set(0.28);
-    $scope.playerSprite.position.x = 80;
+    $scope.playerSprite.scale.set(1.5);
+    $scope.playerSprite.position.x = 40;
     $scope.playerSprite.position.y = 70;
     $scope.overlayWindow.addChild($scope.playerSprite);
 
     $scope.playerLife = createText("life " + $scope.player.stats.life + " / " + $scope.player.stats.lifeMax, [80, 250], $scope.style.playerLife);
     //$scope.playerMana = createText("mana " + $scope.player.stats.mana + " / " + $scope.player.stats.manaMax, [80, 280], $scope.style.playerMana);
 
-    $scope.mobSprite = new PIXI.Sprite($scope.texture.monster);
+    if ($scope.mob.stats.name === "Imperator A.") {
+      $scope.mobSprite = new PIXI.Sprite($scope.texture.boss);
+    } else {
+      $scope.mobSprite = new PIXI.Sprite($scope.texture.monster);
+    }
+    $scope.mobSprite.scale.set(1.5);
     $scope.mobSprite.position.x = 340;
     $scope.mobSprite.position.y = 70;
     $scope.overlayWindow.addChild($scope.mobSprite);
@@ -328,7 +333,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      * @return {promise}
      */
     attack: function(message, dfd) {
-      $scope.position[0] = 40;
+      $scope.position[0] = 20;
       $scope.position[1] += 30;
       createText(message.text, $scope.position, $scope.style[message.type]);
       dfd.resolve();
@@ -382,7 +387,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      * @return {promise}
      */
     reward: function(message, dfd) {
-      $scope.position[0] = 40;
+      $scope.position[0] = 20;
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
       dfd.resolve();
@@ -640,8 +645,9 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
         overlayBackground: PIXI.Texture.fromImage("images/menubackground.png"),
         leftPanelBackground: PIXI.Texture.fromImage("images/leftbackground.png"),
-        char: PIXI.Texture.fromImage("images/SuaRQmP.png"),
-        monster: PIXI.Texture.fromImage("images/Typhon_Monster.png"),
+        char: PIXI.Texture.fromImage("images/player.png"),
+        monster: PIXI.Texture.fromImage("images/enemy.png"),
+        boss: PIXI.Texture.fromImage("images/boss.png"),
         empty: PIXI.Texture.fromImage("images/empty.png")
       };
 
