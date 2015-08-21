@@ -42,11 +42,11 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
    */
   function setStats() {
     $scope.attribute = {
-      strength: _.random(0,2),
-      dexterity: _.random(0,2),
-      endurance: _.random(0,2),
-      intelligence: _.random(0,2),
-      wisdom: _.random(0,2)
+      strength: _.random(1,3),
+      dexterity: _.random(1,3),
+      endurance: _.random(1,3),
+      //intelligence: _.random(0,2),
+      //wisdom: _.random(0,2)
     };
     $scope.stats = {
       level: $scope.level,
@@ -54,8 +54,8 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
     };
     $scope.stats.lifeMax = $scope.stats.level * (6 + $scope.attribute.endurance + _.random(2) * $scope.difficulty);
     $scope.stats.life = $scope.stats.lifeMax;
-    $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom + _.random(2) * $scope.difficulty);
-    $scope.stats.mana = $scope.stats.manaMax;
+    //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom + _.random(2) * $scope.difficulty);
+    //$scope.stats.mana = $scope.stats.manaMax;
 
     $scope.weapon = ItemsDB.randomBaseWeapon($scope.difficulty);
 

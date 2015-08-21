@@ -33,10 +33,10 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
    * @return {integer} attribute, between 0 and 4.
    */
   function randAttribute() {
-    var dice1 = _.random(1, 6);
-    var dice2 = _.random(1, 6);
-    var attribute = _.floor((dice1 + dice2 - 4) / 2);
-    return Math.max(0, attribute);
+    var dice1 = _.random(0, 2);
+    var dice2 = _.random(0, 2);
+    var attribute = dice1 + dice2;
+    return attribute;
   }
 
   /**
@@ -74,8 +74,8 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         strength: randAttribute(),
         dexterity: randAttribute(),
         endurance: randAttribute(),
-        intelligence: randAttribute(),
-        wisdom: randAttribute()
+        //intelligence: randAttribute(),
+        //wisdom: randAttribute()
       };
 
       $scope.stats = {

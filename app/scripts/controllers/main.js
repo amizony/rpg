@@ -64,7 +64,7 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
             AdversariesServ.defineAdversary(CharServ.getAllDatas().stats.level);
             FightEngine.fight();
           } else {
-            CharServ.manaRegen();
+            //CharServ.manaRegen();
             CharServ.lifeRegen();
           }
         }

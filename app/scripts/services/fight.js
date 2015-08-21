@@ -76,7 +76,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
     addMessages(["Round " + $scope.roundNumber], "newRound");
 
     // regain 1 mana pro round
-    CharServ.manaRegen();
+    //CharServ.manaRegen();
 
     var playerAtt = fighters.player.attack();
 
