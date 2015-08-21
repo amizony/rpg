@@ -46,15 +46,23 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
   function levelUP() {
     $scope.stats.experience -= $scope.stats.level *1000;
     $scope.stats.level += 1;
+    if ($scope.stats.level % 5 === 0) {
+      var attributeIncrease = _.shuffle([1, 0, 0]);
+      var i = 0;
+      _.forIn($scope.attribute, function(value, key) {
+        $scope.attribute[key] = value + attributeIncrease[i];
+        i += 1;
+      });
+    }
 
     recalculateStats();
     $scope.stats.life = $scope.stats.lifeMax;
-    $scope.stats.mana = $scope.stats.manaMax;
+    //$scope.stats.mana = $scope.stats.manaMax;
   }
 
   function recalculateStats() {
     $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
-    $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
+    //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
     $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100));
     $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
   }
@@ -82,13 +90,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         level: 1,
         experience: 0
       };
-      $scope.stats.life = $scope.stats.lifeMax;
-      $scope.stats.mana = $scope.stats.manaMax;
 
       $scope.weapon = {
         name: "Rusty Sword",
-        damages: "1d6",
-        hitBonus: 1,
+        damages: "10d6",
+        hitBonus: 10,
         critical: [19, 2],
         enhancement: 0
       };
@@ -96,13 +102,13 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       $scope.armor = {
         name: "Worn Leather Armor",
         weight: 10,
-        defence: 1,
+        defence: 10,
         enhancement: 0
       };
 
       recalculateStats();
       $scope.stats.life = $scope.stats.lifeMax;
-      $scope.stats.mana = $scope.stats.manaMax;
+      //$scope.stats.mana = $scope.stats.manaMax;
 
       $scope.spells = {
         "Heavy Blow": {
