@@ -47,12 +47,16 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     $scope.stats.experience -= $scope.stats.level *1000;
     $scope.stats.level += 1;
 
-    $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
+    recalculateStats();
     $scope.stats.life = $scope.stats.lifeMax;
-    $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
     $scope.stats.mana = $scope.stats.manaMax;
-    $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength; //+ $scope.weapon.enhancement;
-    $scope.stats.defence = 10 + $scope.stats.level + $scope.attribute.dexterity; //+ $scope.armor.defence + $scope.armor.enhancement;
+  }
+
+  function recalculateStats() {
+    $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
+    $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
+    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100));
+    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
   }
 
   return {
@@ -78,27 +82,27 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         level: 1,
         experience: 0
       };
-      $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
       $scope.stats.life = $scope.stats.lifeMax;
-      $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
       $scope.stats.mana = $scope.stats.manaMax;
 
       $scope.weapon = {
-        name: "Rusty sword",
+        name: "Rusty Sword",
         damages: "1d6",
+        hitBonus: 1,
         critical: [19, 2],
         enhancement: 0
       };
 
-      $scope.stats.hitBonus = $scope.stats.level + $scope.attribute.strength + $scope.weapon.enhancement;
-
       $scope.armor = {
-        name: "Leather Armor",
-        defence: 2,
+        name: "Worn Leather Armor",
+        weight: 10,
+        defence: 1,
         enhancement: 0
       };
 
-      $scope.stats.defence = 10 + _.floor($scope.stats.level / 2) + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
+      recalculateStats();
+      $scope.stats.life = $scope.stats.lifeMax;
+      $scope.stats.mana = $scope.stats.manaMax;
 
       $scope.spells = {
         "Heavy Blow": {
@@ -113,16 +117,13 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         }
       };
 
-      $scope.inventory = {
-        "Resurection Stone": {
+      $scope.inventory = [
+        {
+          name: "Resurection Stone",
           quantity: 3,
           usable: false
         },
-        "Life Potion": {
-          quantity: 5,
-          usable: true
-        }
-      };
+      ];
 
     },
     /**
@@ -175,18 +176,64 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       }
       return message;
     },
+
     /**
      * Gaining a new item or increasing the number of one already in inventory.
      *
-     * @param {string} name: the item to add to the inventory.
+     * @param {string} item: the item to add to the inventory.
      */
-    gainItem: function(name) {
-      if (_.isUndefined($scope.inventory[name])) {
-        $scope.inventory[name].quantity = 1;
-        $scope.inventory[name].usable = false; // will require an item DB
-      } else {
-        $scope.inventory[name].quantity += 1;
+    gainItem: function(item) {
+      var itemFound = false;
+      _.forIn($scope.inventory, function(value) {
+        if (value.name === item.name) {
+          value.quantity += 1;
+          itemFound = true;
+        }
+      });
+      if (!itemFound) {
+        item.quantity = 1;
+        $scope.inventory.push(item);
       }
+    },
+
+    /**
+     * Decrease the quantity of an item when used.
+     *
+     * @param {string} name: the used item.
+     */
+    useItem: function(name) {
+      _.forIn($scope.inventory, function(value) {
+        if (value.name === name) {
+          value.quantity -= 1;
+        }
+      });
+    },
+
+    /**
+     * Receiving a new weapon.
+     *
+     * @param {hash} armor as: {name: {string},
+     *                          damages: {string},
+     *                          hiBonus: {integer},
+     *                          critical: {array} as [range, multiplier],
+     *                          enhancement: {integer}}
+     */
+    gainWeapon: function(weapon) {
+      $scope.weapon = weapon;
+      recalculateStats();
+    },
+
+    /**
+     * Receiving a new armor.
+     *
+     * @param {hash} armor as: {name: {string},
+     *                          defence: {integer},
+     *                          weight: {integer},
+     *                          enhancement: {integer}}
+     */
+    gainArmor: function(armor) {
+      $scope.armor = armor;
+      recalculateStats();
     },
 
     /**
@@ -196,10 +243,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
      * @return {string} message to display in the combat log.
      */
     die: function() {
-      if ($scope.inventory["Resurection Stone"].quantity > 0) {
-        $scope.inventory["Resurection Stone"].quantity -= 1;
+      // Resurection Stones always first item in inventory.
+      if ($scope.inventory[0].quantity > 0) {
+        $scope.inventory[0].quantity -= 1;
         $scope.stats.life = $scope.stats.lifeMax;
-        return ["The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory["Resurection Stone"].quantity + " left)."];
+        return ["The use of a Resurection Stone allows you to continue your adventure (" + $scope.inventory[0].quantity + " left)."];
       } else {
         var temp = $scope.position;
         this.create();
@@ -209,17 +257,23 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     },
 
     /**
-     * Regain 1 mana point.
+     * Regain a certain quantity of mana, or only 1 point if not specified.
+     *
+     * @param {integer} value: [optional] the quantity of mana to gain.
      */
-    manaRegen: function() {
-      $scope.stats.mana = Math.min($scope.stats.mana + 1, $scope.stats.manaMax);
+    manaRegen: function(value) {
+      var amount = value || 1;
+      $scope.stats.mana = Math.min($scope.stats.mana + amount, $scope.stats.manaMax);
     },
 
     /**
-     * Regain 1 life point.
-     */
-    lifeRegen: function() {
-      $scope.stats.life = Math.min($scope.stats.life + 1, $scope.stats.lifeMax);
+    * Regain a certain quantity of life, or only 1 point if not specified.
+    *
+    * @param {integer} value: [optional] the quantity of life to gain.
+    */
+    lifeRegen: function(value) {
+      var amount = value || 1;
+      $scope.stats.life = Math.min($scope.stats.life + amount, $scope.stats.lifeMax);
     }
   };
 

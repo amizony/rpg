@@ -7,7 +7,7 @@
  * Turn-based fight engine.
  */
 
-angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", "InterfaceDraw", function (CharServ, AdversariesServ, InterfaceDraw) {
+angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", "InterfaceDraw", "ItemsDB", function (CharServ, AdversariesServ, InterfaceDraw, ItemsDB) {
 
   var $scope = {};
 
@@ -22,8 +22,25 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
     addMessages(messages, "reward");
 
     if (_.random(7) === 0) {
-      CharServ.gainItem("Resurection Stone");
-      addMessages(["You gain a Resurection Stone."], "reward");
+      var rare = ItemsDB.randomRare();
+      CharServ.gainItem(rare);
+      addMessages(["You gain a " + rare.name + "."], "reward");
+    }
+
+    if(_.random(2) === 0) {
+      var potion = ItemsDB.randomPotion();
+      CharServ.gainItem(potion);
+      addMessages(["You gain a " + potion.name + "."], "reward");
+    }
+
+    if (_.random(2) === 0) {
+      var weapon = ItemsDB.randomWeapon();
+      addMessages(["You find a new Weapon: " + weapon.name], "weaponReward", weapon);
+    }
+
+    if (_.random(2) === 0) {
+      var armor = ItemsDB.randomArmor();
+      addMessages(["You find a new Armor: " + armor.name], "armorReward", armor);
     }
   }
 
@@ -32,14 +49,14 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
    *
    * @param {array} messages: an array of strings containing the messages.
    * @param {string} type: information about the way the message will be displayed.
-   * @param {integer} opt: [optional] extra data to the message, used fo the damages done with the action.
+   * @param {integer} opt: [optional] extra data to the message, used fo the damages done with the action or item rewarded.
    */
   function addMessages(messages, type, opt) {
     _.forIn(messages, function(value) {
       $scope.messages.push({
         text: value,
         type: type,
-        dmg: opt
+        opt: opt
       });
     });
   }
@@ -183,7 +200,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
 
       if (victory) {
         addMessages(["Victory!"], "endFight");
-        gainReward(fighters.mob);
+        gainReward(fighters.mob.stats.xpReward);
         CharServ.takeDamages(CharServ.getAllDatas().stats.life - fighters.player.stats.life);
       } else {
         addMessages(["Defeat!"], "endFight");

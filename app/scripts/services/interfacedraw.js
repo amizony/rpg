@@ -51,7 +51,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * The menus are all drawn in the same container (overlayWindow).
    *
    * @param {hash} name: the button's name,
-   *               open: the function drawing the contnt of the menu when he is open
+   *               open: the function drawing the content of the menu when he is open
    * @return {pixi.container} the button we just create.
    */
   function createMenuButton(obj) {
@@ -120,14 +120,16 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.overlayWindow.addChild(char);
 
     // stats
-    createText("Level " + datas.stats.level + "  (" + datas.stats.experience + " / " + datas.stats.level * 1000 + ")", [350, 100], style);
-    createText("Life " + datas.stats.life + " / " + datas.stats.lifeMax, [350, 150], style);
-    createText("Mana " + datas.stats.mana + " / " + datas.stats.manaMax, [350, 200], style);
+    createText("Level  " + datas.stats.level + "  (" + datas.stats.experience + " / " + datas.stats.level * 1000 + ")", [350, 100], style);
+    createText("Life   " + datas.stats.life + " / " + datas.stats.lifeMax, [350, 150], style);
+    createText("Mana  " + datas.stats.mana + " / " + datas.stats.manaMax, [350, 185], style);
 
+    createText("Bonus to hit: " + datas.stats.hitBonus, [350, 235], style);
+    createText("Defence:      " + datas.stats.defence, [350, 270], style);
 
     // Attributes
     var posX = 350;
-    var posY = 250;
+    var posY = 320;
     var i = 30;
     createText("Attributes", [posX, posY], style);
     _.forIn(datas.attribute, function(value, key) {
@@ -146,15 +148,22 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     var datas = CharServ.getAllDatas();
 
     var i = 30;
-    _.forIn(datas.inventory, function(value, key) {
+    _.forIn(datas.inventory, function(value) {
       if (value.quantity > 0) {
-        createItem(key, value.quantity, value.usable, i);
+        createItem(value, i);
         i += 30;
       }
     });
   }
 
-  function createItem(name, quantity, usable, position) {
+  /**
+   * Draw an interactive (invisible) button for an inventory item.
+   * When clicked on, the usable object is used.
+   *
+   * @param {hash} item: the item to display, as: {name, quantity, usable, use, description}.
+   * @param {integer} position: the vertical position of the item.
+   */
+  function createItem(item, position) {
     var style = {};
 
     var clickable = new PIXI.Container();
@@ -167,25 +176,28 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
     var textHover;
 
-    if (usable) {
-      textHover = createText("Click to use item", [350, 50 + position], {});
+    if (item.usable) {
+      textHover = createText(item.description, [350, 50 + position], {});
       clickable.on("click", function() {
-        console.log("You use an item, but nothing is happening (not implemented).");
+        item.use();
+        CharServ.useItem(item.name);
+        destroyMenu();
+        inventoryMenu();
       });
     } else {
       textHover = createText("Not usable", [350, 50 + position], {});
     }
     textHover.renderable = false;
-      clickable
-        .on("mouseover", function() {
-          textHover.renderable = true;
-        })
-        .on("mouseout", function() {
-          textHover. renderable = false;
-        });
+    clickable
+      .on("mouseover", function() {
+        textHover.renderable = true;
+      })
+      .on("mouseout", function() {
+        textHover. renderable = false;
+      });
 
-      createText("- " + quantity + " " + name, [40, 50 + position], style);
-      $scope.overlayWindow.addChild(clickable);
+    createText("- " + item.quantity + " " + item.name, [40, 50 + position], style);
+    $scope.overlayWindow.addChild(clickable);
   }
 
   /**
@@ -203,30 +215,31 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuTitle = createText("Equipment", [20, 10]);
 
     var datas = CharServ.getAllDatas();
+    var style = {
+      font : 'bold italic 26px Arial',
+      fill : '#F7EDCA',
+      stroke : '#4a1850',
+      strokeThickness : 5,
+    };
 
     // draw weapon
-    createText("Weapon", [220, 80]);
+    createText(datas.weapon.name, [50, 80], style);
     createText("[image]", [80, 180]);
     if (datas.weapon.enhancement === 0) {
-      createText(datas.weapon.name, [330, 150], {});
-      createText("damages: " + datas.weapon.damages, [330, 180], {});
-      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [330,210], {});
+      createText("damages: " + datas.weapon.damages, [330, 150], {});
     } else {
-      createText(datas.weapon.name + " + " + datas.weapon.enhancement, [350, 150], {});
-      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [350, 180], {});
-      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [350,210], {});
+      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [330, 150], {});
     }
+    var hit = datas.weapon.hitBonus + datas.weapon.enhancement;
+    createText("hit bonus: " + hit, [330, 180], {});
+    createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [330,210], {});
 
     // draw armor
-    createText("Armor", [220, 340]);
+    createText(datas.armor.name, [50, 340], style);
     createText("[image]", [80, 410]);
-    if (datas.armor.enhancement === 0) {
-      createText(datas.armor.name, [330, 410], {});
-      createText("armor: " + datas.armor.defence, [330, 440], {});
-    } else {
-      createText(datas.armor.name, [330, 410], {});
-      createText("armor: " + datas.armor.defence, [330, 440], {});
-    }
+    var def = datas.armor.defence + datas.armor.enhancement;
+    createText("armor: " + def, [330, 410], {});
+    createText("weight: " + datas.armor.weight, [330, 440], {});
   }
 
   /**
@@ -293,13 +306,17 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *
      * @param {hash} message as: {text: the message to display,
      *                            type: style to use}
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      */
-    newRound: function(message) {
+    newRound: function(message, dfd) {
       destroyMenu();
       drawFighters();
       $scope.position = [200, 330];
       createText(message.text, $scope.position, $scope.style[message.type]);
       $scope.position[1] += 20;
+      dfd.resolve();
+      return dfd.promise();
     },
 
     /**
@@ -307,11 +324,15 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *
      * @param {hash} message as: {text: the message to display,
      *                            type: style to use}
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      */
-    attack: function(message) {
+    attack: function(message, dfd) {
       $scope.position[0] = 40;
       $scope.position[1] += 30;
       createText(message.text, $scope.position, $scope.style[message.type]);
+      dfd.resolve();
+      return dfd.promise();
     },
 
     /**
@@ -319,14 +340,18 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *
      * @param {hash} message as: {text: the message to display,
      *                            type: style to use
-     *                            dmg: damages taken}
+     *                            opt: damages taken}
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      */
-    damagesToPlayer: function(message) {
-      $scope.player.stats.life -= message.dmg;
+    damagesToPlayer: function(message, dfd) {
+      $scope.player.stats.life -= message.opt;
       $scope.playerLife.renderable = false;
       $scope.playerLife = createText("life " + $scope.player.stats.life + " / " + $scope.player.stats.lifeMax, [80, 250], $scope.style.playerLife);
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
+      dfd.resolve();
+      return dfd.promise();
     },
 
     /**
@@ -334,27 +359,180 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *
      * @param {hash} message as: {text: the message to display,
      *                            type: style to use
-     *                            dmg: damages taken}
+     *                            opt: damages taken}
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      */
-    damagesToMob: function(message) {
-      $scope.mob.stats.life -= message.dmg;
+    damagesToMob: function(message, dfd) {
+      $scope.mob.stats.life -= message.opt;
       $scope.mobLife.renderable = false;
       $scope.mobLife = createText("life " + $scope.mob.stats.life + " / " + $scope.mob.stats.lifeMax, [360, 250], $scope.style.mobLife);
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
+      dfd.resolve();
+      return dfd.promise();
     },
 
     /**
      * Display the message when the player is awarded XP or an item.
      *
      * @param {hash} message as: {text: the message to display,
-     *                            type: style to use
-     *                            dmg: damages taken}
+     *                            type: style to use}
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      */
-    reward: function(message) {
+    reward: function(message, dfd) {
       $scope.position[0] = 40;
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
+      dfd.resolve();
+      return dfd.promise();
+    },
+
+    /**
+     * Display a new window presenting a new weapon to the player, and letting
+     * him choose to use it or not.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use,
+     *                            opt: the new weapon}
+     * @param {promise} dfd: a promise resolved when the player has taken his decision.
+     * @return {promise}
+     */
+    weaponReward: function(message, dfd) {
+      destroyMenu();
+      $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.stats.level + ")", [30, 10]);
+      var datas = CharServ.getAllDatas();
+      var style = {
+        font : 'bold italic 26px Arial',
+        fill : '#F7EDCA',
+        stroke : '#4a1850',
+        strokeThickness : 5,
+      };
+
+      createText("You found a new item!", [50, 80]);
+      createText(message.opt.name, [30, 150], style);
+      if (message.opt.enhancement === 0) {
+        createText("damages: " + message.opt.damages, [80, 200], {});
+      } else {
+        createText("damages: " + message.opt.damages + " + " + message.opt.enhancement, [80, 200], {});
+      }
+      var hit = message.opt.hitBonus + message.opt.enhancement;
+      createText("hit bonus: " + hit, [80, 230], {});
+      createText("crit: " + message.opt.critical[0] + "-20  x" + message.opt.critical[1], [80,260], {});
+
+      createText("Currently equiped: ", [50, 350], {});
+      createText(datas.weapon.name, [30, 390], style);
+      if (datas.weapon.enhancement === 0) {
+        createText("damages: " + datas.weapon.damages, [80, 440], {});
+      } else {
+        createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [80, 440], {});
+      }
+      hit = datas.weapon.hitBonus + datas.weapon.enhancement;
+      createText("hit bonus: " + hit, [80, 470], {});
+      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [80,500], {});
+
+      var clickableAccept = new PIXI.Container();
+      var buttonAccept = new PIXI.Sprite($scope.texture.empty);
+      clickableAccept.addChild(buttonAccept);
+      clickableAccept.position.x = 420;
+      clickableAccept.position.y = 220;
+      clickableAccept.buttonMode = true;
+      clickableAccept.interactive = true;
+      createText("Use item", [430, 220], {});
+
+      clickableAccept.on("click", function() {
+        // some visual effect
+        CharServ.gainWeapon(message.opt);
+        dfd.resolve();
+        return dfd.promise();
+      });
+      $scope.overlayWindow.addChild(clickableAccept);
+
+      var clickableDiscard = new PIXI.Container();
+      var buttonDiscard = new PIXI.Sprite($scope.texture.empty);
+      clickableDiscard.addChild(buttonDiscard);
+      clickableDiscard.position.x = 420;
+      clickableDiscard.position.y = 260;
+      clickableDiscard.buttonMode = true;
+      clickableDiscard.interactive = true;
+      createText("Discard", [430, 260], {});
+
+      clickableDiscard.on("click", function() {
+        // some visual effect
+        dfd.resolve();
+        return dfd.promise();
+      });
+      $scope.overlayWindow.addChild(clickableDiscard);
+      return dfd.promise();
+    },
+
+    /**
+     * Display a new window presenting a new armor to the player, and letting
+     * him choose to use it or not.
+     *
+     * @param {hash} message as: {text: the message to display,
+     *                            type: style to use,
+     *                            opt: the new armor}
+     * @param {promise} dfd: a promise resolved when the player has taken his decision.
+     * @return {promise}
+     */
+    armorReward: function(message, dfd) {
+      destroyMenu();
+      $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.stats.level + ")", [30, 10]);
+      var datas = CharServ.getAllDatas();
+      var style = {
+        font : 'bold italic 26px Arial',
+        fill : '#F7EDCA',
+        stroke : '#4a1850',
+        strokeThickness : 5,
+      };
+
+      createText("You found a new item!", [50, 80]);
+      createText(message.opt.name, [30, 150], style);
+      var def = message.opt.defence + message.opt.enhancement;
+      createText("armor: " + def, [80, 200], {});
+      createText("weight: " + message.opt.weight, [80, 230], {});
+
+      createText("Currently equiped: ", [50, 350], {});
+      createText(datas.armor.name, [30, 390], style);
+      def = datas.armor.defence + datas.armor.enhancement;
+      createText("armor: " + def, [80, 440], {});
+      createText("weight: " + datas.armor.weight, [80, 470], {});
+
+      var clickableAccept = new PIXI.Container();
+      var buttonAccept = new PIXI.Sprite($scope.texture.empty);
+      clickableAccept.addChild(buttonAccept);
+      clickableAccept.position.x = 420;
+      clickableAccept.position.y = 220;
+      clickableAccept.buttonMode = true;
+      clickableAccept.interactive = true;
+      createText("Use item", [430, 220], {});
+
+      clickableAccept.on("click", function() {
+        // some visual effect
+        CharServ.gainArmor(message.opt);
+        dfd.resolve();
+        return dfd.promise();
+      });
+      $scope.overlayWindow.addChild(clickableAccept);
+
+      var clickableDiscard = new PIXI.Container();
+      var buttonDiscard = new PIXI.Sprite($scope.texture.empty);
+      clickableDiscard.addChild(buttonDiscard);
+      clickableDiscard.position.x = 420;
+      clickableDiscard.position.y = 260;
+      clickableDiscard.buttonMode = true;
+      clickableDiscard.interactive = true;
+      createText("Discard", [430, 260], {});
+
+      clickableDiscard.on("click", function() {
+        // some visual effect
+        dfd.resolve();
+        return dfd.promise();
+      });
+      $scope.overlayWindow.addChild(clickableDiscard);
+      return dfd.promise();
     },
 
     /**
@@ -362,26 +540,34 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *
      * @param {hash} message as: {text: the message to display,
      *                            type: style to use}
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      */
-    playerDeath: function(message) {
+    playerDeath: function(message, dfd) {
       $scope.playerSprite.renderable = false;
       $scope.playerLife.renderable = false;
       $scope.playerMana.renderable = false;
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
+      dfd.resolve();
+      return dfd.promise();
     },
 
     /**
      * Display the message when the mob dies and remove his sprite.
      *
      * @param {hash} message as: {text: the message to display,
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      *                            type: style to use}
      */
-    mobDeath: function(message) {
+    mobDeath: function(message, dfd) {
       $scope.mobSprite.renderable = false;
       $scope.mobLife.renderable = false;
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
+      dfd.resolve();
+      return dfd.promise();
     },
 
     /**
@@ -389,12 +575,16 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      *
      * @param {hash} message as: {text: the message to display,
      *                            type: style to use}
+     * @param {promise} dfd: a promise resolved when the message is rendered.
+     * @return {promise}
      */
-    endFight: function(message) {
+    endFight: function(message, dfd) {
       $scope.position[0] = 200;
       $scope.position[1] += 40;
       createText(message.text, $scope.position, $scope.style[message.type]);
       $scope.position[1] += 30;
+      dfd.resolve();
+      return dfd.promise();
     }
   };
 
@@ -406,16 +596,17 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * @param {array} messages: array of hashs describing all actions that happended, as:
    *                         {text: message to display,
    *                          type: method (and style) to use to display it,
-   *                          dmg: [optional] damages done during the action}
+   *                          opt: [optional] damages done during the action or new item gained}
    */
   function computeMessage(messages) {
     if (messages[0].type !== "End") {
-      combatLog[messages[0].type](messages[0]);
-
-      messages.shift();
-      window.setTimeout(function() {
-        computeMessage(messages);
-      }, 1000);
+      var dfd = $.Deferred();
+      combatLog[messages[0].type](messages[0], dfd).then(function() {
+        window.setTimeout(function() {
+          messages.shift();
+          computeMessage(messages);
+        }, 1000);
+      });
 
     } else {
       window.setTimeout(function() {
