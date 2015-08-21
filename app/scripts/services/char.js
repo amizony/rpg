@@ -93,8 +93,8 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
       $scope.weapon = {
         name: "Rusty Sword",
-        damages: "10d6",
-        hitBonus: 10,
+        damages: "1d6",
+        hitBonus: 1,
         critical: [19, 2],
         enhancement: 0
       };
@@ -102,7 +102,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       $scope.armor = {
         name: "Worn Leather Armor",
         weight: 10,
-        defence: 10,
+        defence: 1,
         enhancement: 0
       };
 
