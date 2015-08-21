@@ -87,6 +87,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       };
 
       $scope.stats = {
+        name: "Carlisle",
         level: 1,
         experience: 0
       };

@@ -70,7 +70,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         button.texture = $scope.texture.button;
       })
       .on("click", function() {
-        if (_.isUndefined($scope.menuTitle) || $scope.menuTitle._text.slice(0, 5) !== "Mario") {
+        if (_.isUndefined($scope.menuTitle) || $scope.menuTitle._text !== $scope.fightTitle) {
           if (!$scope.overlayWindow.renderable || $scope.menuTitle._text !== obj.name) {
             $scope.overlayWindow.renderable = true;
             destroyMenu();
@@ -112,7 +112,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     var style = {};
 
     // name & picture
-    createText("Super Mario", [50, 80], style);
+    createText(datas.stats.name, [50, 80], style);
     var char = new PIXI.Sprite($scope.texture.char);
     char.position.x = 30;
     char.position.y = 150;
@@ -257,7 +257,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
    */
   function drawFighters() {
-    $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.stats.level + ")", [30, 10]);
+    $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
 
     $scope.playerSprite = new PIXI.Sprite($scope.texture.char);
     $scope.playerSprite.scale.set(0.28);
@@ -401,7 +401,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      */
     weaponReward: function(message, dfd) {
       destroyMenu();
-      $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.stats.level + ")", [30, 10]);
+      $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
       var datas = CharServ.getAllDatas();
       var style = {
         font : 'bold italic 26px Arial',
@@ -479,7 +479,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      */
     armorReward: function(message, dfd) {
       destroyMenu();
-      $scope.menuTitle = createText("Mario   -- VS --   Monster (level " + $scope.mob.stats.level + ")", [30, 10]);
+      $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
       var datas = CharServ.getAllDatas();
       var style = {
         font : 'bold italic 26px Arial',
@@ -687,7 +687,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
       $scope.player = player;
       $scope.mob = mob;
-
+      $scope.fightTitle = player.stats.name + " (" + player.stats.level + ")" +  " -- " + mob.stats.name + " (" + mob.stats.level + ")";
       drawFighters();
     },
 

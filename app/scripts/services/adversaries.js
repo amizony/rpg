@@ -13,6 +13,11 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
 
   var $scope = {};
 
+  var names = ["Alfred", "Bob", "Caleb", "Darius", "Eric", "Franz", "Gustav", "Henry", "Isidore", "Jasper", "Kilian", "Leopold",
+               "Maurice", "Nazim", "Octave", "Peter", "Quentin", "Rys", "Stanis", "Ulric", "Vassili", "Wiliam", "Xavier", "Yann", "Zadig"];
+
+  var ranks = {"-2": "Robber", "-1": "Highwayman", "0": "Henchman", "1": "Mercenary", "2": "Guard", "3": "Soldier", "4": "Squire", "5": "Veteran", "6": "Captain", "7": "Knight", "8": "Champion"};
+
   /**
    * Generate a random level between 1 and the player's level,
    * then for each 4 player's level, the adversary has one more level.
@@ -49,6 +54,7 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
       //wisdom: _.random(0,2)
     };
     $scope.stats = {
+      name: ranks[$scope.difficulty] + " " + names[_.random(names.length - 1)],
       level: $scope.level,
       xpReward: $scope.level * (100 + 20 * $scope.difficulty)
     };
@@ -100,7 +106,7 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
       $scope.level = 30;
       $scope.difficulty = _.floor(charLevel / 5);
       setStats();
-      console.log("You encounter a boss (level " + $scope.level + ", difficulty " + $scope.difficulty + ")");
+      $scope.stats.name = "Imperator A.";
     }
   };
 
