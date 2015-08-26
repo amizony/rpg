@@ -23,7 +23,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
     var buttons = [
       {name: "Character", open: characterMenu},
-      {name: "Equipment", open: equipmentMenu},
+      {name: "Items", open: equipmentMenu},
       {name: "Inventory", open: inventoryMenu},
       {name: "Spells",    open: spellsMenu},
       {name: "Help",      open: helpMenu}
@@ -212,7 +212,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Draw the equiped objects of the character.
    */
   function equipmentMenu() {
-    $scope.menuTitle = createText("Equipment", [20, 10]);
+    $scope.menuTitle = createText("Items", [20, 10]);
 
     var datas = CharServ.getAllDatas();
     var style = {
