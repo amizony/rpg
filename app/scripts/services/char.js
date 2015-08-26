@@ -33,10 +33,10 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
    * @return {integer} attribute, between 0 and 4.
    */
   function randAttribute() {
-    var dice1 = _.random(1, 6);
-    var dice2 = _.random(1, 6);
-    var attribute = _.floor((dice1 + dice2 - 4) / 2);
-    return Math.max(0, attribute);
+    var dice1 = _.random(0, 2);
+    var dice2 = _.random(0, 2);
+    var attribute = dice1 + dice2;
+    return attribute;
   }
 
   /**
@@ -46,15 +46,23 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
   function levelUP() {
     $scope.stats.experience -= $scope.stats.level *1000;
     $scope.stats.level += 1;
+    if ($scope.stats.level % 5 === 0) {
+      var attributeIncrease = _.shuffle([1, 0, 0]);
+      var i = 0;
+      _.forIn($scope.attribute, function(value, key) {
+        $scope.attribute[key] = value + attributeIncrease[i];
+        i += 1;
+      });
+    }
 
     recalculateStats();
     $scope.stats.life = $scope.stats.lifeMax;
-    $scope.stats.mana = $scope.stats.manaMax;
+    //$scope.stats.mana = $scope.stats.manaMax;
   }
 
   function recalculateStats() {
     $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
-    $scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
+    //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
     $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100));
     $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
   }
@@ -74,16 +82,14 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         strength: randAttribute(),
         dexterity: randAttribute(),
         endurance: randAttribute(),
-        intelligence: randAttribute(),
-        wisdom: randAttribute()
+        //intelligence: randAttribute(),
+        //wisdom: randAttribute()
       };
 
       $scope.stats = {
         level: 1,
         experience: 0
       };
-      $scope.stats.life = $scope.stats.lifeMax;
-      $scope.stats.mana = $scope.stats.manaMax;
 
       $scope.weapon = {
         name: "Rusty Sword",
@@ -102,7 +108,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
 
       recalculateStats();
       $scope.stats.life = $scope.stats.lifeMax;
-      $scope.stats.mana = $scope.stats.manaMax;
+      //$scope.stats.mana = $scope.stats.manaMax;
 
       $scope.spells = {
         "Heavy Blow": {

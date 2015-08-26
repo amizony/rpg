@@ -122,7 +122,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     // stats
     createText("Level  " + datas.stats.level + "  (" + datas.stats.experience + " / " + datas.stats.level * 1000 + ")", [350, 100], style);
     createText("Life   " + datas.stats.life + " / " + datas.stats.lifeMax, [350, 150], style);
-    createText("Mana  " + datas.stats.mana + " / " + datas.stats.manaMax, [350, 185], style);
+    //createText("Mana  " + datas.stats.mana + " / " + datas.stats.manaMax, [350, 185], style);
 
     createText("Bonus to hit: " + datas.stats.hitBonus, [350, 235], style);
     createText("Defence:      " + datas.stats.defence, [350, 270], style);
@@ -266,7 +266,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.overlayWindow.addChild($scope.playerSprite);
 
     $scope.playerLife = createText("life " + $scope.player.stats.life + " / " + $scope.player.stats.lifeMax, [80, 250], $scope.style.playerLife);
-    $scope.playerMana = createText("mana " + $scope.player.stats.mana + " / " + $scope.player.stats.manaMax, [80, 280], $scope.style.playerMana);
+    //$scope.playerMana = createText("mana " + $scope.player.stats.mana + " / " + $scope.player.stats.manaMax, [80, 280], $scope.style.playerMana);
 
     $scope.mobSprite = new PIXI.Sprite($scope.texture.monster);
     $scope.mobSprite.position.x = 340;
@@ -546,7 +546,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     playerDeath: function(message, dfd) {
       $scope.playerSprite.renderable = false;
       $scope.playerLife.renderable = false;
-      $scope.playerMana.renderable = false;
+      //$scope.playerMana.renderable = false;
       $scope.position[1] += 20;
       createText(message.text, $scope.position, $scope.style[message.type]);
       dfd.resolve();

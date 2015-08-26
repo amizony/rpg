@@ -59,12 +59,12 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
           AdversariesServ.setBoss(CharServ.getAllDatas().stats.level);
           FightEngine.fight();
         } else {
-          var encounter = true;
+          var encounter = (_.random(5) === 0);
           if (encounter) {
             AdversariesServ.defineAdversary(CharServ.getAllDatas().stats.level);
             FightEngine.fight();
           } else {
-            CharServ.manaRegen();
+            //CharServ.manaRegen();
             CharServ.lifeRegen();
           }
         }

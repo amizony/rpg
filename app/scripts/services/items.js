@@ -288,7 +288,7 @@ angular.module("rpgApp").service("ItemsDB", ["CharServ", function (CharServ) {
     },
 
     /**
-    * @param {integer} difficulty: mob's difficulty parameter, influencing the enhancement.
+     * @param {integer} difficulty: mob's difficulty parameter, influencing the enhancement.
      * @return {hash} a random base armor from the list for mobs.
      */
     randomBaseArmor: function(difficulty) {
@@ -310,16 +310,6 @@ angular.module("rpgApp").service("ItemsDB", ["CharServ", function (CharServ) {
       var secondPrefix = _.random(10);
       var sufix = _.random(10);
 
-      if (sufix < 2) {
-        weapon.damages = increaseDamages(weapon.damages);
-        weapon.name += " of Brutality";
-      }
-
-      if (sufix >8) {
-        weapon.critical[1] = increaseCriticalMultiplier(weapon.critical[1]);
-        weapon.name += " of Extermination";
-      }
-
       if (secondPrefix < 3) {
         weapon.damages = decreaseDamages(weapon.damages);
         weapon.name = "Rusty " + weapon.name;
@@ -340,8 +330,19 @@ angular.module("rpgApp").service("ItemsDB", ["CharServ", function (CharServ) {
         weapon.name = "Well-balanced " + weapon.name;
       }
 
-      // enhancement between 0 and 5
-      weapon.enhancement = _.max([_.floor(_.random(18) / 3) - 1, 0]);
+      if (sufix < 2) {
+        weapon.damages = increaseDamages(weapon.damages);
+        weapon.name += " of Brutality";
+      }
+
+      if (sufix >8) {
+        weapon.critical[1] = increaseCriticalMultiplier(weapon.critical[1]);
+        weapon.name += " of Extermination";
+      }
+
+      var level = CharServ.getAllDatas().stats.level;
+      // enhancement between 0 and level/3 and then +1 for each 5 levels
+      weapon.enhancement = _.floor(_.random(0, level) / 3) + _.floor(level / 5);
       if (weapon.enhancement > 0) {
         weapon.name += " + " + weapon.enhancement;
       }
@@ -389,8 +390,9 @@ angular.module("rpgApp").service("ItemsDB", ["CharServ", function (CharServ) {
         armor.name += " of Protection";
       }
 
-      // enhancement between 0 and 5
-      armor.enhancement = _.max([_.floor(_.random(18) / 3) - 1, 0]);
+      var level = CharServ.getAllDatas().stats.level;
+      // enhancement between 0 and level/3 and then +1 for each 5 levels
+      armor.enhancement = _.floor(_.random(0, level) / 3) + _.floor(level / 5);
       if (armor.enhancement > 0) {
         armor.name += " + " + armor.enhancement;
       }
