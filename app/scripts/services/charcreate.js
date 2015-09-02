@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name rpgApp.service:CharServ
+ * @name rpgApp.service:CharCreation
  * @description
  * Service taking care of character creation (display and stats init).
  */
 
-angular.module("rpgApp").service("CharCreate", ["CharServ", "ItemsDB", function (CharServ, ItemsDB) {
+angular.module("rpgApp").service("CharCreation", ["ItemsDB", function (ItemsDB) {
 
   var $scope = {};
 
@@ -24,8 +24,15 @@ angular.module("rpgApp").service("CharCreate", ["CharServ", "ItemsDB", function 
  // stater items depending on class or can be choosen
 
  return {
-  create: function () {
-    var dfd = $.Deferred();
+  create: function (dfd) {
+    $scope.creationPage = new PIXI.Container();
+
+    var newText = new PIXI.Text("Character Creation Page, wait 3s to continue", {});
+    newText.position.x = 100;
+    newText.position.y = 200;
+    $scope.creationPage.addChild(newText);
+
+
     var result;
 
     // async char creation
@@ -41,7 +48,11 @@ angular.module("rpgApp").service("CharCreate", ["CharServ", "ItemsDB", function 
       }
     }, 100);
 
-    return dfd;
+    return $scope.creationPage;
+  },
+  getDisplay() {
+    return $scope.creationPage;
   }
+
  };
 }]);

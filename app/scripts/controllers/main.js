@@ -8,18 +8,20 @@
  */
 
 
-angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "CharCreate", "MapServ", "PixiServ", "FightEngine", "AdversariesServ", function ($scope, CharServ, CharCreate, MapServ, PixiServ, FightEngine, AdversariesServ) {
+angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", "FightEngine", "AdversariesServ", function ($scope, CharServ, MapServ, PixiServ, FightEngine, AdversariesServ) {
 
   initialisation();
 
   function initialisation() {
-    MapServ.load().then(MapServ.reflect)
-    .then(CharCreate.create)
-    .then(CharServ.create)
-    .then(function() { PixiServ.init(MapServ.getMap(), CharServ.getPosition()); })
-    .then(PixiServ.mapScroll)
-    .then(animate)
-    .then(startFpsCount);
+    PixiServ.init();
+    animate();
+    startFpsCount();
+
+    MapServ.load().then(MapServ.reflect);
+
+    PixiServ.createChar().then(CharServ.create)
+    .then(function() { PixiServ.createGame(MapServ.getMap(), CharServ.getPosition()); })
+    .then(PixiServ.mapScroll);
   }
 
   function startFpsCount() {

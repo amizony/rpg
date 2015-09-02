@@ -7,7 +7,7 @@
  * Main service of Pixi, responsible for the rendering and managing the animations.
  */
 
-angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , function (GameDraw, InterfaceDraw) {
+angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw", "CharCreation", function (GameDraw, InterfaceDraw, CharCreation) {
 
   var $scope = {};
 
@@ -81,20 +81,38 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
 
   return {
     /**
-     * Initialisations of pixi and containers,
-     * drawing the interface, the map and the character.
+     * Initialisation of pixi and main container.
+     */
+    init: function() {
+      // init rendering
+      $scope.renderer = PIXI.autoDetectRenderer(800, 600, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
+
+      // init main display container
+      $scope.stage = new PIXI.Container();
+      $scope.stage.interactive = true;
+    },
+
+    /**
+     * Initialisations of the character creation page.
+     *
+     * @return {promise} resolved when the character is complete.
+     */
+    createChar: function () {
+      var dfd = $.Deferred();
+      $scope.creationPage = CharCreation.create(dfd);
+      $scope.stage.addChild($scope.creationPage);
+
+      return dfd;
+    },
+
+    /**
+     * Initialisations of the interface, the map and the character.
      *
      * @param {array} mapData: map to draw, stored as pseudo-matrix.
      * @param {array} charPosition: coordinates of the character, as [x, y].
      */
-    init: function(mapData, charPosition) {
-      // init rendering
-      $scope.renderer = PIXI.autoDetectRenderer(800, 600, { view:document.getElementById("game-canvas"), backgroundColor : 0x1099bb });
-
-      // init display containers
-      $scope.stage = new PIXI.Container();
-      $scope.stage.interactive = true;
-
+    createGame: function(mapData, charPosition) {
+      $scope.creationPage = undefined;
       $scope.interface = InterfaceDraw.init();
       $scope.dungeon = GameDraw.init(mapData, charPosition);
       $scope.stage.addChild($scope.dungeon);
@@ -117,8 +135,12 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw" , funct
      * Update the contents of the containers and render them.
      */
     render: function() {
-      $scope.dungeon = GameDraw.getGame();
-      $scope.interface = InterfaceDraw.getInterface();
+      if (_.isUndefined($scope.creationPage)) {
+        $scope.dungeon = GameDraw.getGame();
+        $scope.interface = InterfaceDraw.getInterface();
+      } else {
+        $scope.creationPage = CharCreation.getDisplay();
+      }
       $scope.renderer.render($scope.stage);
     },
 
