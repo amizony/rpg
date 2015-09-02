@@ -8,7 +8,7 @@
  */
 
 
-angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ", "PixiServ", "FightEngine", "AdversariesServ", function ($scope, CharServ, MapServ, PixiServ, FightEngine, AdversariesServ) {
+angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "CharCreate", "MapServ", "PixiServ", "FightEngine", "AdversariesServ", function ($scope, CharServ, CharCreate, MapServ, PixiServ, FightEngine, AdversariesServ) {
 
   initialisation();
 
