@@ -14,6 +14,7 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "CharCrea
 
   function initialisation() {
     MapServ.load().then(MapServ.reflect)
+    .then(CharCreate.create)
     .then(CharServ.create)
     .then(function() { PixiServ.init(MapServ.getMap(), CharServ.getPosition()); })
     .then(PixiServ.mapScroll)
