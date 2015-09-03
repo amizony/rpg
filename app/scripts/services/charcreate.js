@@ -8,11 +8,17 @@
  */
 
 angular.module("rpgApp").service("CharCreation", function () {
+  // own display
+  // choose a class
+  // roll attributes (and reroll them at a price)
+  // choose a sprite?
+  // choose a name?
+  // starter items depending on class
 
   var $scope = {};
 
   /**
-   * Display a Pixi Text in the active menu window.
+   * Display a Pixi Text.
    *
    * @param {string} text: the text we want to display.
    * @param {array} position: the location inside the overlayWindow to display it, as [x, y].
@@ -36,6 +42,30 @@ angular.module("rpgApp").service("CharCreation", function () {
     return newText;
   }
 
+  /**
+   * Display an invisible button.
+   *
+   * @param {string} text: the button's name.
+   * @param {array} position: the location inside the overlayWindow to display it, as [x, y].
+   * @param {function} callback: function to execute when the button is clicked.
+   */
+  function invisibleButton(text, position, callback) {
+    var clickable = new PIXI.Container();
+    var button = new PIXI.Sprite($scope.texture.empty);
+    clickable.addChild(button);
+    clickable.position.x = position[0] - 30;
+    clickable.position.y = position[1];
+    clickable.buttonMode = true;
+    clickable.interactive = true;
+    createText(text, position, {});
+
+    clickable.on("click", callback);
+    $scope.creationPage.addChild(clickable);
+  }
+
+  /**
+   * Create a button for choosing the character class.
+   */
   function createClassButton(text, position) {
     var newText = new PIXI.Text(text, {});
     newText.position.x = position[0];
@@ -85,23 +115,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     };
   }
 
-
-  // own display
-
-  // choose a class
-
-  // roll attributes (and reroll them at a price)
-
-  // choose a sprite
-
-  //choose a name
-
- // stater items depending on class or can be choosen
-
- return {
-  create: function (dfd) {
-    $scope.creationPage = new PIXI.Container();
-
+  function createDisplay(dfd) {
     createText("Create a new Character ", [180, 0]);
     createClassButton("Barbarian", [100, 70]);
     createClassButton("Warrior", [350, 70]);
@@ -120,25 +134,31 @@ angular.module("rpgApp").service("CharCreation", function () {
       createText(key + ": " + value, [posX + 10, posY + i], {});
       i += 30;
     });
-    createText("Reroll attributes?", [400, 380], {});
 
-    createText("Accept", [300, 550], {});
+    invisibleButton("Reroll attributes?", [430, 380], function() {
+      console.log("click noticed");
+    });
 
-    var result;
+    invisibleButton("Create Character", [300, 550], function() {
+      defineBaseChar();
+      dfd.resolve();
+    });
 
-    // async char creation
-    window.setTimeout(function() {
-      result = window.confirm("Continue?");
-    }, 3000);
+  }
 
-    // validating the char when done and proceed to the game (will be a button)
-    var int = window.setInterval(function() {
-      if (result) {
-        defineBaseChar();
-        dfd.resolve();
-        clearInterval(int);
-      }
-    }, 100);
+
+ return {
+  init: function (dfd) {
+    $scope.creationPage = new PIXI.Container();
+
+    // init textures
+    $scope.texture = {
+      button: PIXI.Texture.fromImage("images/button.png"),
+      buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
+      empty: PIXI.Texture.fromImage("images/empty.png")
+    };
+
+    createDisplay(dfd);
 
     return $scope.creationPage;
   },

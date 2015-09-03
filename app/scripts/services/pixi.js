@@ -99,7 +99,7 @@ angular.module("rpgApp").service("PixiServ", ["GameDraw","InterfaceDraw", "CharC
      */
     createChar: function () {
       var dfd = $.Deferred();
-      $scope.creationPage = CharCreation.create(dfd);
+      $scope.creationPage = CharCreation.init(dfd);
       $scope.stage.addChild($scope.creationPage);
 
       return dfd;
