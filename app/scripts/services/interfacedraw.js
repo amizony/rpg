@@ -305,6 +305,26 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     return newText;
   }
 
+  /**
+   * Display an invisible button in the active menu window.
+   *
+   * @param {string} text: the button's name.
+   * @param {array} position: the location inside the overlayWindow to display it, as [x, y].
+   * @param {function} callback: function to execute when the button is clicked.
+   */
+  function invisibleButton(text, position, callback) {
+    var clickable = new PIXI.Container();
+    var button = new PIXI.Sprite($scope.texture.empty);
+    clickable.addChild(button);
+    clickable.position.x = position[0] - 10;
+    clickable.position.y = position[1];
+    clickable.buttonMode = true;
+    clickable.interactive = true;
+    createText(text, position, {});
+
+    clickable.on("click", callback);
+    $scope.overlayWindow.addChild(clickable);
+  }
   var combatLog = {
     /**
      * Refresh the display for a new round.
@@ -437,38 +457,17 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       createText("hit bonus: " + hit, [80, 470], {});
       createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [80,500], {});
 
-      var clickableAccept = new PIXI.Container();
-      var buttonAccept = new PIXI.Sprite($scope.texture.empty);
-      clickableAccept.addChild(buttonAccept);
-      clickableAccept.position.x = 420;
-      clickableAccept.position.y = 220;
-      clickableAccept.buttonMode = true;
-      clickableAccept.interactive = true;
-      createText("Use item", [430, 220], {});
-
-      clickableAccept.on("click", function() {
+      invisibleButton("Use item", [430, 220], function() {
         // some visual effect
         CharServ.gainWeapon(message.opt);
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableAccept);
 
-      var clickableDiscard = new PIXI.Container();
-      var buttonDiscard = new PIXI.Sprite($scope.texture.empty);
-      clickableDiscard.addChild(buttonDiscard);
-      clickableDiscard.position.x = 420;
-      clickableDiscard.position.y = 260;
-      clickableDiscard.buttonMode = true;
-      clickableDiscard.interactive = true;
-      createText("Discard", [430, 260], {});
-
-      clickableDiscard.on("click", function() {
+      invisibleButton("Discard", [430, 260], function() {
         // some visual effect
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableDiscard);
+
       return dfd.promise();
     },
 
@@ -505,38 +504,17 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       createText("armor: " + def, [80, 440], {});
       createText("weight: " + datas.armor.weight, [80, 470], {});
 
-      var clickableAccept = new PIXI.Container();
-      var buttonAccept = new PIXI.Sprite($scope.texture.empty);
-      clickableAccept.addChild(buttonAccept);
-      clickableAccept.position.x = 420;
-      clickableAccept.position.y = 220;
-      clickableAccept.buttonMode = true;
-      clickableAccept.interactive = true;
-      createText("Use item", [430, 220], {});
-
-      clickableAccept.on("click", function() {
+      invisibleButton("Use item", [430, 220], function() {
         // some visual effect
         CharServ.gainArmor(message.opt);
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableAccept);
 
-      var clickableDiscard = new PIXI.Container();
-      var buttonDiscard = new PIXI.Sprite($scope.texture.empty);
-      clickableDiscard.addChild(buttonDiscard);
-      clickableDiscard.position.x = 420;
-      clickableDiscard.position.y = 260;
-      clickableDiscard.buttonMode = true;
-      clickableDiscard.interactive = true;
-      createText("Discard", [430, 260], {});
-
-      clickableDiscard.on("click", function() {
+      invisibleButton("Discard", [430, 260], function() {
         // some visual effect
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableDiscard);
+
       return dfd.promise();
     },
 
