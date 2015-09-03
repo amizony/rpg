@@ -12,6 +12,38 @@ angular.module("rpgApp").service("CharCreation", function () {
   var $scope = {};
 
   /**
+   * Display a Pixi Text in the active menu window.
+   *
+   * @param {string} text: the text we want to display.
+   * @param {array} position: the location inside the overlayWindow to display it, as [x, y].
+   * @param {hash} style: [optional] a particular style to apply to the text.
+   * @return {Pixi.Text} the Text we create.
+   */
+  function createText(text, position, style) {
+    if (_.isUndefined(style)) {
+      style = {
+        font : 'bold italic 36px Arial',
+        fill : '#F7EDCA',
+        stroke : '#4a1850',
+        strokeThickness : 5,
+      };
+    }
+    var newText = new PIXI.Text(text, style);
+    newText.position.x = position[0];
+    newText.position.y = position[1];
+    $scope.creationPage.addChild(newText);
+
+    return newText;
+  }
+
+  function createClassButton(text, position) {
+    var newText = new PIXI.Text(text, {});
+    newText.position.x = position[0];
+    newText.position.y = position[1];
+    $scope.creationPage.addChild(newText);
+  }
+
+  /**
    * Randomize attribute with a non-linear repartition
    *
    * @return {integer} attribute, between 0 and 4.
@@ -70,11 +102,27 @@ angular.module("rpgApp").service("CharCreation", function () {
   create: function (dfd) {
     $scope.creationPage = new PIXI.Container();
 
-    var newText = new PIXI.Text("Character Creation Page, wait 3s to continue", {});
-    newText.position.x = 100;
-    newText.position.y = 200;
-    $scope.creationPage.addChild(newText);
+    createText("Create a new Character ", [180, 0]);
+    createClassButton("Barbarian", [100, 70]);
+    createClassButton("Warrior", [350, 70]);
+    createClassButton("Rogue", [600, 70]);
 
+    var posX = 150;
+    var posY = 350;
+    var i = 30;
+    var attributes = {
+      strength: randAttribute(),
+      dexterity: randAttribute(),
+      endurance: randAttribute(),
+    };
+    createText("Attributes", [posX, posY], {});
+    _.forIn(attributes, function(value, key) {
+      createText(key + ": " + value, [posX + 10, posY + i], {});
+      i += 30;
+    });
+    createText("Reroll attributes?", [400, 380], {});
+
+    createText("Accept", [300, 550], {});
 
     var result;
 
