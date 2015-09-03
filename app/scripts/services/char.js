@@ -8,7 +8,7 @@
  * Provide functions to access or modify them.
  */
 
-angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
+angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", function (MapServ, CharCreation) {
 
   var $scope = {};
 
@@ -24,19 +24,6 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       posY = _.random(0,35);
     } while (MapServ.isWall([posX, posY]));
     return [posX, posY];
-  }
-
-
-  /**
-   * Randomize attribute with a non-linear repartition
-   *
-   * @return {integer} attribute, between 0 and 4.
-   */
-  function randAttribute() {
-    var dice1 = _.random(0, 2);
-    var dice2 = _.random(0, 2);
-    var attribute = dice1 + dice2;
-    return attribute;
   }
 
   /**
@@ -72,57 +59,27 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
      * Create the character.
      */
     create: function() {
-      var position = randPos();
-      $scope.position = {
-        x: position[0],
-        y: position[1]
-      };
+      $scope = CharCreation.getChar();
 
-      $scope.attribute = {
-        strength: randAttribute(),
-        dexterity: randAttribute(),
-        endurance: randAttribute(),
-        //intelligence: randAttribute(),
-        //wisdom: randAttribute()
-      };
-
-      $scope.stats = {
-        name: "Carlisle",
-        level: 1,
-        experience: 0
-      };
-
-      $scope.weapon = {
-        name: "Rusty Sword",
-        damages: "1d6",
-        hitBonus: 1,
-        critical: [19, 2],
-        enhancement: 0
-      };
-
-      $scope.armor = {
-        name: "Worn Leather Armor",
-        weight: 10,
-        defence: 1,
-        enhancement: 0
-      };
+      $scope.stats.level = 1;
+      $scope.stats.experience = 0;
 
       recalculateStats();
       $scope.stats.life = $scope.stats.lifeMax;
       //$scope.stats.mana = $scope.stats.manaMax;
 
-      $scope.spells = {
-        "Heavy Blow": {
-          damages: 5,
-          hitBonus: -2,
-          mana: 1
-        },
-        "Precise Blow": {
-          damages: -1,
-          hitBonus: 2,
-          mana: 1
-        }
-      };
+      // $scope.spells = {
+      //   "Heavy Blow": {
+      //     damages: 5,
+      //     hitBonus: -2,
+      //     mana: 1
+      //   },
+      //   "Precise Blow": {
+      //     damages: -1,
+      //     hitBonus: 2,
+      //     mana: 1
+      //   }
+      // };
 
       $scope.inventory = [
         {
@@ -132,6 +89,11 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
         },
       ];
 
+      var position = randPos();
+      $scope.position = {
+        x: position[0],
+        y: position[1]
+      };
     },
     /**
      * @return {array} cell coordinates of player, as [x,y].

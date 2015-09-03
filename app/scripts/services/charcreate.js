@@ -7,9 +7,52 @@
  * Service taking care of character creation (display and stats init).
  */
 
-angular.module("rpgApp").service("CharCreation", ["ItemsDB", function (ItemsDB) {
+angular.module("rpgApp").service("CharCreation", function () {
 
   var $scope = {};
+
+  /**
+   * Randomize attribute with a non-linear repartition
+   *
+   * @return {integer} attribute, between 0 and 4.
+   */
+  function randAttribute() {
+    var dice1 = _.random(0, 2);
+    var dice2 = _.random(0, 2);
+    var attribute = dice1 + dice2;
+    return attribute;
+  }
+
+  function defineBaseChar() {
+    $scope.char = {};
+    $scope.char.attribute = {
+      strength: randAttribute(),
+      dexterity: randAttribute(),
+      endurance: randAttribute(),
+      //intelligence: randAttribute(),
+      //wisdom: randAttribute()
+    };
+
+    $scope.char.stats = {
+      name: "Carlisle"
+    };
+
+    $scope.char.weapon = {
+      name: "Rusty Sword",
+      damages: "1d6",
+      hitBonus: 1,
+      critical: [19, 2],
+      enhancement: 0
+    };
+
+    $scope.char.armor = {
+      name: "Worn Leather Armor",
+      weight: 10,
+      defence: 1,
+      enhancement: 0
+    };
+  }
+
 
   // own display
 
@@ -43,6 +86,7 @@ angular.module("rpgApp").service("CharCreation", ["ItemsDB", function (ItemsDB) 
     // validating the char when done and proceed to the game (will be a button)
     var int = window.setInterval(function() {
       if (result) {
+        defineBaseChar();
         dfd.resolve();
         clearInterval(int);
       }
@@ -50,9 +94,11 @@ angular.module("rpgApp").service("CharCreation", ["ItemsDB", function (ItemsDB) 
 
     return $scope.creationPage;
   },
-  getDisplay() {
+  getDisplay: function() {
     return $scope.creationPage;
+  },
+  getChar: function() {
+    return _.merge({}, $scope.char);
   }
-
  };
-}]);
+});
