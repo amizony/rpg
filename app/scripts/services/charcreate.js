@@ -16,6 +16,20 @@ angular.module("rpgApp").service("CharCreation", function () {
   // starter items depending on class
 
   var $scope = {};
+  var classes = [
+    {
+      name: "Barbarian",
+      desc: "A brutal fighter",
+    },
+    {
+      name: "Warrior",
+      desc: "A defensive fighter",
+    },
+    {
+      name: "Rogue",
+      desc: "An offensive fighter ",
+    },
+  ];
 
   /**
    * Display a Pixi Text.
@@ -66,11 +80,43 @@ angular.module("rpgApp").service("CharCreation", function () {
   /**
    * Create a button for choosing the character class.
    */
-  function createClassButton(text, position) {
-    var newText = new PIXI.Text(text, {});
-    newText.position.x = position[0];
-    newText.position.y = position[1];
-    $scope.creationPage.addChild(newText);
+  function createClassButton(cl, position) {
+    var charClass = new PIXI.Container();
+    charClass.position.x = position[0];
+    charClass.position.y = position[1];
+
+    var button = new PIXI.Sprite($scope.texture.button);
+    button.scale.set(0.70);
+    charClass.buttonMode = true;
+    charClass.interactive = true;
+
+    var classDescription = new PIXI.Text(cl.desc);
+    classDescription.position.x = 5;
+    classDescription.position.y = 100;
+    classDescription.renderable = false;
+
+    charClass
+      .on("mouseover", function() {
+        button.texture = $scope.texture.buttonHover;
+        classDescription.renderable = true;
+      })
+      .on("mouseout", function() {
+        button.texture = $scope.texture.button;
+        classDescription.renderable = false;
+      })
+      .on("click", function() {
+        console.log("class selected");
+      });
+
+    var className = new PIXI.Text(cl.name);
+    className.position.x = 20;
+    className.position.y = 10;
+
+    charClass.addChild(button);
+    charClass.addChild(className);
+    charClass.addChild(classDescription);
+
+    $scope.creationPage.addChild(charClass);
   }
 
   /**
@@ -117,9 +163,9 @@ angular.module("rpgApp").service("CharCreation", function () {
 
   function createDisplay(dfd) {
     createText("Create a new Character ", [180, 0]);
-    createClassButton("Barbarian", [100, 70]);
-    createClassButton("Warrior", [350, 70]);
-    createClassButton("Rogue", [600, 70]);
+    createClassButton(classes[0], [80, 70]);
+    createClassButton(classes[1], [320, 70]);
+    createClassButton(classes[2], [580, 70]);
 
     var posX = 150;
     var posY = 350;
