@@ -132,15 +132,6 @@ angular.module("rpgApp").service("CharCreation", function () {
   }
 
   function defineBaseChar() {
-    $scope.char = {};
-    $scope.char.attribute = {
-      strength: randAttribute(),
-      dexterity: randAttribute(),
-      endurance: randAttribute(),
-      //intelligence: randAttribute(),
-      //wisdom: randAttribute()
-    };
-
     $scope.char.stats = {
       name: "Carlisle"
     };
@@ -159,6 +150,14 @@ angular.module("rpgApp").service("CharCreation", function () {
       defence: 1,
       enhancement: 0
     };
+
+    $scope.char.inventory = [
+      {
+        name: "Resurection Stone",
+        quantity: $scope.stones,
+        usable: false
+      },
+    ];
   }
 
   function createDisplay(dfd) {
@@ -170,19 +169,48 @@ angular.module("rpgApp").service("CharCreation", function () {
     var posX = 150;
     var posY = 350;
     var i = 30;
-    var attributes = {
+    var attributeDisplay = [];
+    $scope.char.attribute = {
       strength: randAttribute(),
       dexterity: randAttribute(),
       endurance: randAttribute(),
+      //intelligence: randAttribute(),
+      //wisdom: randAttribute()
     };
+    $scope.stones = 5;
+
     createText("Attributes", [posX, posY], {});
-    _.forIn(attributes, function(value, key) {
-      createText(key + ": " + value, [posX + 10, posY + i], {});
+    _.forIn($scope.char.attribute, function(value, key) {
+      attributeDisplay.push(createText(key + ": " + value, [posX + 10, posY + i], {}));
       i += 30;
     });
 
+    var rerollLeft = createText("(" + $scope.stones + " left)", [660, 385], {font: "bold 16px Arial"});
+
     invisibleButton("Reroll attributes?", [430, 380], function() {
-      console.log("click noticed");
+      if ($scope.stones > 0) {
+        $scope.stones -= 1;
+
+        _.forIn(attributeDisplay, function(value) {
+          value.renderable = false;
+        });
+        rerollLeft.renderable = false;
+
+        $scope.char.attribute = {
+          strength: randAttribute(),
+          dexterity: randAttribute(),
+          endurance: randAttribute(),
+          //intelligence: randAttribute(),
+          //wisdom: randAttribute()
+        };
+
+        i = 30;
+        _.forIn($scope.char.attribute, function(value, key) {
+          attributeDisplay.push(createText(key + ": " + value, [posX + 10, posY + i], {}));
+          i += 30;
+        });
+        rerollLeft = createText("(" + $scope.stones + " left)", [660, 385], {font: "bold 16px Arial"});
+      }
     });
 
     invisibleButton("Create Character", [300, 550], function() {
@@ -204,6 +232,7 @@ angular.module("rpgApp").service("CharCreation", function () {
       empty: PIXI.Texture.fromImage("images/empty.png")
     };
 
+    $scope.char = {};
     createDisplay(dfd);
 
     return $scope.creationPage;

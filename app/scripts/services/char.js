@@ -81,14 +81,6 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", functio
       //   }
       // };
 
-      $scope.inventory = [
-        {
-          name: "Resurection Stone",
-          quantity: 3,
-          usable: false
-        },
-      ];
-
       var position = randPos();
       $scope.position = {
         x: position[0],
