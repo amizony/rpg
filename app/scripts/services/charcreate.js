@@ -20,6 +20,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     barbarian: {
       name: "Barbarian",
       desc: "A brutal fighter",
+      sprite: new PIXI.Texture.fromImage("images/barbarian.png"),
       lifePerLevel: 12,
       weightBonus: 0,
       hitBonus: 2,
@@ -30,6 +31,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     warrior: {
       name: "Warrior",
       desc: "A defensive fighter",
+      sprite: new PIXI.Texture.fromImage("images/warrior.png"),
       lifePerLevel: 10,
       weightBonus: 20,
       hitBonus: 0,
@@ -40,6 +42,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     rogue: {
       name: "Rogue",
       desc: "An offensive fighter ",
+      sprite: new PIXI.Texture.fromImage("images/rogue.png"),
       lifePerLevel: 8,
       weightBonus: 0,
       hitBonus: 5,
@@ -115,7 +118,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     classDescription.position.y = 100;
     classDescription.renderable = false;
 
-    $scope.charSprites[cl.name] = new PIXI.Sprite($scope.texture[cl.name.toLocaleLowerCase()]);
+    $scope.charSprites[cl.name] = new PIXI.Sprite(classes[cl.name.toLocaleLowerCase()].sprite);
     $scope.charSprites[cl.name].position.x = -25;
     $scope.charSprites[cl.name].position.y = 50;
     $scope.charSprites[cl.name].scale.set(1.5);
@@ -269,10 +272,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     $scope.texture = {
       button: PIXI.Texture.fromImage("images/button.png"),
       buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
-      empty: PIXI.Texture.fromImage("images/empty.png"),
-      rogue: PIXI.Texture.fromImage("images/player.png"),
-      barbarian: PIXI.Texture.fromImage("images/player.png"),
-      warrior: PIXI.Texture.fromImage("images/player.png")
+      empty: PIXI.Texture.fromImage("images/empty.png")
     };
 
     $scope.char = {};

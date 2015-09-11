@@ -113,7 +113,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
     // name & picture
     createText(datas.stats.name, [50, 80], style);
-    var char = new PIXI.Sprite($scope.texture.char);
+    var char = new PIXI.Sprite(datas.classStats.sprite);
     char.position.x = 0;
     char.position.y = 150;
     char.scale.set(2);
@@ -259,7 +259,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
   function drawFighters() {
     $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
 
-    $scope.playerSprite = new PIXI.Sprite($scope.texture.char);
+    $scope.playerSprite = new PIXI.Sprite($scope.player.classStats.sprite);
     $scope.playerSprite.scale.set(1.5);
     $scope.playerSprite.position.x = 40;
     $scope.playerSprite.position.y = 70;
@@ -623,7 +623,6 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
         overlayBackground: PIXI.Texture.fromImage("images/menubackground.png"),
         leftPanelBackground: PIXI.Texture.fromImage("images/leftbackground.png"),
-        char: PIXI.Texture.fromImage("images/player.png"),
         monster: PIXI.Texture.fromImage("images/enemy.png"),
         boss: PIXI.Texture.fromImage("images/boss.png"),
         empty: PIXI.Texture.fromImage("images/empty.png")
