@@ -19,15 +19,15 @@ angular.module("rpgApp").service("CharCreation", function () {
   var classes = [
     {
       name: "Barbarian",
-      desc: "A brutal fighter",
+      desc: "A brutal fighter"
     },
     {
       name: "Warrior",
-      desc: "A defensive fighter",
+      desc: "A defensive fighter"
     },
     {
       name: "Rogue",
-      desc: "An offensive fighter ",
+      desc: "An offensive fighter "
     },
   ];
 
@@ -85,36 +85,54 @@ angular.module("rpgApp").service("CharCreation", function () {
     charClass.position.x = position[0];
     charClass.position.y = position[1];
 
+    var buttonContainer = new PIXI.Container();
+    buttonContainer.buttonMode = true;
+    buttonContainer.interactive = true;
+
     var button = new PIXI.Sprite($scope.texture.button);
     button.scale.set(0.70);
-    charClass.buttonMode = true;
-    charClass.interactive = true;
 
     var classDescription = new PIXI.Text(cl.desc);
     classDescription.position.x = 5;
     classDescription.position.y = 100;
     classDescription.renderable = false;
 
-    charClass
+    $scope.charSprites[cl.name] = new PIXI.Sprite($scope.texture[cl.name.toLocaleLowerCase()]);
+    $scope.charSprites[cl.name].position.x = -25;
+    $scope.charSprites[cl.name].position.y = 50;
+    $scope.charSprites[cl.name].scale.set(1.5);
+    $scope.charSprites[cl.name].renderable = false;
+
+
+    buttonContainer
       .on("mouseover", function() {
         button.texture = $scope.texture.buttonHover;
-        classDescription.renderable = true;
+        if (!$scope.charSprites[cl.name].renderable) {
+          classDescription.renderable = true;
+        }
       })
       .on("mouseout", function() {
         button.texture = $scope.texture.button;
         classDescription.renderable = false;
       })
       .on("click", function() {
-        console.log("class selected");
+        _.forIn($scope.charSprites, function(value) {
+          value.renderable = false;
+        });
+        $scope.charSprites[cl.name].renderable = true;
+        classDescription.renderable = false;
+        $scope.class = cl.name;
       });
 
     var className = new PIXI.Text(cl.name);
     className.position.x = 20;
     className.position.y = 10;
 
-    charClass.addChild(button);
-    charClass.addChild(className);
+    buttonContainer.addChild(button);
+    buttonContainer.addChild(className);
     charClass.addChild(classDescription);
+    charClass.addChild($scope.charSprites[cl.name]);
+    charClass.addChild(buttonContainer);
 
     $scope.creationPage.addChild(charClass);
   }
@@ -162,6 +180,7 @@ angular.module("rpgApp").service("CharCreation", function () {
 
   function createDisplay(dfd) {
     createText("Create a new Character ", [180, 0]);
+    $scope.charSprites = {};
     createClassButton(classes[0], [80, 70]);
     createClassButton(classes[1], [320, 70]);
     createClassButton(classes[2], [580, 70]);
@@ -214,8 +233,10 @@ angular.module("rpgApp").service("CharCreation", function () {
     });
 
     invisibleButton("Create Character", [300, 550], function() {
-      defineBaseChar();
-      dfd.resolve();
+      if ($scope.class !== "new") {
+        defineBaseChar();
+        dfd.resolve();
+      }
     });
 
   }
@@ -229,10 +250,14 @@ angular.module("rpgApp").service("CharCreation", function () {
     $scope.texture = {
       button: PIXI.Texture.fromImage("images/button.png"),
       buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
-      empty: PIXI.Texture.fromImage("images/empty.png")
+      empty: PIXI.Texture.fromImage("images/empty.png"),
+      rogue: PIXI.Texture.fromImage("images/player.png"),
+      barbarian: PIXI.Texture.fromImage("images/player.png"),
+      warrior: PIXI.Texture.fromImage("images/player.png")
     };
 
     $scope.char = {};
+    $scope.class = "new";
     createDisplay(dfd);
 
     return $scope.creationPage;
