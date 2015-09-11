@@ -53,12 +53,24 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
       //intelligence: _.random(0,2),
       //wisdom: _.random(0,2)
     };
+
+    $scope.classStats = {
+      name: "NPC",
+      desc: "An angry NPC",
+      lifePerLevel: 8,
+      weightBonus: 0,
+      hitBonus: 0,
+      hitMultiplier: 1,
+      defenceBonus: 0,
+      criticalDamagesBonus: 0
+    };
+
     $scope.stats = {
       name: ranks[$scope.difficulty] + " " + names[_.random(names.length - 1)],
       level: $scope.level,
       xpReward: $scope.level * (100 + 20 * $scope.difficulty)
     };
-    $scope.stats.lifeMax = $scope.stats.level * (6 + $scope.attribute.endurance + _.random(2) * $scope.difficulty);
+    $scope.stats.lifeMax = $scope.stats.level * ($scope.classStats.lifePerLevel + $scope.attribute.endurance + _.random(2) * $scope.difficulty);
     $scope.stats.life = $scope.stats.lifeMax;
     //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom + _.random(2) * $scope.difficulty);
     //$scope.stats.mana = $scope.stats.manaMax;
@@ -67,9 +79,9 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
 
     $scope.armor = ItemsDB.randomBaseArmor($scope.difficulty);
 
-    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100)) + _.random(2) * $scope.difficulty;
+    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement + $scope.classStats.hitBonus) * $scope.classStats.hitMultiplier * (1 - _.max([0, $scope.armor.weight - $scope.classStats.weightBonus]) / 100)) + _.random(2) * $scope.difficulty;
 
-    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + _.random(2) * $scope.difficulty;
+    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + $scope.classStats.defenceBonus + _.random(2) * $scope.difficulty;
 
   }
 
@@ -78,6 +90,7 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
     getStats: function() {
       return {
         stats: _.extend({}, $scope.stats),
+        classStats: $scope.classStats,
         attribute: $scope.attribute,
         weapon: $scope.weapon,
         armor: $scope.armor,

@@ -65,6 +65,7 @@ function Fighter(fighter) {
     stats: self.stats,
     weapon: self.weapon,
     attribute: self.attribute,
+    criticalDamagesBonus: self.classStats.criticalDamagesBonus || 0,
 
     /**
      * Return current target.

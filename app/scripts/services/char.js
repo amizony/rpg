@@ -48,10 +48,10 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", functio
   }
 
   function recalculateStats() {
-    $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
+    $scope.stats.lifeMax = $scope.stats.level * ($scope.classStats.lifePerLevel + $scope.attribute.endurance);
     //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
-    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100));
-    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
+    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement + $scope.classStats.hitBonus) * $scope.classStats.hitMultiplier * (1 - _.max([0, $scope.armor.weight - $scope.classStats.weightBonus]) / 100));
+    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + $scope.classStats.defenceBonus;
   }
 
   return {
@@ -106,6 +106,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", functio
     getAllDatas: function() {
       return {
         stats: _.extend({}, $scope.stats),
+        classStats: $scope.classStats,
         attribute: $scope.attribute,
         weapon: $scope.weapon,
         armor: $scope.armor,

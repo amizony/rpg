@@ -16,20 +16,38 @@ angular.module("rpgApp").service("CharCreation", function () {
   // starter items depending on class
 
   var $scope = {};
-  var classes = [
-    {
+  var classes = {
+    barbarian: {
       name: "Barbarian",
-      desc: "A brutal fighter"
+      desc: "A brutal fighter",
+      lifePerLevel: 12,
+      weightBonus: 0,
+      hitBonus: 2,
+      hitMultiplier: 1.2,
+      defenceBonus: -2,
+      criticalDamagesBonus: 0
     },
-    {
+    warrior: {
       name: "Warrior",
-      desc: "A defensive fighter"
+      desc: "A defensive fighter",
+      lifePerLevel: 10,
+      weightBonus: 20,
+      hitBonus: 0,
+      hitMultiplier: 1,
+      defenceBonus: 2,
+      criticalDamagesBonus: 0
     },
-    {
+    rogue: {
       name: "Rogue",
-      desc: "An offensive fighter "
-    },
-  ];
+      desc: "An offensive fighter ",
+      lifePerLevel: 8,
+      weightBonus: 0,
+      hitBonus: 5,
+      hitMultiplier: 1,
+      defenceBonus: 0,
+    criticalDamagesBonus: 10
+    }
+  };
 
   /**
    * Display a Pixi Text.
@@ -121,7 +139,7 @@ angular.module("rpgApp").service("CharCreation", function () {
         });
         $scope.charSprites[cl.name].renderable = true;
         classDescription.renderable = false;
-        $scope.class = cl.name;
+        $scope.class = cl.name.toLocaleLowerCase();
       });
 
     var className = new PIXI.Text(cl.name);
@@ -154,6 +172,7 @@ angular.module("rpgApp").service("CharCreation", function () {
       name: "Carlisle"
     };
 
+    $scope.char.classStats = classes[$scope.class];
     $scope.char.weapon = {
       name: "Rusty Sword",
       damages: "1d6",
@@ -181,9 +200,9 @@ angular.module("rpgApp").service("CharCreation", function () {
   function createDisplay(dfd) {
     createText("Create a new Character ", [180, 0]);
     $scope.charSprites = {};
-    createClassButton(classes[0], [80, 70]);
-    createClassButton(classes[1], [320, 70]);
-    createClassButton(classes[2], [580, 70]);
+    createClassButton(classes.barbarian, [80, 70]);
+    createClassButton(classes.warrior, [320, 70]);
+    createClassButton(classes.rogue, [580, 70]);
 
     var posX = 150;
     var posY = 350;
