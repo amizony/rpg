@@ -8,14 +8,9 @@
  */
 
 angular.module("rpgApp").service("CharCreation", function () {
-  // own display
-  // choose a class
-  // roll attributes (and reroll them at a price)
-  // choose a sprite?
-  // choose a name?
-  // starter items depending on class
 
   var $scope = {};
+
   var classes = {
     barbarian: {
       name: "Barbarian",
@@ -50,6 +45,53 @@ angular.module("rpgApp").service("CharCreation", function () {
       defenceBonus: 0,
     criticalDamagesBonus: 10
     }
+  };
+
+  var initialItems = {
+    barbarian: {
+      weapon: {
+        name: "Warhammer",
+        damages: "1d8",
+        hitBonus: 1,
+        critical: [20, 3]
+      },
+      armor: {
+        name: "Padded Armor",
+        weight: 5,
+        defence: 1,
+        enhancement: 0
+      }
+    },
+    warrior: {
+      weapon: {
+        name: "Rusty Sword",
+        damages: "1d6",
+        hitBonus: 1,
+        critical: [19, 2],
+        enhancement: 0
+      },
+      armor: {
+        name: "Chain Mail",
+        weight: 25,
+        defence: 5,
+        enhancement: 0
+      }
+    },
+    rogue: {
+      weapon: {
+        name: "Rapier",
+        damages: "1d6",
+        hitBonus: 3,
+        critical: [18, 2],
+        enhancement: 0
+    },
+      armor: {
+        name: "Padded Armor",
+        weight: 5,
+        defence: 1,
+        enhancement: 0
+      }
+    },
   };
 
   /**
@@ -176,20 +218,9 @@ angular.module("rpgApp").service("CharCreation", function () {
     };
 
     $scope.char.classStats = classes[$scope.class];
-    $scope.char.weapon = {
-      name: "Rusty Sword",
-      damages: "1d6",
-      hitBonus: 1,
-      critical: [19, 2],
-      enhancement: 0
-    };
+    $scope.char.weapon = initialItems[$scope.class].weapon;
 
-    $scope.char.armor = {
-      name: "Worn Leather Armor",
-      weight: 10,
-      defence: 1,
-      enhancement: 0
-    };
+    $scope.char.armor = initialItems[$scope.class].armor;
 
     $scope.char.inventory = [
       {
