@@ -28,7 +28,7 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", functio
 
   /**
    * Provide a level increase to the player.
-   * Increase and recalculate the player's stats.
+   * Each 5 levels an attribute point is gained.
    */
   function levelUP() {
     $scope.stats.experience -= $scope.stats.level *1000;
@@ -47,6 +47,9 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", functio
     //$scope.stats.mana = $scope.stats.manaMax;
   }
 
+  /**
+   * Recalculate the character's stats depending on class, level, attributes or items.
+   */
   function recalculateStats() {
     $scope.stats.lifeMax = $scope.stats.level * ($scope.classStats.lifePerLevel + $scope.attribute.endurance);
     //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
@@ -103,6 +106,9 @@ angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", functio
       //console.log("New hero location: " + $scope.position.x + ", " + $scope.position.y);
     },
 
+    /**
+     * @return {hash} every information describing the character.
+     */
     getAllDatas: function() {
       return {
         stats: _.extend({}, $scope.stats),

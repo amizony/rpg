@@ -142,6 +142,8 @@ angular.module("rpgApp").service("CharCreation", function () {
 
   /**
    * Create a button for choosing the character class.
+   * Hovering on the button displays a short description of the class.
+   * When the class is selected, its sprite is displayed.
    */
   function createClassButton(cl, position) {
     var charClass = new PIXI.Container();
@@ -201,7 +203,7 @@ angular.module("rpgApp").service("CharCreation", function () {
   }
 
   /**
-   * Randomize attribute with a non-linear repartition
+   * Randomize attribute with a non-linear repartition.
    *
    * @return {integer} attribute, between 0 and 4.
    */
@@ -212,6 +214,9 @@ angular.module("rpgApp").service("CharCreation", function () {
     return attribute;
   }
 
+  /**
+   * Initialise the character according to the selected class.
+   */
   function defineBaseChar() {
     $scope.char.stats = {
       name: "Carlisle"
@@ -231,6 +236,11 @@ angular.module("rpgApp").service("CharCreation", function () {
     ];
   }
 
+  /**
+   * Create the interface for making a new character.
+   *
+   * @param {promise} dfd: resolved when the character creation is complete.
+   */
   function createDisplay(dfd) {
     createText("Create a new Character ", [180, 0]);
     $scope.charSprites = {};
@@ -296,6 +306,10 @@ angular.module("rpgApp").service("CharCreation", function () {
 
 
  return {
+   /**
+    * @param {promise} dfd: resolved when the character creation is complete.
+    * @return {pixi.container} container to be rendered.
+    */
   init: function (dfd) {
     $scope.creationPage = new PIXI.Container();
 
@@ -312,9 +326,17 @@ angular.module("rpgApp").service("CharCreation", function () {
 
     return $scope.creationPage;
   },
+
+  /**
+   * @return {pixi.container} container to be rendered.
+   */
   getDisplay: function() {
     return $scope.creationPage;
   },
+
+  /**
+   * @return {hash} the created character.
+   */
   getChar: function() {
     return _.merge({}, $scope.char);
   }
