@@ -268,11 +268,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.playerLife = createText("life " + $scope.player.stats.life + " / " + $scope.player.stats.lifeMax, [80, 250], $scope.style.playerLife);
     //$scope.playerMana = createText("mana " + $scope.player.stats.mana + " / " + $scope.player.stats.manaMax, [80, 280], $scope.style.playerMana);
 
-    if ($scope.mob.stats.name === "Imperator A.") {
-      $scope.mobSprite = new PIXI.Sprite($scope.texture.boss);
-    } else {
-      $scope.mobSprite = new PIXI.Sprite($scope.texture.monster);
-    }
+    $scope.mobSprite = new PIXI.Sprite($scope.mob.classStats.sprite);
     $scope.mobSprite.scale.set(1.5);
     $scope.mobSprite.position.x = 340;
     $scope.mobSprite.position.y = 70;

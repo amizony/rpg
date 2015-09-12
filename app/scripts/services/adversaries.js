@@ -57,6 +57,7 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
     $scope.classStats = {
       name: "NPC",
       desc: "An angry NPC",
+      sprite: new PIXI.Texture.fromImage("images/enemy.png"),
       lifePerLevel: 8,
       weightBonus: 0,
       hitBonus: 0,
@@ -120,6 +121,7 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
       $scope.difficulty = _.floor(charLevel / 5);
       setStats();
       $scope.stats.name = "Imperator A.";
+      $scope.classStats.sprite = new PIXI.Texture.fromImage("images/boss.png");
     }
   };
 
