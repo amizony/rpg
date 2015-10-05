@@ -43,7 +43,7 @@ angular.module("rpgApp").service("CharCreation", function () {
       hitBonus: 5,
       hitMultiplier: 1,
       defenceBonus: 0,
-    criticalDamagesBonus: 10
+      criticalDamagesBonus: 10
     }
   };
 
@@ -53,7 +53,8 @@ angular.module("rpgApp").service("CharCreation", function () {
         name: "Warhammer",
         damages: "1d8",
         hitBonus: 1,
-        critical: [20, 3]
+        critical: [20, 3],
+        enhancement: 0
       },
       armor: {
         name: "Padded Armor",
