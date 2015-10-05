@@ -14,7 +14,7 @@ angular.module("rpgApp").service("CharCreation", function () {
   var classes = {
     barbarian: {
       name: "Barbarian",
-      desc: "A brutal fighter",
+      desc: "A brutal fighter with high attack abilities and lots of health.",
       sprite: new PIXI.Texture.fromImage("images/barbarian.png"),
       lifePerLevel: 12,
       weightBonus: 0,
@@ -25,7 +25,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     },
     warrior: {
       name: "Warrior",
-      desc: "A defensive fighter",
+      desc: "A defensive fighter specialised in wearing heavy armors.",
       sprite: new PIXI.Texture.fromImage("images/warrior.png"),
       lifePerLevel: 10,
       weightBonus: 20,
@@ -36,7 +36,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     },
     rogue: {
       name: "Rogue",
-      desc: "An offensive fighter ",
+      desc: "An offensive fighter using criticals hits to defeat his enemies.",
       sprite: new PIXI.Texture.fromImage("images/rogue.png"),
       lifePerLevel: 8,
       weightBonus: 0,
@@ -146,7 +146,7 @@ angular.module("rpgApp").service("CharCreation", function () {
    * Hovering on the button displays a short description of the class.
    * When the class is selected, its sprite is displayed.
    */
-  function createClassButton(cl, position) {
+  function createClassButton(cl, position, margin) {
     var charClass = new PIXI.Container();
     charClass.position.x = position[0];
     charClass.position.y = position[1];
@@ -158,7 +158,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     var button = new PIXI.Sprite($scope.texture.button);
     button.scale.set(0.70);
 
-    var classDescription = new PIXI.Text(cl.desc);
+    var classDescription = new PIXI.Text(cl.desc, {wordWrap: true, wordWrapWidth: 150, font: "15px Arial"});
     classDescription.position.x = 5;
     classDescription.position.y = 100;
     classDescription.renderable = false;
@@ -191,7 +191,7 @@ angular.module("rpgApp").service("CharCreation", function () {
       });
 
     var className = new PIXI.Text(cl.name);
-    className.position.x = 20;
+    className.position.x = 5 + margin;
     className.position.y = 10;
 
     buttonContainer.addChild(button);
@@ -245,9 +245,9 @@ angular.module("rpgApp").service("CharCreation", function () {
   function createDisplay(dfd) {
     createText("Create a new Character ", [180, 0]);
     $scope.charSprites = {};
-    createClassButton(classes.barbarian, [80, 70]);
-    createClassButton(classes.warrior, [320, 70]);
-    createClassButton(classes.rogue, [580, 70]);
+    createClassButton(classes.barbarian, [80, 70], 5);
+    createClassButton(classes.warrior, [320, 70], 15);
+    createClassButton(classes.rogue, [580, 70], 20);
 
     var posX = 150;
     var posY = 350;
