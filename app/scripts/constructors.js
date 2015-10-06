@@ -65,7 +65,6 @@ function Fighter(fighter) {
     stats: self.stats,
     weapon: self.weapon,
     attribute: self.attribute,
-    criticalDamagesBonus: self.classStats.criticalDamagesBonus || 0,
 
     /**
      * Return current target.
@@ -95,8 +94,6 @@ function Fighter(fighter) {
     /**
      * Calculate the random damages from the weapon held.
      *
-     * @param {string} weaponDamage: damages possibilities of weapon, as 'integer'd'integer' (1d8 , 3d12, 6d4)
-     *                               the first integer is the number of dices and the second the dices' faces' number.
      * @return {integer} damages done.
      */
     rollDamages: function() {
@@ -106,6 +103,21 @@ function Fighter(fighter) {
 
       for (var i = 0; i < nb; i++) {
         damages += _.random(1, dice);
+      }
+
+      return damages;
+    },
+
+    /**
+     * Calculate the bonus damages in case of a critical hit.
+     *
+     * @return {integer} damages done.
+     */
+    rollCriticalDamagesBonus: function() {
+      var damages = 0;
+
+      for (var i = 0; i < (self.stats.level / 2 + 1); i++) {
+        damages += _.random(1, self.classStats.criticalDamagesBonus);
       }
 
       return damages;
