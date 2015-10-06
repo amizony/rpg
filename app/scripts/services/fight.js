@@ -82,7 +82,7 @@ angular.module("rpgApp").service("FightEngine", ["CharServ", "AdversariesServ", 
 
     if (playerAtt.result === "criticalSuccess") {
       // critical success hits automatically with improved damages
-      playerDamages = (fighters.player.rollDamages() + fighters.player.attribute.strength) * fighters.player.weapon.critical[1];
+      playerDamages = (fighters.player.rollDamages() + fighters.player.attribute.strength + _.random(1, fighters.player.criticalDamagesBonus)) * fighters.player.weapon.critical[1];
       fighters.mob.takeDamages(playerDamages);
 
       addMessages(["You attack: " + playerAtt.roll + "   -- CRITICAL HIT!"], "attack");

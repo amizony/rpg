@@ -8,7 +8,7 @@
  * Provide functions to access or modify them.
  */
 
-angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
+angular.module("rpgApp").service("CharServ", ["MapServ", "CharCreation", function (MapServ, CharCreation) {
 
   var $scope = {};
 
@@ -26,22 +26,9 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     return [posX, posY];
   }
 
-
-  /**
-   * Randomize attribute with a non-linear repartition
-   *
-   * @return {integer} attribute, between 0 and 4.
-   */
-  function randAttribute() {
-    var dice1 = _.random(0, 2);
-    var dice2 = _.random(0, 2);
-    var attribute = dice1 + dice2;
-    return attribute;
-  }
-
   /**
    * Provide a level increase to the player.
-   * Increase and recalculate the player's stats.
+   * Each 5 levels an attribute point is gained.
    */
   function levelUP() {
     $scope.stats.experience -= $scope.stats.level *1000;
@@ -60,11 +47,14 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
     //$scope.stats.mana = $scope.stats.manaMax;
   }
 
+  /**
+   * Recalculate the character's stats depending on class, level, attributes or items.
+   */
   function recalculateStats() {
-    $scope.stats.lifeMax = $scope.stats.level * (8 + $scope.attribute.endurance);
+    $scope.stats.lifeMax = $scope.stats.level * ($scope.classStats.lifePerLevel + $scope.attribute.endurance);
     //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom);
-    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement) * (1 - $scope.armor.weight / 100));
-    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement;
+    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement + $scope.classStats.hitBonus) * $scope.classStats.hitMultiplier * (1 - _.max([0, $scope.armor.weight - $scope.classStats.weightBonus]) / 100));
+    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + $scope.classStats.defenceBonus;
   }
 
   return {
@@ -72,66 +62,33 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
      * Create the character.
      */
     create: function() {
-      var position = randPos();
-      $scope.position = {
-        x: position[0],
-        y: position[1]
-      };
+      $scope = CharCreation.getChar();
 
-      $scope.attribute = {
-        strength: randAttribute(),
-        dexterity: randAttribute(),
-        endurance: randAttribute(),
-        //intelligence: randAttribute(),
-        //wisdom: randAttribute()
-      };
-
-      $scope.stats = {
-        name: "Carlisle",
-        level: 1,
-        experience: 0
-      };
-
-      $scope.weapon = {
-        name: "Rusty Sword",
-        damages: "1d6",
-        hitBonus: 1,
-        critical: [19, 2],
-        enhancement: 0
-      };
-
-      $scope.armor = {
-        name: "Worn Leather Armor",
-        weight: 10,
-        defence: 1,
-        enhancement: 0
-      };
+      $scope.stats.level = 1;
+      $scope.stats.experience = 0;
 
       recalculateStats();
       $scope.stats.life = $scope.stats.lifeMax;
       //$scope.stats.mana = $scope.stats.manaMax;
 
-      $scope.spells = {
-        "Heavy Blow": {
-          damages: 5,
-          hitBonus: -2,
-          mana: 1
-        },
-        "Precise Blow": {
-          damages: -1,
-          hitBonus: 2,
-          mana: 1
-        }
+      // $scope.spells = {
+      //   "Heavy Blow": {
+      //     damages: 5,
+      //     hitBonus: -2,
+      //     mana: 1
+      //   },
+      //   "Precise Blow": {
+      //     damages: -1,
+      //     hitBonus: 2,
+      //     mana: 1
+      //   }
+      // };
+
+      var position = randPos();
+      $scope.position = {
+        x: position[0],
+        y: position[1]
       };
-
-      $scope.inventory = [
-        {
-          name: "Resurection Stone",
-          quantity: 3,
-          usable: false
-        },
-      ];
-
     },
     /**
      * @return {array} cell coordinates of player, as [x,y].
@@ -149,9 +106,13 @@ angular.module("rpgApp").service("CharServ", ["MapServ", function (MapServ) {
       //console.log("New hero location: " + $scope.position.x + ", " + $scope.position.y);
     },
 
+    /**
+     * @return {hash} every information describing the character.
+     */
     getAllDatas: function() {
       return {
         stats: _.extend({}, $scope.stats),
+        classStats: $scope.classStats,
         attribute: $scope.attribute,
         weapon: $scope.weapon,
         armor: $scope.armor,

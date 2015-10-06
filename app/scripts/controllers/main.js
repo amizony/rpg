@@ -13,12 +13,15 @@ angular.module("rpgApp").controller("MainCtrl", ["$scope", "CharServ", "MapServ"
   initialisation();
 
   function initialisation() {
-    MapServ.load().then(MapServ.reflect)
-    .then(CharServ.create)
-    .then(function() { PixiServ.init(MapServ.getMap(), CharServ.getPosition()); })
-    .then(PixiServ.mapScroll)
-    .then(animate)
-    .then(startFpsCount);
+    PixiServ.init();
+    animate();
+    startFpsCount();
+
+    MapServ.load().then(MapServ.reflect);
+
+    PixiServ.createChar().then(CharServ.create)
+    .then(function() { PixiServ.createGame(MapServ.getMap(), CharServ.getPosition()); })
+    .then(PixiServ.mapScroll);
   }
 
   function startFpsCount() {

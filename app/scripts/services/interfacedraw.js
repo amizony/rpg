@@ -113,7 +113,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
 
     // name & picture
     createText(datas.stats.name, [50, 80], style);
-    var char = new PIXI.Sprite($scope.texture.char);
+    var char = new PIXI.Sprite(datas.classStats.sprite);
     char.position.x = 0;
     char.position.y = 150;
     char.scale.set(2);
@@ -259,7 +259,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
   function drawFighters() {
     $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
 
-    $scope.playerSprite = new PIXI.Sprite($scope.texture.char);
+    $scope.playerSprite = new PIXI.Sprite($scope.player.classStats.sprite);
     $scope.playerSprite.scale.set(1.5);
     $scope.playerSprite.position.x = 40;
     $scope.playerSprite.position.y = 70;
@@ -268,11 +268,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.playerLife = createText("life " + $scope.player.stats.life + " / " + $scope.player.stats.lifeMax, [80, 250], $scope.style.playerLife);
     //$scope.playerMana = createText("mana " + $scope.player.stats.mana + " / " + $scope.player.stats.manaMax, [80, 280], $scope.style.playerMana);
 
-    if ($scope.mob.stats.name === "Imperator A.") {
-      $scope.mobSprite = new PIXI.Sprite($scope.texture.boss);
-    } else {
-      $scope.mobSprite = new PIXI.Sprite($scope.texture.monster);
-    }
+    $scope.mobSprite = new PIXI.Sprite($scope.mob.classStats.sprite);
     $scope.mobSprite.scale.set(1.5);
     $scope.mobSprite.position.x = 340;
     $scope.mobSprite.position.y = 70;
@@ -305,6 +301,26 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     return newText;
   }
 
+  /**
+   * Display an invisible button in the active menu window.
+   *
+   * @param {string} text: the button's name.
+   * @param {array} position: the location inside the overlayWindow to display it, as [x, y].
+   * @param {function} callback: function to execute when the button is clicked.
+   */
+  function invisibleButton(text, position, callback) {
+    var clickable = new PIXI.Container();
+    var button = new PIXI.Sprite($scope.texture.empty);
+    clickable.addChild(button);
+    clickable.position.x = position[0] - 10;
+    clickable.position.y = position[1];
+    clickable.buttonMode = true;
+    clickable.interactive = true;
+    createText(text, position, {});
+
+    clickable.on("click", callback);
+    $scope.overlayWindow.addChild(clickable);
+  }
   var combatLog = {
     /**
      * Refresh the display for a new round.
@@ -437,38 +453,17 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       createText("hit bonus: " + hit, [80, 470], {});
       createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [80,500], {});
 
-      var clickableAccept = new PIXI.Container();
-      var buttonAccept = new PIXI.Sprite($scope.texture.empty);
-      clickableAccept.addChild(buttonAccept);
-      clickableAccept.position.x = 420;
-      clickableAccept.position.y = 220;
-      clickableAccept.buttonMode = true;
-      clickableAccept.interactive = true;
-      createText("Use item", [430, 220], {});
-
-      clickableAccept.on("click", function() {
+      invisibleButton("Use item", [430, 220], function() {
         // some visual effect
         CharServ.gainWeapon(message.opt);
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableAccept);
 
-      var clickableDiscard = new PIXI.Container();
-      var buttonDiscard = new PIXI.Sprite($scope.texture.empty);
-      clickableDiscard.addChild(buttonDiscard);
-      clickableDiscard.position.x = 420;
-      clickableDiscard.position.y = 260;
-      clickableDiscard.buttonMode = true;
-      clickableDiscard.interactive = true;
-      createText("Discard", [430, 260], {});
-
-      clickableDiscard.on("click", function() {
+      invisibleButton("Discard", [430, 260], function() {
         // some visual effect
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableDiscard);
+
       return dfd.promise();
     },
 
@@ -505,38 +500,17 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       createText("armor: " + def, [80, 440], {});
       createText("weight: " + datas.armor.weight, [80, 470], {});
 
-      var clickableAccept = new PIXI.Container();
-      var buttonAccept = new PIXI.Sprite($scope.texture.empty);
-      clickableAccept.addChild(buttonAccept);
-      clickableAccept.position.x = 420;
-      clickableAccept.position.y = 220;
-      clickableAccept.buttonMode = true;
-      clickableAccept.interactive = true;
-      createText("Use item", [430, 220], {});
-
-      clickableAccept.on("click", function() {
+      invisibleButton("Use item", [430, 220], function() {
         // some visual effect
         CharServ.gainArmor(message.opt);
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableAccept);
 
-      var clickableDiscard = new PIXI.Container();
-      var buttonDiscard = new PIXI.Sprite($scope.texture.empty);
-      clickableDiscard.addChild(buttonDiscard);
-      clickableDiscard.position.x = 420;
-      clickableDiscard.position.y = 260;
-      clickableDiscard.buttonMode = true;
-      clickableDiscard.interactive = true;
-      createText("Discard", [430, 260], {});
-
-      clickableDiscard.on("click", function() {
+      invisibleButton("Discard", [430, 260], function() {
         // some visual effect
         dfd.resolve();
-        return dfd.promise();
       });
-      $scope.overlayWindow.addChild(clickableDiscard);
+
       return dfd.promise();
     },
 
@@ -645,7 +619,6 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
         overlayBackground: PIXI.Texture.fromImage("images/menubackground.png"),
         leftPanelBackground: PIXI.Texture.fromImage("images/leftbackground.png"),
-        char: PIXI.Texture.fromImage("images/player.png"),
         monster: PIXI.Texture.fromImage("images/enemy.png"),
         boss: PIXI.Texture.fromImage("images/boss.png"),
         empty: PIXI.Texture.fromImage("images/empty.png")
