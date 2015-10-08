@@ -43,7 +43,7 @@ angular.module("rpgApp").service("CharCreation", function () {
       hitBonus: 5,
       hitMultiplier: 1,
       defenceBonus: 0,
-      criticalDamagesBonus: 10
+      criticalDamagesBonus: 5
     }
   };
 

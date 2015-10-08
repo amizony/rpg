@@ -16,7 +16,8 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
   var names = ["Alfred", "Bob", "Caleb", "Darius", "Eric", "Franz", "Gustav", "Henry", "Isidore", "Jasper", "Kilian", "Leopold",
                "Maurice", "Nazim", "Octave", "Peter", "Quentin", "Rys", "Stanis", "Ulric", "Vassili", "Wiliam", "Xavier", "Yann", "Zadig"];
 
-  var ranks = {"-2": "Robber", "-1": "Highwayman", "0": "Henchman", "1": "Mercenary", "2": "Guard", "3": "Soldier", "4": "Squire", "5": "Veteran", "6": "Captain", "7": "Knight", "8": "Champion"};
+  var ranks = {"-2": "Robber", "-1": "Highwayman", "0": "Henchman", "1": "Mercenary", "2": "Guard",
+               "3": "Soldier", "4": "Squire", "5": "Veteran", "6": "Captain", "7": "Knight", "8": "Champion"};
 
   /**
    * Generate a random level between 1 and the player's level,
@@ -34,22 +35,21 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
    * The difficulty is a small power adjustment of the adversary.
    *
    * @param {integer} charLevel: player's level.
+   * @param {integer} param: (not yet used) adjustment in adversary difficulty.
    */
-  function setDifficulty(charLevel) {
-    $scope.difficulty = _.random(-1, _.floor(charLevel / 3)) - 1;
-
+  function setDifficulty(charLevel, param) {
+    var add = param || 0;
+    $scope.difficulty = _.random(-1, _.floor(charLevel / 3)) - 1 + add;
   }
 
   /**
    * Set the stats depending on the level and difficulty.
-   *
-   * @param {integer} charLevel: player's level.
    */
   function setStats() {
     $scope.attribute = {
-      strength: _.random(1,3),
-      dexterity: _.random(1,3),
-      endurance: _.random(1,3),
+      strength: _.random(-1, _.max([1, $scope.difficulty])) + _.random(0, _.floor($scope.level / 5)),
+      dexterity: _.random(-1, _.max([1, $scope.difficulty])) + _.random(0, _.floor($scope.level / 5)),
+      endurance: _.random(-1, _.max([1, $scope.difficulty])) + _.random(0, _.floor($scope.level / 5)),
       //intelligence: _.random(0,2),
       //wisdom: _.random(0,2)
     };
@@ -71,7 +71,7 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
       level: $scope.level,
       xpReward: $scope.level * (100 + 20 * $scope.difficulty)
     };
-    $scope.stats.lifeMax = $scope.stats.level * ($scope.classStats.lifePerLevel + $scope.attribute.endurance + _.random(2) * $scope.difficulty);
+    $scope.stats.lifeMax = $scope.stats.level * ($scope.classStats.lifePerLevel + $scope.attribute.endurance + $scope.difficulty);
     $scope.stats.life = $scope.stats.lifeMax;
     //$scope.stats.manaMax = $scope.stats.level * (2 + $scope.attribute.wisdom + _.random(2) * $scope.difficulty);
     //$scope.stats.mana = $scope.stats.manaMax;
@@ -80,9 +80,9 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
 
     $scope.armor = ItemsDB.randomBaseArmor($scope.difficulty);
 
-    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement + $scope.classStats.hitBonus) * $scope.classStats.hitMultiplier * (1 - _.max([0, $scope.armor.weight - $scope.classStats.weightBonus]) / 100)) + _.random(2) * $scope.difficulty;
+    $scope.stats.hitBonus = _.floor(($scope.stats.level + $scope.attribute.strength + $scope.weapon.hitBonus + $scope.weapon.enhancement + $scope.classStats.hitBonus) * $scope.classStats.hitMultiplier * (1 - _.max([0, $scope.armor.weight - $scope.classStats.weightBonus]) / 100)) + $scope.difficulty;
 
-    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + $scope.classStats.defenceBonus + _.random(2) * $scope.difficulty;
+    $scope.stats.defence = 10 + $scope.attribute.dexterity + $scope.armor.defence + $scope.armor.enhancement + $scope.classStats.defenceBonus + $scope.difficulty;
 
   }
 
@@ -104,10 +104,11 @@ angular.module("rpgApp").service("AdversariesServ", ["ItemsDB", function (ItemsD
      * Create a new adversary with a power depending on the player's level.
      *
      * @param {integer} charLevel: player's level.
+     * @param {integer} param: (not yet used) adjustment in adversary difficulty.
      */
-    defineAdversary: function(charLevel) {
+    defineAdversary: function(charLevel, param) {
       setLevel(charLevel);
-      setDifficulty(charLevel);
+      setDifficulty(charLevel, param);
       setStats();
     },
 
