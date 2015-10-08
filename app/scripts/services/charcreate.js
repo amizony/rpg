@@ -246,8 +246,8 @@ angular.module("rpgApp").service("CharCreation", function () {
     createText("Create a new Character ", [180, 0]);
     $scope.charSprites = {};
     createClassButton(classes.barbarian, [80, 70], 5);
-    createClassButton(classes.warrior, [320, 70], 15);
-    createClassButton(classes.rogue, [580, 70], 20);
+    createClassButton(classes.warrior, [320, 70], 17);
+    createClassButton(classes.rogue, [580, 70], 24);
 
     var posX = 150;
     var posY = 350;

@@ -32,7 +32,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     $scope.menuItems = [];
     for (var i = 0; i < buttons.length; i++) {
       $scope.menuItems.push(createMenuButton(buttons[i]));
-      $scope.menuItems[i].position.y = 10 + i*55;
+      $scope.menuItems[i].position.y = 70 + i*70;
       $scope.leftPanel.addChild($scope.menuItems[i]);
     }
 
@@ -58,7 +58,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     var item = new PIXI.Container();
     var button = new PIXI.Sprite($scope.texture.button);
     button.scale.set(0.70);
-    button.position.x = 10;
+    button.position.x = 0;
     item.buttonMode = true;
     item.interactive = true;
 
@@ -83,7 +83,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
       });
 
     var text = new PIXI.Text(obj.name);
-    text.x = 20;
+    text.x = 10;
     text.y = 10;
 
     item.addChild(button);
