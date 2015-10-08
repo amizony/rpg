@@ -158,7 +158,7 @@ angular.module("rpgApp").service("CharCreation", function () {
     var button = new PIXI.Sprite($scope.texture.button);
     button.scale.set(0.70);
 
-    var classDescription = new PIXI.Text(cl.desc, {wordWrap: true, wordWrapWidth: 150, font: "15px Arial"});
+    var classDescription = new PIXI.Text(cl.desc, $scope.style.classDesc);
     classDescription.position.x = 5;
     classDescription.position.y = 100;
     classDescription.renderable = false;
@@ -190,7 +190,7 @@ angular.module("rpgApp").service("CharCreation", function () {
         $scope.class = cl.name.toLocaleLowerCase();
       });
 
-    var className = new PIXI.Text(cl.name);
+    var className = new PIXI.Text(cl.name, $scope.style.button);
     className.position.x = 5 + margin;
     className.position.y = 10;
 
@@ -243,10 +243,10 @@ angular.module("rpgApp").service("CharCreation", function () {
    * @param {promise} dfd: resolved when the character creation is complete.
    */
   function createDisplay(dfd) {
-    createText("Create a new Character ", [180, 0]);
+    createText("Create a new Character ", [180, 0], $scope.style.title);
     $scope.charSprites = {};
-    createClassButton(classes.barbarian, [80, 70], 5);
-    createClassButton(classes.warrior, [320, 70], 17);
+    createClassButton(classes.barbarian, [80, 70], 3);
+    createClassButton(classes.warrior, [320, 70], 15);
     createClassButton(classes.rogue, [580, 70], 24);
 
     var posX = 150;
@@ -262,13 +262,13 @@ angular.module("rpgApp").service("CharCreation", function () {
     };
     $scope.stones = 5;
 
-    createText("Attributes", [posX, posY], {});
+    createText("Attributes", [posX, posY], $scope.style.menu);
     _.forIn($scope.char.attribute, function(value, key) {
       attributeDisplay.push(createText(key + ": " + value, [posX + 10, posY + i], {}));
       i += 30;
     });
 
-    var rerollLeft = createText("(" + $scope.stones + " left)", [660, 385], {font: "bold 16px Arial"});
+    var rerollLeft = createText("(" + $scope.stones + " left)", [660, 383], $scope.style.menu);
 
     invisibleButton("Reroll attributes?", [430, 380], function() {
       if ($scope.stones > 0) {
@@ -292,7 +292,7 @@ angular.module("rpgApp").service("CharCreation", function () {
           attributeDisplay.push(createText(key + ": " + value, [posX + 10, posY + i], {}));
           i += 30;
         });
-        rerollLeft = createText("(" + $scope.stones + " left)", [660, 385], {font: "bold 16px Arial"});
+        rerollLeft = createText("(" + $scope.stones + " left)", [660, 383], $scope.style.menu);
       }
     });
 
@@ -320,6 +320,19 @@ angular.module("rpgApp").service("CharCreation", function () {
       buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
       empty: PIXI.Texture.fromImage("images/empty.png"),
       textureBackground: PIXI.Texture.fromImage("images/texture-background.png")
+    };
+
+    $scope.style = {
+      title: {font: 'bold 42px UnifrakturMaguntia',
+              fill: '#cc2',
+              stroke: '#000',
+              strokeThickness: 5},
+      button: {font: 'bold 24px Georgia'},
+      menu: {font:'bold 24px Georgia'},
+      classDesc: {wordWrap: true,
+                  wordWrapWidth: 150,
+                  font: "15px Georgia"
+                 }
     };
 
     var background = new PIXI.Sprite($scope.texture.textureBackground);

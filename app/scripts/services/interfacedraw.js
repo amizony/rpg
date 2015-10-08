@@ -82,7 +82,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         }
       });
 
-    var text = new PIXI.Text(obj.name);
+    var text = new PIXI.Text(obj.name, $scope.style.button);
     text.x = 10;
     text.y = 10;
 
@@ -106,13 +106,13 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Draw the content of the character page.
    */
   function characterMenu() {
-    $scope.menuTitle = createText("Character", [20, 10]);
+    $scope.menuTitle = createText("Character", [220, 10], $scope.style.title);
 
     var datas = CharServ.getAllDatas();
-    var style = {};
+    var style = $scope.style.menu;
 
     // name & picture
-    createText(datas.stats.name, [50, 80], style);
+    createText(datas.stats.name, [50, 80], $scope.style.title);
     var char = new PIXI.Sprite(datas.classStats.sprite);
     char.position.x = 0;
     char.position.y = 150;
@@ -143,7 +143,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Draw the content of the inventory page.
    */
   function inventoryMenu() {
-    $scope.menuTitle = createText("Inventory", [20, 10]);
+    $scope.menuTitle = createText("Inventory", [220, 10], $scope.style.title);
 
     var datas = CharServ.getAllDatas();
 
@@ -164,8 +164,6 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * @param {integer} position: the vertical position of the item.
    */
   function createItem(item, position) {
-    var style = {};
-
     var clickable = new PIXI.Container();
     var button = new PIXI.Sprite($scope.texture.empty);
     clickable.addChild(button);
@@ -177,7 +175,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     var textHover;
 
     if (item.usable) {
-      textHover = createText(item.description, [350, 50 + position], {});
+      textHover = createText(item.description, [350, 50 + position], $scope.style.menu);
       clickable.on("click", function() {
         item.use();
         CharServ.useItem(item.name);
@@ -185,7 +183,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         inventoryMenu();
       });
     } else {
-      textHover = createText("Not usable", [350, 50 + position], {});
+      textHover = createText("Not usable", [350, 50 + position], $scope.style.menu);
     }
     textHover.renderable = false;
     clickable
@@ -196,7 +194,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         textHover. renderable = false;
       });
 
-    createText("- " + item.quantity + " " + item.name, [40, 50 + position], style);
+    createText("- " + item.quantity + " " + item.name, [40, 50 + position], $scope.style.menu);
     $scope.overlayWindow.addChild(clickable);
   }
 
@@ -204,50 +202,45 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * Draw the content of the spells page.
    */
   function spellsMenu() {
-    $scope.menuTitle = createText("Spells", [20, 10]);
-    createText("Not yet implemented", [50, 80], {});
+    $scope.menuTitle = createText("Spells", [220, 10], $scope.style.title);
+    createText("Not yet implemented", [50, 80], $scope.style.menu);
   }
 
   /**
    * Draw the equiped objects of the character.
    */
   function equipmentMenu() {
-    $scope.menuTitle = createText("Items", [20, 10]);
+    $scope.menuTitle = createText("Items", [220, 10], $scope.style.title);
 
     var datas = CharServ.getAllDatas();
     var style = {
-      font : 'bold italic 26px Arial',
-      fill : '#F7EDCA',
-      stroke : '#4a1850',
-      strokeThickness : 5,
+      font : 'bold 30px Georgia',
     };
 
     // draw weapon
     createText(datas.weapon.name, [50, 80], style);
-    createText("[image]", [80, 180]);
     if (datas.weapon.enhancement === 0) {
-      createText("damages: " + datas.weapon.damages, [330, 150], {});
+      createText("damages: " + datas.weapon.damages, [130, 150], $scope.style.menu);
     } else {
-      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [330, 150], {});
+      createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [130, 150], $scope.style.menu);
     }
     var hit = datas.weapon.hitBonus + datas.weapon.enhancement;
-    createText("hit bonus: " + hit, [330, 180], {});
-    createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [330,210], {});
+    createText("hit bonus: " + hit, [130, 180], $scope.style.menu);
+    createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [130,210], $scope.style.menu);
 
     // draw armor
     createText(datas.armor.name, [50, 340], style);
-    createText("[image]", [80, 410]);
     var def = datas.armor.defence + datas.armor.enhancement;
-    createText("armor: " + def, [330, 410], {});
-    createText("weight: " + datas.armor.weight, [330, 440], {});
+    createText("armor: " + def, [130, 410], $scope.style.menu);
+    createText("weight: " + datas.armor.weight, [130, 440], $scope.style.menu);
   }
 
   /**
    * Draw the content of the help page.
    */
   function helpMenu() {
-    $scope.menuTitle = createText("Help", [20, 10]);
-    createText("Sorry you can't count on anyone's help for now", [50, 80], {font: 'bold 20px Arial'});
+    $scope.menuTitle = createText("Help", [220, 10], $scope.style.title);
+    createText("Sorry you can't count on anyone's help for now", [50, 80], $scope.style.menu);
   }
 
   /**
@@ -257,7 +250,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
    * @param {hash} mob: stats relative to the mob - only life and level are useful yet.
    */
   function drawFighters() {
-    $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
+    $scope.menuTitle = createText($scope.fightTitle, [10, 10], $scope.style.title);
 
     $scope.playerSprite = new PIXI.Sprite($scope.player.classStats.sprite);
     $scope.playerSprite.scale.set(1.5);
@@ -422,7 +415,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      */
     weaponReward: function(message, dfd) {
       destroyMenu();
-      $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
+      $scope.menuTitle = createText($scope.fightTitle, [10, 10], $scope.style.title);
       var datas = CharServ.getAllDatas();
       var style = {
         font : 'bold italic 26px Arial',
@@ -431,27 +424,27 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         strokeThickness : 5,
       };
 
-      createText("You found a new item!", [50, 80]);
+      createText("You found a new item!", [50, 80], $scope.style.menu);
       createText(message.opt.name, [30, 150], style);
       if (message.opt.enhancement === 0) {
-        createText("damages: " + message.opt.damages, [80, 200], {});
+        createText("damages: " + message.opt.damages, [80, 200], $scope.style.menu);
       } else {
-        createText("damages: " + message.opt.damages + " + " + message.opt.enhancement, [80, 200], {});
+        createText("damages: " + message.opt.damages + " + " + message.opt.enhancement, [80, 200], $scope.style.menu);
       }
       var hit = message.opt.hitBonus + message.opt.enhancement;
-      createText("hit bonus: " + hit, [80, 230], {});
-      createText("crit: " + message.opt.critical[0] + "-20  x" + message.opt.critical[1], [80,260], {});
+      createText("hit bonus: " + hit, [80, 230], $scope.style.menu);
+      createText("crit: " + message.opt.critical[0] + "-20  x" + message.opt.critical[1], [80,260], $scope.style.menu);
 
-      createText("Currently equiped: ", [50, 350], {});
+      createText("Currently equiped: ", [50, 350], $scope.style.menu);
       createText(datas.weapon.name, [30, 390], style);
       if (datas.weapon.enhancement === 0) {
-        createText("damages: " + datas.weapon.damages, [80, 440], {});
+        createText("damages: " + datas.weapon.damages, [80, 440], $scope.style.menu);
       } else {
-        createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [80, 440], {});
+        createText("damages: " + datas.weapon.damages + " + " + datas.weapon.enhancement, [80, 440], $scope.style.menu);
       }
       hit = datas.weapon.hitBonus + datas.weapon.enhancement;
-      createText("hit bonus: " + hit, [80, 470], {});
-      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [80,500], {});
+      createText("hit bonus: " + hit, [80, 470], $scope.style.menu);
+      createText("crit: " + datas.weapon.critical[0] + "-20  x" + datas.weapon.critical[1], [80,500], $scope.style.menu);
 
       invisibleButton("Use item", [430, 220], function() {
         // some visual effect
@@ -479,7 +472,7 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
      */
     armorReward: function(message, dfd) {
       destroyMenu();
-      $scope.menuTitle = createText($scope.fightTitle, [10, 10]);
+      $scope.menuTitle = createText($scope.fightTitle, [10, 10], $scope.style.title);
       var datas = CharServ.getAllDatas();
       var style = {
         font : 'bold italic 26px Arial',
@@ -488,17 +481,17 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         strokeThickness : 5,
       };
 
-      createText("You found a new item!", [50, 80]);
+      createText("You found a new item!", [50, 80], $scope.style.menu);
       createText(message.opt.name, [30, 150], style);
       var def = message.opt.defence + message.opt.enhancement;
-      createText("armor: " + def, [80, 200], {});
-      createText("weight: " + message.opt.weight, [80, 230], {});
+      createText("armor: " + def, [80, 200], $scope.style.menu);
+      createText("weight: " + message.opt.weight, [80, 230], $scope.style.menu);
 
-      createText("Currently equiped: ", [50, 350], {});
+      createText("Currently equiped: ", [50, 350], $scope.style.menu);
       createText(datas.armor.name, [30, 390], style);
       def = datas.armor.defence + datas.armor.enhancement;
-      createText("armor: " + def, [80, 440], {});
-      createText("weight: " + datas.armor.weight, [80, 470], {});
+      createText("armor: " + def, [80, 440], $scope.style.menu);
+      createText("weight: " + datas.armor.weight, [80, 470], $scope.style.menu);
 
       invisibleButton("Use item", [430, 220], function() {
         // some visual effect
@@ -621,8 +614,16 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         empty: PIXI.Texture.fromImage("images/empty.png")
       };
 
-      // init styles for messages in the combat log
+      // init styles
       $scope.style = {
+        title: {font: 'bold 42px UnifrakturMaguntia',
+                fill: '#cc2',
+                stroke: '#000',
+                strokeThickness: 5},
+        button: {font: 'bold 24px Georgia'},
+        menu: {font:'bold 24px Georgia'},
+
+        // combat log
         newRound: {
           font : 'bold italic 36px Arial',
           fill : '#F7EDCA',
