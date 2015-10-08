@@ -318,8 +318,14 @@ angular.module("rpgApp").service("CharCreation", function () {
     $scope.texture = {
       button: PIXI.Texture.fromImage("images/button.png"),
       buttonHover: PIXI.Texture.fromImage("images/buttonhover.png"),
-      empty: PIXI.Texture.fromImage("images/empty.png")
+      empty: PIXI.Texture.fromImage("images/empty.png"),
+      textureBackground: PIXI.Texture.fromImage("images/texture-background.png")
     };
+
+    var background = new PIXI.Sprite($scope.texture.textureBackground);
+    background.position.x = 0;
+    background.position.y = 0;
+    $scope.creationPage.addChild(background);
 
     $scope.char = {};
     $scope.class = "new";

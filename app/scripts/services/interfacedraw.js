@@ -610,9 +610,6 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
     init: function() {
       $scope.interface = new PIXI.Container();
 
-      $scope.leftPanel = new PIXI.Graphics();
-      $scope.interface.addChild($scope.leftPanel);
-
       // init textures
       $scope.texture = {
         button: PIXI.Texture.fromImage("images/button.png"),
@@ -649,6 +646,8 @@ angular.module("rpgApp").service("InterfaceDraw", ["CharServ", function (CharSer
         attack: {font: 'bold 16px Arial'}
       };
 
+      $scope.leftPanel = new PIXI.Graphics();
+      $scope.interface.addChild($scope.leftPanel);
       createMenu();
 
       return $scope.interface;
